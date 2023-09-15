@@ -30,7 +30,7 @@ export default function Details(props) {
                         {props.branchname}
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="purple" mr={3} onClick={onClose}>
+                        <Button type="ghost" mr={3} onClick={onClose}>
                             Close
                         </Button>
                     </ModalFooter>
