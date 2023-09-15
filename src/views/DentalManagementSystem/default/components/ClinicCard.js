@@ -22,6 +22,7 @@ import {
 } from "react-icons/md";
 import MiniStatistics from "components/card/MiniStatistics";
 import DetailsButton from "./ClinicCardComponents/Details"
+import ModifyButton from "./ClinicCardComponents/Modify"
 export default function ClinicCard(props) {
   const { ...rest } = props;
 
@@ -41,6 +42,7 @@ export default function ClinicCard(props) {
           </MenuButton>
           <MenuList>
             <DetailsButton branchname={props.branchname} />
+            <ModifyButton branchname={props.branchname} />
           </MenuList>
         </Menu>
       }
