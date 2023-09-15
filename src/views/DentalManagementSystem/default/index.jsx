@@ -45,6 +45,7 @@ import {
 } from "@chakra-ui/react";
 import CardBannerDems from "./components/CardBannerDems"
 import CardBannerSysGo from "./components/CardBannerSysGo"
+import ClinicCard from "./components/ClinicCard"
 // Custom components
 import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
@@ -70,7 +71,7 @@ export default function UserReports() {
               <ModalHeader>Add new clinic</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                {/* <Heading>Hello World</Heading> */}
+                <Heading>Hello World</Heading>
               </ModalBody>
               <ModalFooter>
                 <Button mr={3} colorScheme="green">Save</Button>
@@ -80,31 +81,7 @@ export default function UserReports() {
           </Modal>
         </Box>
       </Flex>
-      <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3, "2xl": 4 }}
-        gap='20px'
-        mb='20px'>
-        <MiniStatistics
-          name='DMS - Laguna'
-          value='DMS-Lag'
-          endContent={
-            <Menu>
-              <MenuButton as={IconButton}
-                w='64px'
-                h='64px'
-                icon={<MdSettings />}
-                ariaLabel="Options"
-                colorScheme="purple">
-              </MenuButton>
-              <MenuList>
-                <MenuItem>Details</MenuItem>
-                <MenuItem>Modify</MenuItem>
-                <MenuItem>Delete</MenuItem>
-              </MenuList>
-            </Menu>
-          }
-        />
-      </SimpleGrid>
+      <ClinicCard location="Philippines, Laguna" branchname="DMS-Laguna"/>
       <Grid
         templateColumns={{
           base: "1fr",
