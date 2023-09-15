@@ -22,11 +22,11 @@
 
 // Chakra imports
 import { Box, SimpleGrid } from "@chakra-ui/react";
-import DevelopmentTable from "views/admin/dataTables/components/DevelopmentTable";
+import DevelopmentTable from "views/DentalManagementSystem/patients/components/DevelopmentTable";
 import {
   columnsDataDevelopment,
 } from "views/admin/dataTables/variables/columnsData";
-import tableDataDevelopment from "views/admin/dataTables/variables/tableDataDevelopment.json";
+import tableDataDevelopment from "views/DentalManagementSystem/patients/variables/tableDataDevelopment.json";
 import React from "react";
 
 export default function Settings() {

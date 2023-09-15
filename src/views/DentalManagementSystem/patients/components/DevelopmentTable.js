@@ -1,6 +1,7 @@
 /* eslint-disable */
 import {
   Flex,
+  Icon,
   Progress,
   Table,
   Tbody,
@@ -13,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card";
-import { AndroidLogo, AppleLogo, WindowsLogo } from "components/icons/Icons";
+import { MdPerson } from "react-icons/md";
 import Menu from "components/menu/MainMenu";
 import React, { useMemo } from "react";
 import {
@@ -107,36 +108,11 @@ export default function DevelopmentTable(props) {
                     data = (
                       <Flex align='center'>
                         {cell.value.map((item, key) => {
-                          if (item === "apple") {
+                          if (item === "patient") {
                             return (
-                              <AppleLogo
-                                key={key}
-                                color={iconColor}
-                                me='16px'
-                                h='18px'
-                                w='15px'
-                              />
+                              <MdPerson w={24} h={24} />
                             );
-                          } else if (item === "android") {
-                            return (
-                              <AndroidLogo
-                                key={key}
-                                color={iconColor}
-                                me='16px'
-                                h='18px'
-                                w='16px'
-                              />
-                            );
-                          } else if (item === "windows") {
-                            return (
-                              <WindowsLogo
-                                key={key}
-                                color={iconColor}
-                                h='18px'
-                                w='19px'
-                              />
-                            );
-                          }
+                          } 
                         })}
                       </Flex>
                     );
