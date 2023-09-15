@@ -1,7 +1,8 @@
+/* eslint-disable */
 import {
   Flex,
+  Progress,
   Table,
-  Checkbox,
   Tbody,
   Td,
   Text,
@@ -10,6 +11,10 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
+// Custom components
+import Card from "components/card/Card";
+import { AndroidLogo, AppleLogo, WindowsLogo } from "components/icons/Icons";
+import Menu from "components/menu/MainMenu";
 import React, { useMemo } from "react";
 import {
   useGlobalFilter,
@@ -18,10 +23,7 @@ import {
   useTable,
 } from "react-table";
 
-// Custom components
-import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
-export default function CheckTable(props) {
+export default function DevelopmentTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
@@ -48,6 +50,7 @@ export default function CheckTable(props) {
   initialState.pageSize = 11;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
+  const iconColor = useColorModeValue("secondaryGray.500", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
@@ -61,7 +64,7 @@ export default function CheckTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          Check Table
+          Development Table
         </Text>
         <Menu />
       </Flex>
@@ -96,16 +99,52 @@ export default function CheckTable(props) {
                   let data = "";
                   if (cell.column.Header === "NAME") {
                     data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "TECH") {
+                    data = (
                       <Flex align='center'>
-                        <Checkbox
-                          defaultChecked={cell.value[1]}
-                          colorScheme='brandScheme'
-                          me='10px'
-                        />
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
-                          {cell.value[0]}
-                        </Text>
+                        {cell.value.map((item, key) => {
+                          if (item === "apple") {
+                            return (
+                              <AppleLogo
+                                key={key}
+                                color={iconColor}
+                                me='16px'
+                                h='18px'
+                                w='15px'
+                              />
+                            );
+                          } else if (item === "android") {
+                            return (
+                              <AndroidLogo
+                                key={key}
+                                color={iconColor}
+                                me='16px'
+                                h='18px'
+                                w='16px'
+                              />
+                            );
+                          } else if (item === "windows") {
+                            return (
+                              <WindowsLogo
+                                key={key}
+                                color={iconColor}
+                                h='18px'
+                                w='19px'
+                              />
+                            );
+                          }
+                        })}
                       </Flex>
+                    );
+                  } else if (cell.column.Header === "DATE") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
                     );
                   } else if (cell.column.Header === "PROGRESS") {
                     data = (
@@ -117,19 +156,14 @@ export default function CheckTable(props) {
                           fontWeight='700'>
                           {cell.value}%
                         </Text>
+                        <Progress
+                          variant='table'
+                          colorScheme='brandScheme'
+                          h='8px'
+                          w='63px'
+                          value={cell.value}
+                        />
                       </Flex>
-                    );
-                  } else if (cell.column.Header === "QUANTITY") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "DATE") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
                     );
                   }
                   return (

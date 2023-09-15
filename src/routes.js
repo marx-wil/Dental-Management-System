@@ -2,11 +2,8 @@ import React from "react";
 
 import { Icon } from "@chakra-ui/react";
 import {
-  MdBarChart,
   MdPerson,
   MdHome,
-  MdLock,
-  MdOutlineShoppingCart,
 } from "react-icons/md";
 
 // Dentall Management System Imports
@@ -20,13 +17,13 @@ const routes = [
     icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
     component: Dashboard,
   }
-  // ,{
-  //   name: "Patients",
-  //   layout: "/admin",
-  //   path: "/patients",
-  //   icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
-  //   component: Patients,
-  // }
+  ,{
+    name: "Patients",
+    layout: "/admin",
+    path: "/patients",
+    icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+    component: Patients,
+  }
 ];
 
 export default routes;

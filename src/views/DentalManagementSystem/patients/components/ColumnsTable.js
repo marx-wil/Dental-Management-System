@@ -1,7 +1,6 @@
 import {
   Flex,
   Table,
-  Checkbox,
   Tbody,
   Td,
   Text,
@@ -21,7 +20,7 @@ import {
 // Custom components
 import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
-export default function CheckTable(props) {
+export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
@@ -45,7 +44,7 @@ export default function CheckTable(props) {
     prepareRow,
     initialState,
   } = tableInstance;
-  initialState.pageSize = 11;
+  initialState.pageSize = 5;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -61,7 +60,7 @@ export default function CheckTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          Check Table
+          4-Column Table
         </Text>
         <Menu />
       </Flex>
@@ -97,13 +96,8 @@ export default function CheckTable(props) {
                   if (cell.column.Header === "NAME") {
                     data = (
                       <Flex align='center'>
-                        <Checkbox
-                          defaultChecked={cell.value[1]}
-                          colorScheme='brandScheme'
-                          me='10px'
-                        />
                         <Text color={textColor} fontSize='sm' fontWeight='700'>
-                          {cell.value[0]}
+                          {cell.value}
                         </Text>
                       </Flex>
                     );
