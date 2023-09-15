@@ -23,6 +23,7 @@ import {
 import MiniStatistics from "components/card/MiniStatistics";
 import DetailsButton from "./ClinicCardComponents/Details"
 import ModifyButton from "./ClinicCardComponents/Modify"
+import DeleteButton from "./ClinicCardComponents/Delete"
 export default function ClinicCard(props) {
   const { ...rest } = props;
 
@@ -43,6 +44,7 @@ export default function ClinicCard(props) {
           <MenuList>
             <DetailsButton branchname={props.branchname} />
             <ModifyButton branchname={props.branchname} />
+            <DeleteButton branchname={props.branchname} />
           </MenuList>
         </Menu>
       }
