@@ -19,13 +19,14 @@ const routes = [
     path: "/default",
     icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
     component: Dashboard,
-  },{
-    name: "Patients",
-    layout: "/admin",
-    path: "/patients",
-    icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
-    component: Patients,
   }
+  // ,{
+  //   name: "Patients",
+  //   layout: "/admin",
+  //   path: "/patients",
+  //   icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+  //   component: Patients,
+  // }
 ];
 
 export default routes;

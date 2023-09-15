@@ -11,7 +11,6 @@ import {
     Button
 } from "@chakra-ui/react";
 export default function Details(props) {
-    const { ...rest } = props;
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
         <>

@@ -22,14 +22,9 @@
 
 // Chakra imports
 import {
-  IconButton,
   Button,
   Box,
   SimpleGrid,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Flex,
   Spacer,
   Grid,
@@ -47,11 +42,8 @@ import CardBannerDems from "./components/CardBannerDems"
 import CardBannerSysGo from "./components/CardBannerSysGo"
 import ClinicCard from "./components/ClinicCard"
 // Custom components
-import MiniCalendar from "components/calendar/MiniCalendar";
-import MiniStatistics from "components/card/MiniStatistics";
 import React from "react";
 import {
-  MdSettings,
   MdAddBox
 } from "react-icons/md";
 export default function UserReports() {

@@ -1,21 +1,8 @@
 import {
   IconButton,
-  SimpleGrid,
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
-  Spacer,
-  Grid,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Heading
 } from "@chakra-ui/react";
 import {
   MdSettings,
@@ -25,8 +12,6 @@ import DetailsButton from "./ClinicCardComponents/Details"
 import ModifyButton from "./ClinicCardComponents/Modify"
 import DeleteButton from "./ClinicCardComponents/Delete"
 export default function ClinicCard(props) {
-  const { ...rest } = props;
-
   // Chakra Color Mode
   return (
     <MiniStatistics
