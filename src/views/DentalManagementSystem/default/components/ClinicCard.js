@@ -1,13 +1,10 @@
 import {
   IconButton,
-  Button,
-  Box,
   SimpleGrid,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Flex,
   Spacer,
   Grid,
   Modal,
@@ -30,30 +27,23 @@ export default function ClinicCard(props) {
 
   // Chakra Color Mode
   return (
-    <SimpleGrid
-      columns={{ base: 1, md: 2, lg: 3, "2xl": 4 }}
-      gap='20px'
-      mb='20px'>
-      <MiniStatistics
-        name={props.branchid+props.location}
-        value={props.branchname}
-        endContent={
-          <Menu>
-            <MenuButton as={IconButton}
-              w='64px'
-              h='64px'
-              icon={<MdSettings />}
-              ariaLabel="Options"
-              colorScheme="purple">
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Details</MenuItem>
-              <MenuItem>Modify</MenuItem>
-              <MenuItem>Delete</MenuItem>
-            </MenuList>
-          </Menu>
-        }
-      />
-    </SimpleGrid>
+    <MiniStatistics
+      name={props.branchid + props.location}
+      value={props.branchname}
+      endContent={
+        <Menu>
+          <MenuButton as={IconButton}
+            w='64px'
+            h='64px'
+            icon={<MdSettings />}
+            ariaLabel="Options"
+            colorScheme="purple">
+          </MenuButton>
+          <MenuList>
+            <DetailsButton branchname={props.branchname} />
+          </MenuList>
+        </Menu>
+      }
+    />
   );
 }

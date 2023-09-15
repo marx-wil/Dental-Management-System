@@ -81,7 +81,17 @@ export default function UserReports() {
           </Modal>
         </Box>
       </Flex>
-      <ClinicCard location="Philippines, Laguna" branchname="DMS-Laguna" branchid="15"/>
+      <SimpleGrid
+        columns={{ base: 1, md: 2, lg: 3, "2xl": 4 }}
+        gap='20px'
+        mb='20px'>
+        <ClinicCard location="Philippines, Laguna" branchname="DMS-Laguna" branchid="15" />
+        <ClinicCard location="Philippines, Manila" branchname="DMS-Manila" branchid="16" />
+        <ClinicCard location="Philippines, Cavite" branchname="DMS-Cavite" branchid="17" />
+        <ClinicCard location="Philippines, Camsur" branchname="DMS-Camsur" branchid="18" />
+        <ClinicCard location="Japan, Ohayo" branchname="DMSJ-Ohayo" branchid="19" />
+        <ClinicCard location="Korea, Gangnam" branchname="DMSK-Gangnam" branchid="20" />
+      </SimpleGrid>
       <Grid
         templateColumns={{
           base: "1fr",
