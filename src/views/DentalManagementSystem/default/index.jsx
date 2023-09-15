@@ -73,10 +73,8 @@ export default function UserReports() {
                 {/* <Heading>Hello World</Heading> */}
               </ModalBody>
               <ModalFooter>
-                <Button mr={3} colorScheme="green">Secondary Action</Button>
-                <Button mr={3} onClick={onClose} variant="ghost">
-                  Close
-                </Button>
+                <Button mr={3} colorScheme="green">Save</Button>
+                <Button mr={3} onClick={onClose} variant="ghost">Close</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
