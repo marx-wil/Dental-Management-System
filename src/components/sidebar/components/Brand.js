@@ -15,8 +15,7 @@ export function SidebarBrand() {
 
   return (
     <Flex align='center' direction='column'>
-      {/* <Heading as="h2" size="lg" py="25px"><Icon as={MdLocalHospital} color={logoColor} /> DEMS</Heading > */}
-      {/* <Icon as={MdLocalHospital} w={32} h={32} color={logoColor} mb='20px'/> */}
+      <Heading as="h6" size="md" py="25px">Dental Management</Heading >
       <HSeparator mb='20px' />
     </Flex>
   );
