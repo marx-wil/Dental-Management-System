@@ -81,7 +81,7 @@ export default function UserReports() {
           </Modal>
         </Box>
       </Flex>
-      <ClinicCard location="Philippines, Laguna" branchname="DMS-Laguna"/>
+      <ClinicCard location="Philippines, Laguna" branchname="DMS-Laguna" branchid="15"/>
       <Grid
         templateColumns={{
           base: "1fr",

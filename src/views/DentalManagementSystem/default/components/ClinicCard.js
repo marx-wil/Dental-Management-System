@@ -35,7 +35,7 @@ export default function ClinicCard(props) {
       gap='20px'
       mb='20px'>
       <MiniStatistics
-        name={props.location}
+        name={props.branchid+props.location}
         value={props.branchname}
         endContent={
           <Menu>
