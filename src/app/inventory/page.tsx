@@ -165,7 +165,7 @@ export default function InventoryPage() {
     }
   };
 
-  const getStockStatus = (item: InventoryItem) => {
+  const getStockStatus = (item: InventoryItem): 'in-stock' | 'low-stock' | 'out-of-stock' | 'expired' => {
     if (item.currentStock === 0) return 'out-of-stock';
     if (item.currentStock <= item.minimumStock) return 'low-stock';
     if (item.expiryDate && new Date(item.expiryDate) < new Date()) return 'expired';
@@ -193,6 +193,16 @@ export default function InventoryPage() {
     setInventory(inventory.map(item => item.id === updatedItem.id ? itemWithStatus : item));
     onClose();
     setSelectedItem(null);
+  };
+
+  const handleSaveItem = (item: InventoryItem | Omit<InventoryItem, 'id'>) => {
+    if ('id' in item) {
+      // This is an update operation
+      handleUpdateItem(item as InventoryItem);
+    } else {
+      // This is an add operation
+      handleAddItem(item);
+    }
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -445,7 +455,7 @@ export default function InventoryPage() {
               setSelectedItem(null);
             }}
             item={selectedItem}
-            onSave={selectedItem ? handleUpdateItem : handleAddItem}
+            onSave={handleSaveItem}
           />
         </Container>
       </Layout>
@@ -505,7 +515,11 @@ function InventoryModal({ isOpen, onClose, item, onSave }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const itemData = {
+      ...formData,
+      status: item ? item.status : 'in-stock' as const,
+    };
+    onSave(itemData);
   };
 
   const categories = [
