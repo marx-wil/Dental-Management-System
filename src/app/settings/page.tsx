@@ -12,6 +12,8 @@ import {
   FormControl,
   FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   Switch,
   Textarea,
@@ -179,32 +181,44 @@ export default function SettingsPage() {
                           <GridItem>
                             <FormControl>
                               <FormLabel>Full Name</FormLabel>
-                              <Input
-                                value={profileData.name}
-                                onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                                leftIcon={<FiUser />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiUser />
+                                </InputLeftElement>
+                                <Input
+                                  value={profileData.name}
+                                  onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem>
                             <FormControl>
                               <FormLabel>Email Address</FormLabel>
-                              <Input
-                                type="email"
-                                value={profileData.email}
-                                onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                                leftIcon={<FiMail />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiMail />
+                                </InputLeftElement>
+                                <Input
+                                  type="email"
+                                  value={profileData.email}
+                                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem>
                             <FormControl>
                               <FormLabel>Phone Number</FormLabel>
-                              <Input
-                                value={profileData.phone}
-                                onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                                leftIcon={<FiPhone />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiPhone />
+                                </InputLeftElement>
+                                <Input
+                                  value={profileData.phone}
+                                  onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem>
@@ -235,11 +249,15 @@ export default function SettingsPage() {
                           <GridItem>
                             <FormControl>
                               <FormLabel>Address</FormLabel>
-                              <Input
-                                value={profileData.address}
-                                onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
-                                leftIcon={<FiMapPin />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiMapPin />
+                                </InputLeftElement>
+                                <Input
+                                  value={profileData.address}
+                                  onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                         </Grid>
@@ -288,42 +306,58 @@ export default function SettingsPage() {
                           <GridItem>
                             <FormControl>
                               <FormLabel>Phone Number</FormLabel>
-                              <Input
-                                value={clinicData.phone}
-                                onChange={(e) => setClinicData({ ...clinicData, phone: e.target.value })}
-                                leftIcon={<FiPhone />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiPhone />
+                                </InputLeftElement>
+                                <Input
+                                  value={clinicData.phone}
+                                  onChange={(e) => setClinicData({ ...clinicData, phone: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem>
                             <FormControl>
                               <FormLabel>Email Address</FormLabel>
-                              <Input
-                                type="email"
-                                value={clinicData.email}
-                                onChange={(e) => setClinicData({ ...clinicData, email: e.target.value })}
-                                leftIcon={<FiMail />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiMail />
+                                </InputLeftElement>
+                                <Input
+                                  type="email"
+                                  value={clinicData.email}
+                                  onChange={(e) => setClinicData({ ...clinicData, email: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem>
                             <FormControl>
                               <FormLabel>Website</FormLabel>
-                              <Input
-                                value={clinicData.website}
-                                onChange={(e) => setClinicData({ ...clinicData, website: e.target.value })}
-                                leftIcon={<FiGlobe />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiGlobe />
+                                </InputLeftElement>
+                                <Input
+                                  value={clinicData.website}
+                                  onChange={(e) => setClinicData({ ...clinicData, website: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                           <GridItem colSpan={2}>
                             <FormControl>
                               <FormLabel>Address</FormLabel>
-                              <Input
-                                value={clinicData.address}
-                                onChange={(e) => setClinicData({ ...clinicData, address: e.target.value })}
-                                leftIcon={<FiMapPin />}
-                              />
+                              <InputGroup>
+                                <InputLeftElement>
+                                  <FiMapPin />
+                                </InputLeftElement>
+                                <Input
+                                  value={clinicData.address}
+                                  onChange={(e) => setClinicData({ ...clinicData, address: e.target.value })}
+                                />
+                              </InputGroup>
                             </FormControl>
                           </GridItem>
                         </Grid>
