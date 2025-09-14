@@ -32,6 +32,8 @@ import {
   Tab,
   TabPanel,
   useToast,
+  useBreakpointValue,
+  Stack,
 } from '@chakra-ui/react';
 import {
   FiUser,
@@ -53,6 +55,11 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const toast = useToast();
   const cardBg = useColorModeValue('white', 'gray.800');
+  
+  // Responsive values
+  const containerMaxW = useBreakpointValue({ base: '100%', md: '4xl' });
+  const gridColumns = useBreakpointValue({ base: 1, md: 2 });
+  const spacing = useBreakpointValue({ base: 4, md: 8 });
 
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
@@ -141,8 +148,8 @@ export default function SettingsPage() {
   return (
     <ProtectedRoute>
       <Layout>
-        <Container maxW="4xl" py={8}>
-          <VStack spacing={8} align="stretch">
+        <Container maxW={containerMaxW} py={spacing}>
+          <VStack spacing={spacing} align="stretch">
             {/* Header */}
             <Box>
               <Heading size="lg">Settings</Heading>
@@ -150,11 +157,11 @@ export default function SettingsPage() {
             </Box>
 
             <Tabs variant="enclosed">
-              <TabList>
-                <Tab>Profile</Tab>
-                <Tab>Clinic</Tab>
-                <Tab>Notifications</Tab>
-                <Tab>Security</Tab>
+              <TabList overflowX="auto" overflowY="hidden">
+                <Tab whiteSpace="nowrap">Profile</Tab>
+                <Tab whiteSpace="nowrap">Clinic</Tab>
+                <Tab whiteSpace="nowrap">Notifications</Tab>
+                <Tab whiteSpace="nowrap">Security</Tab>
               </TabList>
 
               <TabPanels>
@@ -166,18 +173,23 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardBody>
                       <VStack spacing={6}>
-                        <HStack spacing={6} w="full">
+                        <Stack 
+                          direction={{ base: 'column', md: 'row' }} 
+                          spacing={6} 
+                          w="full" 
+                          align={{ base: 'center', md: 'flex-start' }}
+                        >
                           <Avatar size="xl" src={user?.avatar} name={user?.name} />
-                          <VStack align="start" spacing={2}>
+                          <VStack align={{ base: 'center', md: 'start' }} spacing={2}>
                             <Text fontWeight="medium" fontSize="lg">{user?.name}</Text>
                             <Text color="gray.600">{user?.role}</Text>
                             <Button size="sm" variant="outline">
                               Change Photo
                             </Button>
                           </VStack>
-                        </HStack>
+                        </Stack>
 
-                        <Grid templateColumns="repeat(2, 1fr)" gap={6} w="full">
+                        <Grid templateColumns={`repeat(${gridColumns}, 1fr)`} gap={6} w="full">
                           <GridItem>
                             <FormControl>
                               <FormLabel>Full Name</FormLabel>
@@ -293,7 +305,7 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardBody>
                       <VStack spacing={6}>
-                        <Grid templateColumns="repeat(2, 1fr)" gap={6} w="full">
+                        <Grid templateColumns={`repeat(${gridColumns}, 1fr)`} gap={6} w="full">
                           <GridItem>
                             <FormControl>
                               <FormLabel>Clinic Name</FormLabel>
@@ -364,7 +376,7 @@ export default function SettingsPage() {
 
                         <Box w="full">
                           <Text fontWeight="medium" mb={4}>Operating Hours</Text>
-                          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                          <Grid templateColumns={`repeat(${gridColumns}, 1fr)`} gap={4}>
                             {Object.entries(clinicData.operatingHours).map(([day, hours]) => (
                               <GridItem key={day}>
                                 <FormControl>
@@ -407,7 +419,12 @@ export default function SettingsPage() {
                     <CardBody>
                       <VStack spacing={6}>
                         <VStack spacing={4} align="stretch" w="full">
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Email Notifications</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -421,9 +438,14 @@ export default function SettingsPage() {
                                 emailNotifications: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">SMS Notifications</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -437,9 +459,14 @@ export default function SettingsPage() {
                                 smsNotifications: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Appointment Reminders</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -453,9 +480,14 @@ export default function SettingsPage() {
                                 appointmentReminders: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Payment Reminders</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -469,9 +501,14 @@ export default function SettingsPage() {
                                 paymentReminders: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Low Stock Alerts</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -485,9 +522,14 @@ export default function SettingsPage() {
                                 lowStockAlerts: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">System Updates</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -501,9 +543,14 @@ export default function SettingsPage() {
                                 systemUpdates: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Marketing Emails</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -517,7 +564,7 @@ export default function SettingsPage() {
                                 marketingEmails: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
                         </VStack>
 
                         <Button
@@ -542,7 +589,12 @@ export default function SettingsPage() {
                     <CardBody>
                       <VStack spacing={6}>
                         <VStack spacing={4} align="stretch" w="full">
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Two-Factor Authentication</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -556,9 +608,14 @@ export default function SettingsPage() {
                                 twoFactorAuth: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
-                          <HStack justify="space-between">
+                          <Stack 
+                            direction={{ base: 'column', sm: 'row' }} 
+                            justify="space-between" 
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            spacing={{ base: 2, sm: 4 }}
+                          >
                             <Box>
                               <Text fontWeight="medium">Login Notifications</Text>
                               <Text fontSize="sm" color="gray.600">
@@ -572,7 +629,7 @@ export default function SettingsPage() {
                                 loginNotifications: e.target.checked
                               })}
                             />
-                          </HStack>
+                          </Stack>
 
                           <FormControl>
                             <FormLabel>Session Timeout (minutes)</FormLabel>
@@ -613,7 +670,7 @@ export default function SettingsPage() {
 
                         <VStack spacing={4} align="stretch" w="full">
                           <Text fontWeight="medium">Change Password</Text>
-                          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                          <Grid templateColumns={`repeat(${gridColumns}, 1fr)`} gap={4}>
                             <GridItem>
                               <FormControl>
                                 <FormLabel>Current Password</FormLabel>
