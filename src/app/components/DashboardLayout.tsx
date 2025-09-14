@@ -52,7 +52,7 @@ interface DashboardLayoutProps {
 }
 
 // Icon mapping for dynamic menu items
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
   FiHome,
   FiUsers,
   FiCalendar,
