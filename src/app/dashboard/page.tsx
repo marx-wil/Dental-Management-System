@@ -352,8 +352,8 @@ export default function DashboardPage() {
           <Grid
             templateColumns={{
               base: "1fr",
-              md: "repeat(2, 1fr)",
-              lg: "repeat(4, 1fr)",
+              lg: "repeat(2, 1fr)",
+              xl: "repeat(4, 1fr)",
             }}
             gap={6}
           >
@@ -456,7 +456,7 @@ export default function DashboardPage() {
           <Grid 
             templateColumns={{ 
               base: "1fr", 
-              lg: hasPermission(user?.role || 'patient', 'patients', 'view') && hasPermission(user?.role || 'patient', 'appointments', 'view') 
+              xl: hasPermission(user?.role || 'patient', 'patients', 'view') && hasPermission(user?.role || 'patient', 'appointments', 'view') 
                 ? "2fr 1fr" 
                 : "1fr" 
             }} 
