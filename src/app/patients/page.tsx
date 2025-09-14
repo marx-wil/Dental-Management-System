@@ -365,6 +365,7 @@ function AddPatientModal({ isOpen, onClose, onSave }: {
     emergencyContact: '',
     medicalHistory: '',
     allergies: '',
+    lastVisit: new Date().toISOString().split('T')[0],
     status: 'Active' as 'Active' | 'Inactive',
   });
 
@@ -381,6 +382,7 @@ function AddPatientModal({ isOpen, onClose, onSave }: {
       emergencyContact: '',
       medicalHistory: '',
       allergies: '',
+      lastVisit: new Date().toISOString().split('T')[0],
       status: 'Active',
     });
   };
