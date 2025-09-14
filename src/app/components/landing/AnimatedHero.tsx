@@ -499,7 +499,7 @@ export default function AnimatedHero({
                 <VStack spacing={4} align="stretch">
                   <HStack justify="space-between" align="center">
                     <Text fontSize="sm" fontWeight="semibold" color="gray.700">
-                      Today's Schedule
+                      Today&apos;s Schedule
                     </Text>
                     <Button size="xs" bg="dental.500" color="white" leftIcon={<FiPlus />}>
                       Add
