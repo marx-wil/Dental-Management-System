@@ -19,11 +19,6 @@ import {
   Avatar,
   Icon,
   useColorModeValue,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -35,6 +30,8 @@ import {
   Input,
   Textarea,
   useDisclosure,
+  SimpleGrid,
+  Flex,
 } from '@chakra-ui/react';
 import {
   FiCalendar,
@@ -48,6 +45,7 @@ import {
   FiMapPin,
   FiPhone,
 } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 import Layout from '../components/Layout';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -74,7 +72,7 @@ const mockAppointments: Appointment[] = [
     patientName: 'Maria Santos',
     dentistId: '1',
     dentistName: 'Dr. Juan Dela Cruz',
-    date: '2024-01-15',
+    date: '2025-01-15',
     time: '09:00',
     duration: 60,
     type: 'Cleaning',
@@ -89,7 +87,7 @@ const mockAppointments: Appointment[] = [
     patientName: 'Carlos Mendoza',
     dentistId: '1',
     dentistName: 'Dr. Juan Dela Cruz',
-    date: '2024-01-15',
+    date: '2025-01-15',
     time: '10:30',
     duration: 90,
     type: 'Filling',
@@ -104,7 +102,7 @@ const mockAppointments: Appointment[] = [
     patientName: 'Ana Rodriguez',
     dentistId: '2',
     dentistName: 'Dr. Maria Santos',
-    date: '2024-01-15',
+    date: '2025-01-15',
     time: '14:00',
     duration: 120,
     type: 'Root Canal',
@@ -119,14 +117,104 @@ const mockAppointments: Appointment[] = [
     patientName: 'Luis Garcia',
     dentistId: '1',
     dentistName: 'Dr. Juan Dela Cruz',
-    date: '2024-01-16',
-    time: '09:00',
+    date: '2025-01-15',
+    time: '15:30',
     duration: 45,
     type: 'Check-up',
     status: 'confirmed',
     notes: 'Annual check-up',
     patientPhone: '+63 912 345 6786',
     patientEmail: 'luis.garcia@email.com',
+  },
+  {
+    id: '5',
+    patientId: '5',
+    patientName: 'Elena Martinez',
+    dentistId: '2',
+    dentistName: 'Dr. Maria Santos',
+    date: '2025-01-16',
+    time: '09:00',
+    duration: 60,
+    type: 'Cleaning',
+    status: 'scheduled',
+    notes: 'Regular cleaning appointment',
+    patientPhone: '+63 912 345 6785',
+    patientEmail: 'elena.martinez@email.com',
+  },
+  {
+    id: '6',
+    patientId: '6',
+    patientName: 'Roberto Silva',
+    dentistId: '1',
+    dentistName: 'Dr. Juan Dela Cruz',
+    date: '2025-01-16',
+    time: '11:00',
+    duration: 90,
+    type: 'Crown',
+    status: 'confirmed',
+    notes: 'Crown placement on tooth #12',
+    patientPhone: '+63 912 345 6784',
+    patientEmail: 'roberto.silva@email.com',
+  },
+  {
+    id: '7',
+    patientId: '7',
+    patientName: 'Carmen Lopez',
+    dentistId: '3',
+    dentistName: 'Dr. Pedro Reyes',
+    date: '2025-01-17',
+    time: '08:30',
+    duration: 45,
+    type: 'Check-up',
+    status: 'scheduled',
+    notes: 'Routine check-up',
+    patientPhone: '+63 912 345 6783',
+    patientEmail: 'carmen.lopez@email.com',
+  },
+  {
+    id: '8',
+    patientId: '8',
+    patientName: 'Miguel Torres',
+    dentistId: '2',
+    dentistName: 'Dr. Maria Santos',
+    date: '2025-01-17',
+    time: '10:00',
+    duration: 60,
+    type: 'Extraction',
+    status: 'confirmed',
+    notes: 'Wisdom tooth extraction',
+    patientPhone: '+63 912 345 6782',
+    patientEmail: 'miguel.torres@email.com',
+  },
+  {
+    id: '9',
+    patientId: '9',
+    patientName: 'Isabella Cruz',
+    dentistId: '1',
+    dentistName: 'Dr. Juan Dela Cruz',
+    date: '2025-01-17',
+    time: '14:00',
+    duration: 120,
+    type: 'Root Canal',
+    status: 'scheduled',
+    notes: 'Root canal treatment on tooth #19',
+    patientPhone: '+63 912 345 6781',
+    patientEmail: 'isabella.cruz@email.com',
+  },
+  {
+    id: '10',
+    patientId: '10',
+    patientName: 'Fernando Ramos',
+    dentistId: '3',
+    dentistName: 'Dr. Pedro Reyes',
+    date: '2025-01-17',
+    time: '16:00',
+    duration: 60,
+    type: 'Consultation',
+    status: 'confirmed',
+    notes: 'Initial consultation for orthodontic treatment',
+    patientPhone: '+63 912 345 6780',
+    patientEmail: 'fernando.ramos@email.com',
   },
 ];
 
@@ -141,15 +229,24 @@ const mockPatients = [
   { id: '2', name: 'Carlos Mendoza' },
   { id: '3', name: 'Ana Rodriguez' },
   { id: '4', name: 'Luis Garcia' },
+  { id: '5', name: 'Elena Martinez' },
+  { id: '6', name: 'Roberto Silva' },
+  { id: '7', name: 'Carmen Lopez' },
+  { id: '8', name: 'Miguel Torres' },
+  { id: '9', name: 'Isabella Cruz' },
+  { id: '10', name: 'Fernando Ramos' },
 ];
 
 export default function AppointmentsPage() {
+  const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('day');
   const [selectedDentist, setSelectedDentist] = useState('all');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedDayAppointments, setSelectedDayAppointments] = useState<Appointment[]>([]);
+  const [selectedDayDate, setSelectedDayDate] = useState<Date | null>(null);
   
   const cardBg = useColorModeValue('white', 'gray.800');
 
@@ -179,6 +276,54 @@ export default function AppointmentsPage() {
       const aptDate = new Date(apt.date);
       return aptDate >= startOfWeek && aptDate <= endOfWeek;
     });
+  };
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const days = [];
+    
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+    
+    // Add all days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day));
+    }
+    
+    return days;
+  };
+
+  const handleDateClick = (date: Date) => {
+    const dayAppointments = getAppointmentsForDate(date);
+    
+    if (dayAppointments.length === 0) {
+      return;
+    } else if (dayAppointments.length === 1) {
+      // Single appointment - redirect to details page
+      router.push(`/appointments/${dayAppointments[0].id}`);
+    } else if (dayAppointments.length >= 3) {
+      // Multiple appointments - show modal
+      setSelectedDayAppointments(dayAppointments);
+      setSelectedDayDate(date);
+      onModalOpen();
+    } else {
+      // 2 appointments - still show modal for consistency
+      setSelectedDayAppointments(dayAppointments);
+      setSelectedDayDate(date);
+      onModalOpen();
+    }
+  };
+
+  const handleAppointmentClick = (appointment: Appointment) => {
+    router.push(`/appointments/${appointment.id}`);
   };
 
   const formatTime = (time: string) => {
@@ -212,125 +357,108 @@ export default function AppointmentsPage() {
     setAppointments(appointments.filter(apt => apt.id !== appointmentId));
   };
 
-  const renderDayView = () => {
-    const dayAppointments = getAppointmentsForDate(selectedDate);
+  const renderCalendarView = () => {
+    const days = getDaysInMonth(selectedDate);
+    const monthName = selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
     return (
       <VStack spacing={4} align="stretch">
-        {dayAppointments.length === 0 ? (
-          <Card bg={cardBg}>
-            <CardBody textAlign="center" py={8}>
-              <Icon as={FiCalendar} boxSize={12} color="gray.400" mb={4} />
-              <Text color="gray.600">No appointments scheduled for this day</Text>
-            </CardBody>
-          </Card>
-        ) : (
-          dayAppointments.map((appointment) => (
-            <Card key={appointment.id} bg={cardBg}>
-              <CardBody>
-                <HStack justify="space-between" align="start">
-                  <VStack align="start" spacing={2}>
-                    <HStack spacing={3}>
-                      <Avatar size="sm" name={appointment.patientName} />
-                      <Box>
-                        <Text fontWeight="medium">{appointment.patientName}</Text>
-                        <Text fontSize="sm" color="gray.600">{appointment.dentistName}</Text>
-                      </Box>
-                    </HStack>
-                    <HStack spacing={4}>
-                      <HStack spacing={1}>
-                        <Icon as={FiClock} />
-                        <Text fontSize="sm">{formatTime(appointment.time)}</Text>
-                      </HStack>
-                      <Badge colorScheme={getStatusColor(appointment.status)}>
-                        {appointment.status}
-                      </Badge>
-                    </HStack>
-                    <Text fontSize="sm" color="gray.600">{appointment.type}</Text>
-                  </VStack>
-                  <HStack spacing={2}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedAppointment(appointment);
-                        onOpen();
-                      }}
-                    >
-                      <FiEdit />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      colorScheme="red"
-                      onClick={() => handleDeleteAppointment(appointment.id)}
-                    >
-                      <FiTrash2 />
-                    </Button>
-                  </HStack>
-                </HStack>
-              </CardBody>
-            </Card>
-          ))
-        )}
-      </VStack>
-    );
-  };
-
-  const renderWeekView = () => {
-    const weekAppointments = getAppointmentsForWeek(selectedDate);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    
-    return (
-      <Grid templateColumns="repeat(7, 1fr)" gap={4}>
-        {days.map((day, index) => {
-          const dayDate = new Date(selectedDate);
-          dayDate.setDate(selectedDate.getDate() - selectedDate.getDay() + index);
-          const dayAppointments = getAppointmentsForDate(dayDate);
-          
-          return (
+        <Heading size="md" textAlign="center">{monthName}</Heading>
+        
+        {/* Day headers */}
+        <Grid templateColumns="repeat(7, 1fr)" gap={{ base: 0.5, md: 1 }}>
+          {dayNames.map((day) => (
             <GridItem key={day}>
-              <Card bg={cardBg} h="full">
-                <CardHeader pb={2}>
-                  <Text fontWeight="medium" textAlign="center">{day}</Text>
-                  <Text fontSize="sm" color="gray.600" textAlign="center">
-                    {dayDate.getDate()}
-                  </Text>
-                </CardHeader>
-                <CardBody pt={0}>
-                  <VStack spacing={2} align="stretch">
-                    {dayAppointments.map((appointment) => (
-                      <Box
-                        key={appointment.id}
-                        p={2}
-                        bg="dental.50"
-                        borderRadius="md"
-                        borderLeft="3px solid"
-                        borderLeftColor="dental.500"
-                        cursor="pointer"
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          onOpen();
-                        }}
-                      >
-                        <Text fontSize="xs" fontWeight="medium">
-                          {formatTime(appointment.time)}
-                        </Text>
-                        <Text fontSize="xs" color="gray.600">
-                          {appointment.patientName}
-                        </Text>
-                        <Text fontSize="xs" color="gray.500">
-                          {appointment.type}
-                        </Text>
-                      </Box>
-                    ))}
-                  </VStack>
-                </CardBody>
-              </Card>
+              <Text 
+                fontSize={{ base: "xs", md: "sm" }} 
+                fontWeight="bold" 
+                textAlign="center" 
+                py={{ base: 1, md: 2 }}
+              >
+                {day}
+              </Text>
             </GridItem>
-          );
-        })}
-      </Grid>
+          ))}
+        </Grid>
+        
+        {/* Calendar days */}
+        <Grid templateColumns="repeat(7, 1fr)" gap={{ base: 0.5, md: 1 }}>
+          {days.map((day, index) => {
+            if (!day) {
+              return <GridItem key={index} h={{ base: "60px", md: "80px" }} />;
+            }
+            
+            const dayAppointments = getAppointmentsForDate(day);
+            const isToday = day.toDateString() === new Date().toDateString();
+            const isSelected = day.toDateString() === selectedDate.toDateString();
+            
+            return (
+              <GridItem key={day.getTime()}>
+                <Box
+                  h={{ base: "60px", md: "80px" }}
+                  p={{ base: 1, md: 2 }}
+                  border="1px solid"
+                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderRadius="md"
+                  cursor="pointer"
+                  bg={isToday ? 'dental.50' : isSelected ? 'dental.100' : 'transparent'}
+                  _hover={{ bg: 'dental.50' }}
+                  position="relative"
+                  onClick={() => handleDateClick(day)}
+                >
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    fontWeight={isToday ? 'bold' : 'normal'}
+                  >
+                    {day.getDate()}
+                  </Text>
+                  
+                  {/* Appointment indicators */}
+                  {dayAppointments.length > 0 && (
+                    <VStack spacing={0.5} align="stretch" mt={0.5}>
+                      {dayAppointments.slice(0, 2).map((appointment, idx) => (
+                        <Box
+                          key={appointment.id}
+                          h={{ base: "3px", md: "4px" }}
+                          bg={getStatusColor(appointment.status) === 'green' ? 'green.400' : 
+                              getStatusColor(appointment.status) === 'blue' ? 'blue.400' : 
+                              getStatusColor(appointment.status) === 'red' ? 'red.400' : 
+                              getStatusColor(appointment.status) === 'orange' ? 'orange.400' : 'gray.400'}
+                          borderRadius="full"
+                          title={`${formatTime(appointment.time)} - ${appointment.patientName}`}
+                        />
+                      ))}
+                      {dayAppointments.length > 2 && (
+                        <Box
+                          h={{ base: "3px", md: "4px" }}
+                          bg="orange.400"
+                          borderRadius="full"
+                          title={`${dayAppointments.length - 2} more appointments`}
+                        />
+                      )}
+                    </VStack>
+                  )}
+                  
+                  {/* Orange circle for 3+ appointments */}
+                  {dayAppointments.length >= 3 && (
+                    <Box
+                      position="absolute"
+                      top={0.5}
+                      right={0.5}
+                      w={{ base: "6px", md: "8px" }}
+                      h={{ base: "6px", md: "8px" }}
+                      bg="orange.500"
+                      borderRadius="full"
+                      border="1px solid white"
+                    />
+                  )}
+                </Box>
+              </GridItem>
+            );
+          })}
+        </Grid>
+      </VStack>
     );
   };
 
@@ -340,42 +468,51 @@ export default function AppointmentsPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
-              <Box>
-                <Heading size="lg">Appointment Management</Heading>
-                <Text color="gray.600">Schedule and manage patient appointments</Text>
+            <HStack justify="space-between" wrap="wrap" spacing={4}>
+              <Box flex="1" minW="200px">
+                <Heading size={{ base: "md", md: "lg" }}>Appointment Management</Heading>
+                <Text color="gray.600" fontSize={{ base: "sm", md: "md" }}>
+                  Schedule and manage patient appointments
+                </Text>
               </Box>
               <Button
                 leftIcon={<FiPlus />}
                 colorScheme="dental"
                 onClick={onOpen}
+                size={{ base: "sm", md: "md" }}
+                minW="fit-content"
               >
-                Schedule Appointment
+                <Text display={{ base: "none", sm: "inline" }}>Schedule Appointment</Text>
+                <Text display={{ base: "inline", sm: "none" }}>Schedule</Text>
               </Button>
             </HStack>
 
             {/* Controls */}
             <Card bg={cardBg}>
               <CardBody>
-                <HStack spacing={4} wrap="wrap">
-                  <HStack spacing={2}>
+                <VStack spacing={4} align="stretch">
+                  {/* Month Navigation */}
+                  <HStack spacing={2} justify="center">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => {
                         const newDate = new Date(selectedDate);
-                        newDate.setDate(selectedDate.getDate() - 1);
+                        newDate.setMonth(selectedDate.getMonth() - 1);
                         setSelectedDate(newDate);
                       }}
                     >
                       <FiChevronLeft />
                     </Button>
-                    <Text minW="120px" textAlign="center">
+                    <Text 
+                      minW={{ base: "150px", md: "200px" }} 
+                      textAlign="center" 
+                      fontWeight="medium"
+                      fontSize={{ base: "sm", md: "md" }}
+                    >
                       {selectedDate.toLocaleDateString('en-US', { 
-                        weekday: 'long', 
                         year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                        month: 'long'
                       })}
                     </Text>
                     <Button
@@ -383,7 +520,7 @@ export default function AppointmentsPage() {
                       variant="outline"
                       onClick={() => {
                         const newDate = new Date(selectedDate);
-                        newDate.setDate(selectedDate.getDate() + 1);
+                        newDate.setMonth(selectedDate.getMonth() + 1);
                         setSelectedDate(newDate);
                       }}
                     >
@@ -391,49 +528,46 @@ export default function AppointmentsPage() {
                     </Button>
                   </HStack>
                   
-                  <Select
-                    value={viewMode}
-                    onChange={(e) => setViewMode(e.target.value as 'day' | 'week' | 'month')}
-                    w="120px"
-                  >
-                    <option value="day">Day</option>
-                    <option value="week">Week</option>
-                    <option value="month">Month</option>
-                  </Select>
-                  
-                  <Select
-                    value={selectedDentist}
-                    onChange={(e) => setSelectedDentist(e.target.value)}
-                    w="200px"
-                  >
-                    <option value="all">All Dentists</option>
-                    {mockDentists.map((dentist) => (
-                      <option key={dentist.id} value={dentist.id}>
-                        {dentist.name}
-                      </option>
-                    ))}
-                  </Select>
-                </HStack>
+                  {/* Action Buttons */}
+                  <HStack spacing={4} justify={{ base: "center", md: "flex-end" }} wrap="wrap">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedDate(new Date())}
+                      minW="80px"
+                      w={{base: "full", lg: "auto"}}
+                    >
+                      Today
+                    </Button>
+                    
+                    <Select
+                      value={selectedDentist}
+                      onChange={(e) => setSelectedDentist(e.target.value)}
+                      w={{ base: "full", sm: "200px" }}
+                      maxW="200px"
+                    >
+                      <option value="all">All Dentists</option>
+                      {mockDentists.map((dentist) => (
+                        <option key={dentist.id} value={dentist.id}>
+                          {dentist.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </HStack>
+                </VStack>
               </CardBody>
             </Card>
 
             {/* Calendar View */}
             <Card bg={cardBg}>
               <CardHeader>
-                <Heading size="md">
-                  {viewMode === 'day' && 'Daily View'}
-                  {viewMode === 'week' && 'Weekly View'}
-                  {viewMode === 'month' && 'Monthly View'}
-                </Heading>
+                <Heading size="md">Appointment Calendar</Heading>
+                <Text fontSize="sm" color="gray.600">
+                  Click on a date to view appointments. Days with 3+ appointments show an orange indicator.
+                </Text>
               </CardHeader>
               <CardBody>
-                {viewMode === 'day' && renderDayView()}
-                {viewMode === 'week' && renderWeekView()}
-                {viewMode === 'month' && (
-                  <Text textAlign="center" color="gray.600" py={8}>
-                    Monthly view coming soon...
-                  </Text>
-                )}
+                {renderCalendarView()}
               </CardBody>
             </Card>
           </VStack>
@@ -448,6 +582,71 @@ export default function AppointmentsPage() {
             appointment={selectedAppointment}
             onSave={selectedAppointment ? handleUpdateAppointment : handleAddAppointment}
           />
+
+          {/* Multiple Appointments Modal */}
+          <Modal isOpen={isModalOpen} onClose={onModalClose} size={{ base: "full", md: "lg" }}>
+            <ModalOverlay />
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader>
+                <Text fontSize={{ base: "sm", md: "md" }}>
+                  Appointments for {selectedDayDate?.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Text>
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <VStack spacing={3} align="stretch">
+                  {selectedDayAppointments.map((appointment) => (
+                    <Card key={appointment.id} bg={cardBg} cursor="pointer" 
+                          onClick={() => handleAppointmentClick(appointment)}
+                          _hover={{ bg: 'dental.50' }}>
+                      <CardBody p={{ base: 3, md: 4 }}>
+                        <HStack justify="space-between" align="start" spacing={3}>
+                          <VStack align="start" spacing={2} flex="1">
+                            <HStack spacing={3}>
+                              <Avatar size="sm" name={appointment.patientName} />
+                              <Box>
+                                <Text fontWeight="medium" fontSize={{ base: "sm", md: "md" }}>
+                                  {appointment.patientName}
+                                </Text>
+                                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                                  {appointment.dentistName}
+                                </Text>
+                              </Box>
+                            </HStack>
+                            <HStack spacing={4} wrap="wrap">
+                              <HStack spacing={1}>
+                                <Icon as={FiClock} boxSize={3} />
+                                <Text fontSize={{ base: "xs", md: "sm" }}>
+                                  {formatTime(appointment.time)}
+                                </Text>
+                              </HStack>
+                              <Badge 
+                                colorScheme={getStatusColor(appointment.status)}
+                                fontSize={{ base: "xs", md: "sm" }}
+                                px={2}
+                                py={1}
+                              >
+                                {appointment.status}
+                              </Badge>
+                            </HStack>
+                            <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                              {appointment.type}
+                            </Text>
+                          </VStack>
+                          <Icon as={FiChevronRight} color="gray.400" boxSize={4} />
+                        </HStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </VStack>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </Container>
       </Layout>
     </ProtectedRoute>

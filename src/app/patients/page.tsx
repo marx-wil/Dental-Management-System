@@ -218,7 +218,7 @@ export default function PatientsPage() {
               <CardHeader>
                 <Heading size="md">Patients ({filteredPatients.length})</Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflowX="auto">
                 <Table variant="simple">
                   <Thead>
                     <Tr>

@@ -369,7 +369,7 @@ export default function BillingPage() {
 
             {/* Stats Cards */}
             <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
               gap={6}
             >
               <GridItem>
@@ -466,7 +466,7 @@ export default function BillingPage() {
                   Invoices ({filteredInvoices.length})
                 </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflow={"auto"}>
                 <Table variant="simple">
                   <Thead>
                     <Tr>
