@@ -144,7 +144,7 @@ export default function DashboardPage() {
         stats: [
           { label: "My Patients", value: "156", change: "+3%", trend: "up" },
           {
-            label: "Today's Appointments",
+            label: "Today&apos;s Appointments",
             value: "8",
             change: "+1",
             trend: "up",
@@ -343,7 +343,7 @@ export default function DashboardPage() {
               Welcome back, {user?.name}!
             </Heading>
             <Text color="gray.600" fontSize="lg">
-              Here's what's happening at your{" "}
+              Here&apos;s what&apos;s happening at your{" "}
               {user?.role === "patient" ? "appointments" : "clinic"} today.
             </Text>
           </Box>
