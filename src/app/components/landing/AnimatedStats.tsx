@@ -159,7 +159,7 @@ export default function AnimatedStats() {
             {stats.map((stat, index) => (
               <GridItem key={index}>
                 <Box
-                  ref={(el) => (statRefs.current[index] = el)}
+                  ref={(el) => { statRefs.current[index] = el; }}
                   p={8}
                   bg="white"
                   borderRadius="2xl"

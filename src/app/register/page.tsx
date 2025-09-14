@@ -3,10 +3,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Container,
-  Card,
-  CardBody,
-  CardHeader,
   Heading,
   FormControl,
   FormLabel,
@@ -17,43 +13,31 @@ import {
   Text,
   Alert,
   AlertIcon,
-  Select,
-  useColorModeValue,
   InputGroup,
   InputRightElement,
   IconButton,
-  RadioGroup,
-  Radio,
-  Stack,
+  Checkbox,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { FiMail, FiLock, FiUser } from "react-icons/fi";
-import { FaBuilding } from "react-icons/fa";
+import { ViewIcon, ViewOffIcon, CheckIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth, UserRole } from "../contexts/AuthContext";
-import Layout from "../components/Layout";
+import AuthLayout from "../components/AuthLayout";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    phone: "",
-    address: "",
-    dateOfBirth: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { register } = useAuth();
   const router = useRouter();
-
-  const bg = useColorModeValue("gray.50", "gray.900");
-  const cardBg = useColorModeValue("white", "gray.800");
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -64,8 +48,8 @@ export default function RegisterPage() {
     setError("");
 
     // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    if (!formData.name || !formData.email || !formData.password) {
+      setError("All fields are required");
       return;
     }
 
@@ -74,18 +58,8 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!formData.phone) {
-      setError("Phone number is required");
-      return;
-    }
-
-    if (!formData.address) {
-      setError("Address is required");
-      return;
-    }
-
-    if (!formData.dateOfBirth) {
-      setError("Date of birth is required");
+    if (!agreedToTerms) {
+      setError("You must agree to the Terms & Conditions");
       return;
     }
 
@@ -97,9 +71,9 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
         role: "patient" as UserRole,
-        phone: formData.phone,
-        address: formData.address,
-        dateOfBirth: formData.dateOfBirth,
+        phone: "",
+        address: "",
+        dateOfBirth: "",
       });
 
       if (success) {
@@ -115,186 +89,195 @@ export default function RegisterPage() {
   };
 
   return (
-    <Layout>
-      <Box minH="100vh" bg={bg} py={12}>
-        <Container maxW="md">
-          <VStack spacing={8}>
-            <VStack spacing={4} textAlign="center">
-              <Heading size="2xl" color="dental.500">
-                Patient Registration
-              </Heading>
-              <Text color="gray.600">
-                Create your patient account to access your dental records and appointments
+    <AuthLayout>
+      <VStack spacing={8} align="stretch">
+        <Box>
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<ArrowBackIcon />}
+              color="gray.600"
+              mb={4}
+              _hover={{
+                bg: "gray.100",
+                color: "gray.800",
+              }}
+            >
+              Back to Home
+            </Button>
+          </Link>
+          <Heading size="xl" color="gray.800" mb={2}>
+            Create your account
+          </Heading>
+        </Box>
+
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={6} align="stretch">
+            {error && (
+              <Alert status="error" borderRadius="md" fontSize="sm">
+                <AlertIcon />
+                {error}
+              </Alert>
+            )}
+
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600" mb={2}>
+                Name
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type="text"
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  border="none"
+                  borderBottom="2px solid"
+                  borderBottomColor="gray.200"
+                  borderRadius="0"
+                  px={0}
+                  py={3}
+                  fontSize="md"
+                  _focus={{
+                    borderBottomColor: "#3182ce",
+                    boxShadow: "none",
+                  }}
+                  _placeholder={{
+                    color: "gray.400",
+                  }}
+                />
+                <InputRightElement>
+                  <CheckIcon color="green.500" />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600" mb={2}>
+                E-mail Address
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  border="none"
+                  borderBottom="2px solid"
+                  borderBottomColor="gray.200"
+                  borderRadius="0"
+                  px={0}
+                  py={3}
+                  fontSize="md"
+                  _focus={{
+                    borderBottomColor: "#3182ce",
+                    boxShadow: "none",
+                  }}
+                  _placeholder={{
+                    color: "gray.400",
+                  }}
+                />
+                <InputRightElement>
+                  <CheckIcon color="green.500" />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600" mb={2}>
+                Password
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  border="none"
+                  borderBottom="2px solid"
+                  borderBottomColor="gray.200"
+                  borderRadius="0"
+                  px={0}
+                  py={3}
+                  fontSize="md"
+                  _focus={{
+                    borderBottomColor: "#3182ce",
+                    boxShadow: "none",
+                  }}
+                  _placeholder={{
+                    color: "gray.400",
+                  }}
+                />
+                <InputRightElement>
+                  <IconButton
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    color="gray.500"
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <Checkbox
+              isChecked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              colorScheme="blue"
+              size="md"
+            >
+              <Text fontSize="sm" color="gray.600">
+                By Signing Up, I Agree with{" "}
+                <ChakraLink color="#3182ce" textDecoration="underline">
+                  Terms & Conditions
+                </ChakraLink>
               </Text>
-            </VStack>
+            </Checkbox>
 
-            <Card w="full" bg={cardBg}>
-              <CardHeader>
-                <Heading size="md">Sign Up</Heading>
-              </CardHeader>
-              <CardBody>
-                <form onSubmit={handleSubmit}>
-                  <VStack spacing={4}>
-                    {error && (
-                      <Alert status="error" borderRadius="md">
-                        <AlertIcon />
-                        {error}
-                      </Alert>
-                    )}
-
-                    <FormControl isRequired>
-                      <FormLabel>Full Name</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Enter your full name"
-                        value={formData.name}
-                        onChange={(e) =>
-                          handleInputChange("name", e.target.value)
-                        }
-                        // leftIcon={<FiUser />}
-                      />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Email Address</FormLabel>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          handleInputChange("email", e.target.value)
-                        }
-                        // leftIcon={<FiMail />}
-                      />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Phone Number</FormLabel>
-                      <Input
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        value={formData.phone}
-                        onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
-                        }
-                      />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Address</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Enter your address"
-                        value={formData.address}
-                        onChange={(e) =>
-                          handleInputChange("address", e.target.value)
-                        }
-                      />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Date of Birth</FormLabel>
-                      <Input
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={(e) =>
-                          handleInputChange("dateOfBirth", e.target.value)
-                        }
-                      />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Password</FormLabel>
-                      <InputGroup>
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Create a password"
-                          value={formData.password}
-                          onChange={(e) =>
-                            handleInputChange("password", e.target.value)
-                          }
-                          // leftIcon={<FiLock />}
-                        />
-                        <InputRightElement>
-                          <IconButton
-                            aria-label={
-                              showPassword ? "Hide password" : "Show password"
-                            }
-                            icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowPassword(!showPassword)}
-                          />
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <InputGroup>
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirm your password"
-                          value={formData.confirmPassword}
-                          onChange={(e) =>
-                            handleInputChange("confirmPassword", e.target.value)
-                          }
-                          // leftIcon={<FiLock />}
-                        />
-                        <InputRightElement>
-                          <IconButton
-                            aria-label={
-                              showConfirmPassword
-                                ? "Hide password"
-                                : "Show password"
-                            }
-                            icon={
-                              showConfirmPassword ? (
-                                <ViewOffIcon />
-                              ) : (
-                                <ViewIcon />
-                              )
-                            }
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              setShowConfirmPassword(!showConfirmPassword)
-                            }
-                          />
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
-
-                    <Button
-                      type="submit"
-                      colorScheme="dental"
-                      size="lg"
-                      w="full"
-                      isLoading={isLoading}
-                      loadingText="Creating account..."
-                    >
-                      Create Account
-                    </Button>
-                  </VStack>
-                </form>
-              </CardBody>
-            </Card>
-
-            <HStack spacing={1}>
-              <Text color="gray.600">Already have an account?</Text>
+            <HStack spacing={4} pt={4}>
+              <Button
+                type="submit"
+                bg="#3182ce"
+                color="white"
+                size="lg"
+                flex="1"
+                borderRadius="full"
+                fontSize="md"
+                fontWeight="medium"
+                isLoading={isLoading}
+                loadingText="Signing Up..."
+                _hover={{
+                  bg: "#2c5aa0",
+                }}
+                _active={{
+                  bg: "#2c5aa0",
+                }}
+              >
+                Sign Up
+              </Button>
+              
               <Link href="/login">
-                <Text
-                  color="dental.500"
+                <Button
+                  variant="outline"
+                  size="lg"
+                  borderRadius="full"
+                  fontSize="md"
                   fontWeight="medium"
-                  _hover={{ textDecoration: "underline" }}
+                  borderColor="gray.300"
+                  color="gray.700"
+                  _hover={{
+                    bg: "gray.50",
+                    borderColor: "gray.400",
+                  }}
                 >
-                  Sign in
-                </Text>
+                  Sign In
+                </Button>
               </Link>
             </HStack>
           </VStack>
-        </Container>
-      </Box>
-    </Layout>
+        </form>
+      </VStack>
+    </AuthLayout>
   );
 }

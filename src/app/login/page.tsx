@@ -3,10 +3,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Container,
-  Card,
-  CardBody,
-  CardHeader,
   Heading,
   FormControl,
   FormLabel,
@@ -18,17 +14,15 @@ import {
   Alert,
   AlertIcon,
   Divider,
-  useColorModeValue,
   InputGroup,
   InputRightElement,
   IconButton,
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FiMail, FiLock } from 'react-icons/fi';
+import { ViewIcon, ViewOffIcon, CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
-import Layout from '../components/Layout';
+import AuthLayout from '../components/AuthLayout';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,9 +33,6 @@ export default function LoginPage() {
   
   const { login } = useAuth();
   const router = useRouter();
-  
-  const bg = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,119 +61,186 @@ export default function LoginPage() {
   ];
 
   return (
-    <Layout>
-      <Box minH="100vh" bg={bg} py={12}>
-        <Container maxW="md">
-          <VStack spacing={8}>
-            <VStack spacing={4} textAlign="center">
-              <Heading size="2xl" color="dental.500">
-                Welcome Back
-              </Heading>
-              <Text color="gray.600">
-                Sign in to your Dental Management System account
-              </Text>
-            </VStack>
+    <AuthLayout>
+      <VStack spacing={8} align="stretch">
+        <Box>
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<ArrowBackIcon />}
+              color="gray.600"
+              mb={4}
+              _hover={{
+                bg: "gray.100",
+                color: "gray.800",
+              }}
+            >
+              Back to Home
+            </Button>
+          </Link>
+          <Heading size="xl" color="gray.800" mb={2}>
+            Sign in to your account
+          </Heading>
+        </Box>
 
-            <Card w="full" bg={cardBg}>
-              <CardHeader>
-                <Heading size="md">Sign In</Heading>
-              </CardHeader>
-              <CardBody>
-                <form onSubmit={handleSubmit}>
-                  <VStack spacing={4}>
-                    {error && (
-                      <Alert status="error" borderRadius="md">
-                        <AlertIcon />
-                        {error}
-                      </Alert>
-                    )}
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={6} align="stretch">
+            {error && (
+              <Alert status="error" borderRadius="md" fontSize="sm">
+                <AlertIcon />
+                {error}
+              </Alert>
+            )}
 
-                    <FormControl isRequired>
-                      <FormLabel>Email Address</FormLabel>
-                      <InputGroup>
-                        <Input
-                          type="email"
-                          placeholder="Enter your email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          // leftIcon={<FiMail />}
-                        />
-                      </InputGroup>
-                    </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600" mb={2}>
+                E-mail Address
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  border="none"
+                  borderBottom="2px solid"
+                  borderBottomColor="gray.200"
+                  borderRadius="0"
+                  px={0}
+                  py={3}
+                  fontSize="md"
+                  _focus={{
+                    borderBottomColor: "#3182ce",
+                    boxShadow: "none",
+                  }}
+                  _placeholder={{
+                    color: "gray.400",
+                  }}
+                />
+                <InputRightElement>
+                  <CheckIcon color="green.500" />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
 
-                    <FormControl isRequired>
-                      <FormLabel>Password</FormLabel>
-                      <InputGroup>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Enter your password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          // leftIcon={<FiLock />}
-                        />
-                        <InputRightElement>
-                          <IconButton
-                            aria-label={showPassword ? 'Hide password' : 'Show password'}
-                            icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowPassword(!showPassword)}
-                          />
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.600" mb={2}>
+                Password
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  border="none"
+                  borderBottom="2px solid"
+                  borderBottomColor="gray.200"
+                  borderRadius="0"
+                  px={0}
+                  py={3}
+                  fontSize="md"
+                  _focus={{
+                    borderBottomColor: "#3182ce",
+                    boxShadow: "none",
+                  }}
+                  _placeholder={{
+                    color: "gray.400",
+                  }}
+                />
+                <InputRightElement>
+                  <IconButton
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    color="gray.500"
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
 
-                    <Button
-                      type="submit"
-                      colorScheme="dental"
-                      size="lg"
-                      w="full"
-                      isLoading={isLoading}
-                      loadingText="Signing in..."
-                    >
-                      Sign In
-                    </Button>
-                  </VStack>
-                </form>
-
-                <VStack spacing={4} mt={6}>
-                  <HStack>
-                    <Divider />
-                    <Text fontSize="sm" color="gray.500">Demo Accounts</Text>
-                    <Divider />
-                  </HStack>
-
-                  <VStack spacing={2} w="full">
-                    {demoAccounts.map((account, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        w="full"
-                        onClick={() => {
-                          setEmail(account.email);
-                          setPassword(account.password);
-                        }}
-                      >
-                        {account.role} - {account.email}
-                      </Button>
-                    ))}
-                  </VStack>
-                </VStack>
-              </CardBody>
-            </Card>
-
-            <HStack spacing={1}>
-              <Text color="gray.600">Don't have an account?</Text>
+            <HStack spacing={4} pt={4}>
+              <Button
+                type="submit"
+                bg="#3182ce"
+                color="white"
+                size="lg"
+                flex="1"
+                borderRadius="full"
+                fontSize="md"
+                fontWeight="medium"
+                isLoading={isLoading}
+                loadingText="Signing In..."
+                _hover={{
+                  bg: "#2c5aa0",
+                }}
+                _active={{
+                  bg: "#2c5aa0",
+                }}
+              >
+                Sign In
+              </Button>
+              
               <Link href="/register">
-                <Text color="dental.500" fontWeight="medium" _hover={{ textDecoration: 'underline' }}>
-                  Sign up
-                </Text>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  borderRadius="full"
+                  fontSize="md"
+                  fontWeight="medium"
+                  borderColor="gray.300"
+                  color="gray.700"
+                  _hover={{
+                    bg: "gray.50",
+                    borderColor: "gray.400",
+                  }}
+                >
+                  Sign Up
+                </Button>
               </Link>
             </HStack>
           </VStack>
-        </Container>
-      </Box>
-    </Layout>
+        </form>
+
+        {/* Demo Accounts Section */}
+        <VStack spacing={4} mt={8}>
+          <HStack w="full">
+            <Divider />
+            <Text fontSize="sm" color="gray.500" px={4}>
+              Demo Accounts
+            </Text>
+            <Divider />
+          </HStack>
+
+          <VStack spacing={2} w="full">
+            {demoAccounts.map((account, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                w="full"
+                fontSize="xs"
+                py={2}
+                borderColor="gray.200"
+                color="gray.600"
+                _hover={{
+                  bg: "gray.50",
+                  borderColor: "gray.300",
+                }}
+                onClick={() => {
+                  setEmail(account.email);
+                  setPassword(account.password);
+                }}
+              >
+                {account.role} - {account.email}
+              </Button>
+            ))}
+          </VStack>
+        </VStack>
+      </VStack>
+    </AuthLayout>
   );
 }
