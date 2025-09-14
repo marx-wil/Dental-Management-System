@@ -76,7 +76,7 @@ export const getAccessibleModules = (userRole: UserRole): string[] => {
 
 // Menu items configuration with role restrictions
 export interface MenuItem {
-  icon: any;
+  icon: string;
   label: string;
   href: string;
   requiredRole?: UserRole[];
