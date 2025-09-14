@@ -245,7 +245,7 @@ export default function InventoryPage() {
             )}
 
             {/* Stats Cards */}
-            <Grid templateColumns={{ base: '1fr', md: 'repeat(4, 1fr)' }} gap={6}>
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={6}>
               <GridItem>
                 <Card bg={cardBg}>
                   <CardBody>
@@ -311,7 +311,7 @@ export default function InventoryPage() {
             {/* Search and Filters */}
             <Card bg={cardBg}>
               <CardBody>
-                <HStack spacing={4}>
+              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(2, 1fr)' }} gap={6}>
                   <InputGroup flex={1}>
                     <InputLeftElement>
                       <FiSearch />
@@ -345,7 +345,7 @@ export default function InventoryPage() {
                     <option value="out-of-stock">Out of Stock</option>
                     <option value="expired">Expired</option>
                   </Select>
-                </HStack>
+                </Grid>
               </CardBody>
             </Card>
 
@@ -354,7 +354,7 @@ export default function InventoryPage() {
               <CardHeader>
                 <Heading size="md">Inventory Items ({filteredInventory.length})</Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflow={"auto"}>
                 <Table variant="simple">
                   <Thead>
                     <Tr>
