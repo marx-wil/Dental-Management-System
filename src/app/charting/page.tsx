@@ -35,6 +35,7 @@ import {
   Textarea,
   useDisclosure,
   Divider,
+  Flex,
 } from '@chakra-ui/react';
 import {
   FiUser,
@@ -141,50 +142,70 @@ const mockTreatmentPlans: TreatmentPlan[] = [
   },
 ];
 
-// Dental chart tooth positions (Universal Numbering System)
-const toothPositions = [
-  // Upper teeth (maxillary)
-  { number: '18', position: { x: 50, y: 20 }, type: 'molar' },
-  { number: '17', position: { x: 100, y: 20 }, type: 'molar' },
-  { number: '16', position: { x: 150, y: 20 }, type: 'molar' },
-  { number: '15', position: { x: 200, y: 20 }, type: 'premolar' },
-  { number: '14', position: { x: 250, y: 20 }, type: 'premolar' },
-  { number: '13', position: { x: 300, y: 20 }, type: 'canine' },
-  { number: '12', position: { x: 350, y: 20 }, type: 'incisor' },
-  { number: '11', position: { x: 400, y: 20 }, type: 'incisor' },
-  { number: '21', position: { x: 450, y: 20 }, type: 'incisor' },
-  { number: '22', position: { x: 500, y: 20 }, type: 'incisor' },
-  { number: '23', position: { x: 550, y: 20 }, type: 'canine' },
-  { number: '24', position: { x: 600, y: 20 }, type: 'premolar' },
-  { number: '25', position: { x: 650, y: 20 }, type: 'premolar' },
-  { number: '26', position: { x: 700, y: 20 }, type: 'molar' },
-  { number: '27', position: { x: 750, y: 20 }, type: 'molar' },
-  { number: '28', position: { x: 800, y: 20 }, type: 'molar' },
-  
-  // Lower teeth (mandibular)
-  { number: '48', position: { x: 50, y: 80 }, type: 'molar' },
-  { number: '47', position: { x: 100, y: 80 }, type: 'molar' },
-  { number: '46', position: { x: 150, y: 80 }, type: 'molar' },
-  { number: '45', position: { x: 200, y: 80 }, type: 'premolar' },
-  { number: '44', position: { x: 250, y: 80 }, type: 'premolar' },
-  { number: '43', position: { x: 300, y: 80 }, type: 'canine' },
-  { number: '42', position: { x: 350, y: 80 }, type: 'incisor' },
-  { number: '41', position: { x: 400, y: 80 }, type: 'incisor' },
-  { number: '31', position: { x: 450, y: 80 }, type: 'incisor' },
-  { number: '32', position: { x: 500, y: 80 }, type: 'incisor' },
-  { number: '33', position: { x: 550, y: 80 }, type: 'canine' },
-  { number: '34', position: { x: 600, y: 80 }, type: 'premolar' },
-  { number: '35', position: { x: 650, y: 80 }, type: 'premolar' },
-  { number: '36', position: { x: 700, y: 80 }, type: 'molar' },
-  { number: '37', position: { x: 750, y: 80 }, type: 'molar' },
-  { number: '38', position: { x: 800, y: 80 }, type: 'molar' },
+// Dental chart tooth positions - 4 rows layout with even spacing
+const toothRows = [
+  // Upper Primary Teeth (Row 1) - Labial
+  {
+    label: 'Labial',
+    teeth: ['55', '54', '53', '52', '51', '61', '62', '63', '64', '65'],
+    type: 'primary'
+  },
+  // Upper Permanent Teeth (Row 2)
+  {
+    label: '',
+    teeth: ['18', '17', '16', '15', '14', '13', '12', '11', '21', '22', '23', '24', '25', '26', '27', '28'],
+    type: 'permanent'
+  },
+  // Lower Permanent Teeth (Row 3) - Lingual
+  {
+    label: 'Lingual',
+    teeth: ['48', '47', '46', '45', '44', '43', '42', '41', '31', '32', '33', '34', '35', '36', '37', '38'],
+    type: 'permanent'
+  },
+  // Lower Primary Teeth (Row 4) - Labial
+  {
+    label: 'Labial',
+    teeth: ['85', '84', '83', '82', '81', '71', '72', '73', '74', '75'],
+    type: 'primary'
+  }
 ];
+
+// Dental conditions with colors
+const dentalConditions = {
+  'Decayed': { color: 'red.500', bg: 'red.500' },
+  'Missing': { color: 'gray.300', bg: 'gray.300' },
+  'Bridge Pontic': { color: 'green.300', bg: 'green.300' },
+  'Reset': { color: 'gray.600', bg: 'gray.600' },
+  'Attrition': { color: 'pink.400', bg: 'pink.400' },
+  'Mobile': { color: 'orange.600', bg: 'orange.600' },
+  'Partially Impacted': { color: 'yellow.600', bg: 'yellow.600' },
+  'For Extraction': { color: 'red.300', bg: 'red.300' },
+  'Recurrent Caries': { color: 'red.700', bg: 'red.700' },
+  'Filled': { color: 'blue.500', bg: 'blue.500' },
+  'Implant': { color: 'yellow.500', bg: 'yellow.500' },
+  'Crown/Bridge Abutment': { color: 'green.400', bg: 'green.400' },
+  'Abrasion': { color: 'pink.300', bg: 'pink.300' },
+  'Abfraction': { color: 'pink.600', bg: 'pink.600' },
+  'Impacted': { color: 'orange.800', bg: 'orange.800' },
+  'Unerupted': { color: 'yellow.700', bg: 'yellow.700' },
+  'Root Canal Treated': { color: 'cyan.500', bg: 'cyan.500' },
+  'Healthy': { color: 'gray.200', bg: 'gray.200' },
+};
 
 export default function ChartingPage() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(mockPatients[0]);
   const [toothConditions, setToothConditions] = useState<ToothCondition[]>(mockToothConditions);
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans);
   const [selectedTooth, setSelectedTooth] = useState<string | null>(null);
+  const [toothStates, setToothStates] = useState<Record<string, string>>({
+    '18': 'Decayed',
+    '17': 'Decayed', 
+    '16': 'Decayed',
+    '21': 'Filled',
+    '22': 'Decayed',
+    '25': 'Root Canal Treated',
+    '75': 'Filled'
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<'condition' | 'treatment'>('condition');
   
@@ -199,17 +220,22 @@ export default function ChartingPage() {
   };
 
   const getToothColor = (toothNumber: string) => {
-    const condition = getToothCondition(toothNumber);
-    const treatment = getToothTreatment(toothNumber);
-    
-    if (treatment?.status === 'completed') return 'green.500';
-    if (treatment?.status === 'in-progress') return 'yellow.500';
-    if (treatment?.priority === 'high') return 'red.500';
-    if (condition?.condition === 'Cavity') return 'orange.500';
-    if (condition?.condition === 'Root Canal') return 'purple.500';
-    if (condition?.condition === 'Filling') return 'blue.500';
-    
-    return 'gray.300';
+    const state = toothStates[toothNumber];
+    if (state && dentalConditions[state as keyof typeof dentalConditions]) {
+      return dentalConditions[state as keyof typeof dentalConditions].bg;
+    }
+    return dentalConditions.Healthy.bg;
+  };
+
+  const handleToothStateChange = (toothNumber: string, condition: string) => {
+    setToothStates(prev => ({
+      ...prev,
+      [toothNumber]: condition
+    }));
+  };
+
+  const resetAllTeeth = () => {
+    setToothStates({});
   };
 
   const handleToothClick = (toothNumber: string) => {
@@ -224,6 +250,12 @@ export default function ChartingPage() {
       id: Date.now().toString(),
     };
     setToothConditions([...toothConditions, newCondition]);
+    
+    // Update tooth state
+    if (selectedTooth) {
+      handleToothStateChange(selectedTooth, condition.condition);
+    }
+    
     onClose();
   };
 
@@ -260,11 +292,12 @@ export default function ChartingPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
               <Box>
                 <Heading size="lg">Dental Charting</Heading>
                 <Text color="gray.600">Interactive dental chart and treatment planning</Text>
               </Box>
+              <Flex justify="flex-end">
               <HStack spacing={4}>
                 <Select
                   value={selectedPatient?.id || ''}
@@ -291,7 +324,8 @@ export default function ChartingPage() {
                   Add Treatment Plan
                 </Button>
               </HStack>
-            </HStack>
+              </Flex>
+            </Grid>
 
             {/* Patient Info */}
             {selectedPatient && (
@@ -321,72 +355,158 @@ export default function ChartingPage() {
                     </Text>
                   </CardHeader>
                   <CardBody>
-                    <Box position="relative" h="400px" bg="gray.50" borderRadius="md" overflow="hidden">
-                      {/* Chart Legend */}
-                      <Box position="absolute" top={4} right={4} bg="white" p={3} borderRadius="md" shadow="sm">
-                        <VStack spacing={2} align="start">
-                          <HStack spacing={2}>
-                            <Box w={3} h={3} bg="red.500" borderRadius="sm" />
-                            <Text fontSize="xs">High Priority</Text>
-                          </HStack>
-                          <HStack spacing={2}>
-                            <Box w={3} h={3} bg="orange.500" borderRadius="sm" />
-                            <Text fontSize="xs">Cavity</Text>
-                          </HStack>
-                          <HStack spacing={2}>
-                            <Box w={3} h={3} bg="blue.500" borderRadius="sm" />
-                            <Text fontSize="xs">Filling</Text>
-                          </HStack>
-                          <HStack spacing={2}>
-                            <Box w={3} h={3} bg="purple.500" borderRadius="sm" />
-                            <Text fontSize="xs">Root Canal</Text>
-                          </HStack>
-                          <HStack spacing={2}>
-                            <Box w={3} h={3} bg="green.500" borderRadius="sm" />
-                            <Text fontSize="xs">Completed</Text>
-                          </HStack>
+                    <VStack spacing={4} align="stretch">
+                      {/* Chart Container */}
+                      <Box 
+                        w="100%"
+                        bg="white" 
+                        borderRadius="md" 
+                        p={{ base: 2, sm: 3, md: 4, lg: 6 }}
+                        position="relative"
+                        overflow="hidden"
+                      >
+                        {/* Dental Chart Rows */}
+                        <VStack spacing={{ base: 3, sm: 4, md: 5, lg: 6 }} align="stretch">
+                          {toothRows.map((row, rowIndex) => (
+                            <HStack key={rowIndex} spacing={{ base: 1, sm: 2, md: 3 }} align="center">
+                              {/* Row Label */}
+                              {row.label && (
+                                <Text 
+                                  fontSize={{ base: "10px", sm: "xs", md: "sm" }} 
+                                  fontWeight="bold"
+                                  color="gray.600"
+                                  minW={{ base: "35px", sm: "40px", md: "50px", lg: "60px" }}
+                                  textAlign="left"
+                                  display={{ base: "none", sm: "block" }}
+                                >
+                                  {row.label}
+                                </Text>
+                              )}
+                              
+                              {/* Teeth in Row */}
+                              <HStack 
+                                spacing={{ base: "2px", sm: 1, md: 2 }} 
+                                justify="center" 
+                                flex="1"
+                                wrap="nowrap"
+                                overflowX={{ base: "auto", sm: "visible" }}
+                                pb={{ base: 2, sm: 0 }}
+                                css={{
+                                  '&::-webkit-scrollbar': {
+                                    height: '4px',
+                                  },
+                                  '&::-webkit-scrollbar-track': {
+                                    background: 'transparent',
+                                  },
+                                  '&::-webkit-scrollbar-thumb': {
+                                    background: '#CBD5E0',
+                                    borderRadius: '2px',
+                                  },
+                                }}
+                              >
+                                {row.teeth.map((toothNumber) => {
+                                  const currentState = toothStates[toothNumber] || 'Healthy';
+                                  const isSelected = selectedTooth === toothNumber;
+                                  const condition = dentalConditions[currentState as keyof typeof dentalConditions];
+                                  
+                                  return (
+                                    <Box
+                                      key={toothNumber}
+                                      w={{ base: "20px", sm: "24px", md: "28px", lg: "32px" }}
+                                      h={{ base: "20px", sm: "24px", md: "28px", lg: "32px" }}
+                                      bg={condition.bg}
+                                      borderRadius="sm"
+                                      display="flex"
+                                      alignItems="center"
+                                      justifyContent="center"
+                                      cursor="pointer"
+                                      border="2px solid"
+                                      borderColor={isSelected ? "blue.500" : "gray.300"}
+                                      shadow="sm"
+                                      _hover={{
+                                        transform: 'scale(1.1)',
+                                        shadow: 'md',
+                                        borderColor: "blue.400"
+                                      }}
+                                      transition="all 0.2s"
+                                      onClick={() => handleToothClick(toothNumber)}
+                                      position="relative"
+                                      flexShrink={0}
+                                      minW={{ base: "20px", sm: "24px", md: "28px", lg: "32px" }}
+                                    >
+                                      {/* Inner square for depth effect */}
+                                      <Box
+                                        position="absolute"
+                                        top="1px"
+                                        left="1px"
+                                        right="1px"
+                                        bottom="1px"
+                                        bg="rgba(255,255,255,0.2)"
+                                        borderRadius="sm"
+                                      />
+                                      <Text 
+                                        fontSize={{ base: "7px", sm: "8px", md: "9px", lg: "10px" }} 
+                                        fontWeight="bold" 
+                                        color={currentState === 'Healthy' ? "gray.600" : "white"}
+                                        zIndex={1}
+                                        lineHeight="1"
+                                      >
+                                        {toothNumber}
+                                      </Text>
+                                    </Box>
+                                  );
+                                })}
+                              </HStack>
+                            </HStack>
+                          ))}
                         </VStack>
+
+                        {/* Reset All Button */}
+                        <Box
+                          position="absolute"
+                          top={{ base: 1, sm: 2, md: 4 }}
+                          right={{ base: 1, sm: 2, md: 4 }}
+                        >
+                          <Button
+                            size={{ base: "xs", sm: "sm", md: "md" }}
+                            colorScheme="red"
+                            leftIcon={<Icon as={FiTrash2} boxSize={{ base: 3, sm: 4, md: 5 }} />}
+                            onClick={resetAllTeeth}
+                            fontSize={{ base: "10px", sm: "xs", md: "sm" }}
+                            px={{ base: 2, sm: 3, md: 4 }}
+                            py={{ base: 1, sm: 2, md: 3 }}
+                          >
+                            <Text display={{ base: "none", sm: "inline" }}>Reset All</Text>
+                            <Text display={{ base: "inline", sm: "none" }}>Reset</Text>
+                          </Button>
+                        </Box>
                       </Box>
 
-                      {/* Teeth */}
-                      {toothPositions.map((tooth) => (
-                        <Box
-                          key={tooth.number}
-                          position="absolute"
-                          left={`${tooth.position.x}px`}
-                          top={`${tooth.position.y}px`}
-                          w="40px"
-                          h="40px"
-                          bg={getToothColor(tooth.number)}
-                          borderRadius="full"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          cursor="pointer"
-                          border="2px solid"
-                          borderColor="white"
-                          shadow="sm"
-                          _hover={{
-                            transform: 'scale(1.1)',
-                            shadow: 'md',
-                          }}
-                          transition="all 0.2s"
-                          onClick={() => handleToothClick(tooth.number)}
-                        >
-                          <Text fontSize="xs" fontWeight="bold" color="white">
-                            {tooth.number}
-                          </Text>
-                        </Box>
-                      ))}
-
-                      {/* Chart Labels */}
-                      <Text position="absolute" top={2} left={2} fontSize="sm" fontWeight="bold">
-                        Upper (Maxillary)
-                      </Text>
-                      <Text position="absolute" bottom={2} left={2} fontSize="sm" fontWeight="bold">
-                        Lower (Mandibular)
-                      </Text>
-                    </Box>
+                      {/* Dental Chart Legend - Bottom Position (Normal Flow) */}
+                      <Box 
+                        bg="white" 
+                        p={{ base: 3, md: 4 }} 
+                        borderRadius="md" 
+                        shadow="md"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        w="100%"
+                      >
+                        <Text fontSize={{ base: "sm", md: "md" }} fontWeight="bold" mb={3} textAlign="center">
+                          Dental Chart Legend
+                        </Text>
+                        <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }} gap={2}>
+                          {Object.entries(dentalConditions).map(([condition, { bg }]) => (
+                            <HStack key={condition} spacing={2}>
+                              <Box w={3} h={3} bg={bg} borderRadius="sm" />
+                              <Text fontSize={{ base: "xs", md: "sm" }} lineHeight="1.2">
+                                {condition}
+                              </Text>
+                            </HStack>
+                          ))}
+                        </Grid>
+                      </Box>
+                    </VStack>
                   </CardBody>
                 </Card>
               </GridItem>
@@ -551,12 +671,11 @@ function ToothModal({ isOpen, onClose, toothNumber, type, onAddCondition, onAddT
                       onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
                     >
                       <option value="">Select Condition</option>
-                      <option value="Cavity">Cavity</option>
-                      <option value="Filling">Filling</option>
-                      <option value="Root Canal">Root Canal</option>
-                      <option value="Crown">Crown</option>
-                      <option value="Extraction">Extraction</option>
-                      <option value="Healthy">Healthy</option>
+                      {Object.keys(dentalConditions).map((condition) => (
+                        <option key={condition} value={condition}>
+                          {condition}
+                        </option>
+                      ))}
                     </Select>
                   </FormControl>
                 </>
