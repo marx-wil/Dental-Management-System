@@ -18,7 +18,6 @@ export default function GSAPProvider({ children }: GSAPProviderProps) {
     // Global GSAP settings for better performance
     gsap.config({
       nullTargetWarn: false,
-      trialWarn: false,
     });
 
     // Set default ease for better performance
