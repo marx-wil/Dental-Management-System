@@ -26,6 +26,7 @@ import {
   Td,
   Progress,
   Divider,
+  Flex,
 } from "@chakra-ui/react";
 import {
   FiBarChart,
@@ -155,14 +156,14 @@ export default function ReportsPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">Reports & Analytics</Heading>
                 <Text color="gray.600">
                   Comprehensive clinic performance insights
                 </Text>
               </Box>
-              <HStack spacing={4}>
+              <Flex justifyContent={"flex-end"} gap={4}>
                 <Select
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -174,14 +175,17 @@ export default function ReportsPage() {
                   <option value="1year">Last Year</option>
                 </Select>
                 <Button
+                  w={{ base: "full", md: "fit-content" }}
                   leftIcon={<FiDownload />}
                   variant="outline"
                   colorScheme="dental"
+                  size={{ base: "sm", md: "md" }}
+                  minW={{ base: "full", md: "fit-content" }}
                 >
-                  Export Report
-                </Button>
-              </HStack>
-            </HStack>
+                    Export Report
+                  </Button>
+              </Flex>
+            </Grid>
 
             {/* Key Metrics */}
             <Grid
