@@ -96,12 +96,12 @@ export default function Navigation() {
   return (
     <>
       <Box bg={bg} px={4} borderBottom="1px" borderColor={borderColor}>
-        <Flex h={16} alignItems="center" justifyContent="space-between">
+        <Flex h={16} alignItems="center" justifyContent="space-between">  
           <IconButton
             size="md"
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label="Open Menu"
-            display={{ md: 'none' }}
+            display={{ lg: 'none' }}
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems="center">
@@ -110,7 +110,7 @@ export default function Navigation() {
                 DMS
               </Text>
             </Link>
-            <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
+            <HStack as="nav" spacing={4} display={{ base: 'none', lg: 'flex' }}>
               {filteredNavItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button

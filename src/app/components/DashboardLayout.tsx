@@ -81,7 +81,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Responsive values
   const sidebarWidth = '320px';
-  const mainMarginLeft = useBreakpointValue({ base: '0', md: '280px' });
+  const mainMarginLeft = useBreakpointValue({ base: '0', lg: '320px' });
   const headerPadding = useBreakpointValue({ base: 4, md: 8 });
   const contentPadding = useBreakpointValue({ base: 4, md: 8 });
 
@@ -201,7 +201,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <Box minH="100vh" bg={mainBg}>
       {/* Desktop Sidebar - Hidden on mobile */}
-      <Box display={{ base: 'none', md: 'block' }}>
+      <Box display={{ base: 'none', lg: 'block' }}>
         <SidebarContent />
       </Box>
 

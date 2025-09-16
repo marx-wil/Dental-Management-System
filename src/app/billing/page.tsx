@@ -342,14 +342,14 @@ export default function BillingPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+              <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">Billing & Payments</Heading>
                 <Text color="gray.600">
                   Manage invoices and payment processing
                 </Text>
               </Box>
-              <HStack spacing={4}>
+              <HStack spacing={4} justifyContent={"flex-end"}>
                 <Button
                   leftIcon={<FiPlus />}
                   colorScheme="dental"
@@ -365,11 +365,11 @@ export default function BillingPage() {
                   Record Payment
                 </Button>
               </HStack>
-            </HStack>
+            </Grid>
 
             {/* Stats Cards */}
             <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
               gap={6}
             >
               <GridItem>
@@ -466,7 +466,7 @@ export default function BillingPage() {
                   Invoices ({filteredInvoices.length})
                 </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflow={"auto"}>
                 <Table variant="simple">
                   <Thead>
                     <Tr>
