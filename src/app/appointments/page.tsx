@@ -249,7 +249,7 @@ export default function AppointmentsPage() {
   const [selectedDayDate, setSelectedDayDate] = useState<Date | null>(null);
   
   const cardBg = useColorModeValue('white', 'gray.800');
-
+  const calendarDayBorderColor = useColorModeValue('gray.200', 'gray.600');
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed': return 'green';
@@ -399,7 +399,7 @@ export default function AppointmentsPage() {
                   h={{ base: "60px", md: "80px" }}
                   p={{ base: 1, md: 2 }}
                   border="1px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={calendarDayBorderColor}
                   borderRadius="md"
                   cursor="pointer"
                   bg={isToday ? 'dental.50' : isSelected ? 'dental.100' : 'transparent'}
