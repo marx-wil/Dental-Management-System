@@ -38,6 +38,7 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
+  Flex,
 } from '@chakra-ui/react';
 import {
   FiSearch,
@@ -217,19 +218,24 @@ export default function InventoryPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">Inventory Management</Heading>
                 <Text color="gray.600">Track dental supplies and equipment</Text>
               </Box>
-              <Button
+              <Flex justifyContent={"flex-end"}>
+                <Button
+                w={{ base: "full", md: "fit-content" }}
                 leftIcon={<FiPlus />}
                 colorScheme="dental"
                 onClick={onOpen}
+                size={{ base: "sm", md: "md" }}
+                minW={{ base: "full", md: "fit-content" }}
               >
                 Add Item
               </Button>
-            </HStack>
+              </Flex>
+            </Grid>
 
             {/* Alerts */}
             {lowStockItems.length > 0 && (

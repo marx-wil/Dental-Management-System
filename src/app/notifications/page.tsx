@@ -27,6 +27,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Grid,
 } from '@chakra-ui/react';
 import {
   FiBell,
@@ -192,7 +193,7 @@ export default function NotificationsPage() {
         <Container maxW="4xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">Notifications</Heading>
                 <Text color="gray.600">
@@ -222,7 +223,7 @@ export default function NotificationsPage() {
                   Notification Settings
                 </Button>
               </HStack>
-            </HStack>
+            </Grid>
 
             <Tabs index={activeTab} onChange={setActiveTab}>
               <TabList>
