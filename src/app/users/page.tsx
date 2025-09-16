@@ -44,6 +44,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Flex,
 } from "@chakra-ui/react";
 import {
   FiSearch,
@@ -219,24 +220,29 @@ export default function UsersPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">User Management</Heading>
                 <Text color="gray.600">
                   Manage clinic staff, dentists, and administrators
                 </Text>
               </Box>
-              <Button
+              <Flex justifyContent={"flex-end"}>
+                <Button
+                w={{ base: "full", md: "fit-content" }}
                 leftIcon={<FiPlus />}
                 colorScheme="dental"
                 onClick={() => {
                   setSelectedUser(null);
                   onOpen();
                 }}
+                size={{ base: "sm", md: "md" }}
+                minW={{ base: "full", md: "fit-content" }}
               >
                 Add User
               </Button>
-            </HStack>
+              </Flex>
+            </Grid>
 
             {/* Stats Cards */}
             <Grid
@@ -357,7 +363,7 @@ export default function UsersPage() {
                   Users ({filteredUsers.length})
                 </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflow={"auto"}>
                 <Table variant="simple">
                   <Thead>
                     <Tr>

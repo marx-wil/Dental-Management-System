@@ -38,6 +38,7 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
+  Flex,
 } from '@chakra-ui/react';
 import {
   FiSearch,
@@ -217,19 +218,24 @@ export default function InventoryPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <HStack justify="space-between">
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
                 <Heading size="lg">Inventory Management</Heading>
                 <Text color="gray.600">Track dental supplies and equipment</Text>
               </Box>
-              <Button
+              <Flex justifyContent={"flex-end"}>
+                <Button
+                w={{ base: "full", md: "fit-content" }}
                 leftIcon={<FiPlus />}
                 colorScheme="dental"
                 onClick={onOpen}
+                size={{ base: "sm", md: "md" }}
+                minW={{ base: "full", md: "fit-content" }}
               >
                 Add Item
               </Button>
-            </HStack>
+              </Flex>
+            </Grid>
 
             {/* Alerts */}
             {lowStockItems.length > 0 && (
@@ -245,7 +251,7 @@ export default function InventoryPage() {
             )}
 
             {/* Stats Cards */}
-            <Grid templateColumns={{ base: '1fr', md: 'repeat(4, 1fr)' }} gap={6}>
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={6}>
               <GridItem>
                 <Card bg={cardBg}>
                   <CardBody>
@@ -311,7 +317,7 @@ export default function InventoryPage() {
             {/* Search and Filters */}
             <Card bg={cardBg}>
               <CardBody>
-                <HStack spacing={4}>
+              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(2, 1fr)' }} gap={6}>
                   <InputGroup flex={1}>
                     <InputLeftElement>
                       <FiSearch />
@@ -345,7 +351,7 @@ export default function InventoryPage() {
                     <option value="out-of-stock">Out of Stock</option>
                     <option value="expired">Expired</option>
                   </Select>
-                </HStack>
+                </Grid>
               </CardBody>
             </Card>
 
@@ -354,7 +360,7 @@ export default function InventoryPage() {
               <CardHeader>
                 <Heading size="md">Inventory Items ({filteredInventory.length})</Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody overflow={"auto"}>
                 <Table variant="simple">
                   <Thead>
                     <Tr>
