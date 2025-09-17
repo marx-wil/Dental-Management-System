@@ -61,7 +61,6 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: FiHome, roles: ['admin', 'dentist', 'staff', 'patient'] },
   { label: 'Patients', href: '/patients', icon: FiUsers, roles: ['admin', 'dentist', 'staff'] },
   { label: 'Appointments', href: '/appointments', icon: FiCalendar, roles: ['admin', 'dentist', 'staff', 'patient'] },
-  { label: 'Dental Charting', href: '/charting', icon: FiActivity, roles: ['admin', 'dentist'] },
   { label: 'Billing', href: '/billing', icon: FiDollarSign, roles: ['admin', 'dentist', 'staff'] },
   { label: 'Inventory', href: '/inventory', icon: FiPackage, roles: ['admin', 'staff'] },
   { label: 'Reports', href: '/reports', icon: FiBarChart, roles: ['admin', 'dentist'] },

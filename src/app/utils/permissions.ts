@@ -116,12 +116,6 @@ export const getMenuItemsForRole = (userRole: UserRole): MenuItem[] => {
       requiredPermission: { module: 'inventory', action: 'view' }
     },
     { 
-      icon: 'FiFileText', 
-      label: 'Charting', 
-      href: '/charting',
-      requiredPermission: { module: 'charting', action: 'view' }
-    },
-    { 
       icon: 'FiBarChart', 
       label: 'Reports', 
       href: '/reports',
