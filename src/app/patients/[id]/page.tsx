@@ -37,6 +37,17 @@ import {
   Textarea,
   Select,
   useDisclosure,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   FiArrowLeft,
@@ -63,6 +74,8 @@ import {
   FiFileText,
   FiScissors,
   FiAlertTriangle,
+  FiEye,
+  FiMoreVertical,
 } from "react-icons/fi";
 import { useRouter, useParams } from "next/navigation";
 import Layout from "../../components/Layout";
@@ -122,6 +135,19 @@ interface TreatmentPlan {
   estimatedDuration: number;
   status: "planned" | "in-progress" | "completed";
   notes: string;
+}
+
+interface DentalProcedure {
+  id: string;
+  procedureName: string;
+  toothNumber?: string;
+  date: string;
+  dentist: string;
+  status: "Completed" | "In Progress" | "Cancelled";
+  cost: number;
+  notes: string;
+  followUpRequired: boolean;
+  followUpDate?: string;
 }
 
 // Mock data - in a real app, this would come from an API
@@ -258,6 +284,77 @@ const mockTreatmentPlans: TreatmentPlan[] = [
   },
 ];
 
+const mockDentalProcedures: DentalProcedure[] = [
+  {
+    id: "1",
+    procedureName: "Dental Cleaning",
+    date: "2024-01-15",
+    dentist: "Dr. Maria Santos",
+    status: "Completed",
+    cost: 2000,
+    notes: "Regular cleaning and checkup",
+    followUpRequired: true,
+    followUpDate: "2024-07-15",
+  },
+  {
+    id: "2",
+    procedureName: "Composite Filling",
+    toothNumber: "16",
+    date: "2024-02-10",
+    dentist: "Dr. Juan Dela Cruz",
+    status: "Completed",
+    cost: 3500,
+    notes: "Filled cavity on upper left molar",
+    followUpRequired: false,
+  },
+  {
+    id: "3",
+    procedureName: "Root Canal Treatment",
+    toothNumber: "25",
+    date: "2024-03-05",
+    dentist: "Dr. Maria Santos",
+    status: "Completed",
+    cost: 12000,
+    notes: "Root canal on upper left premolar",
+    followUpRequired: true,
+    followUpDate: "2024-04-05",
+  },
+  {
+    id: "4",
+    procedureName: "Tooth Extraction",
+    toothNumber: "75",
+    date: "2024-03-20",
+    dentist: "Dr. Juan Dela Cruz",
+    status: "Completed",
+    cost: 2500,
+    notes: "Extracted decayed primary tooth",
+    followUpRequired: true,
+    followUpDate: "2024-04-20",
+  },
+  {
+    id: "5",
+    procedureName: "Dental Crown",
+    toothNumber: "18",
+    date: "2024-04-12",
+    dentist: "Dr. Maria Santos",
+    status: "In Progress",
+    cost: 15000,
+    notes: "Porcelain crown placement in progress",
+    followUpRequired: true,
+    followUpDate: "2024-05-12",
+  },
+  {
+    id: "6",
+    procedureName: "Teeth Whitening",
+    date: "2024-01-30",
+    dentist: "Dr. Maria Santos",
+    status: "Completed",
+    cost: 8000,
+    notes: "Professional teeth whitening treatment",
+    followUpRequired: false,
+  },
+];
+
 // Dental chart tooth positions
 const toothRows = [
   {
@@ -321,6 +418,10 @@ export default function PatientDetailsPage() {
   const [editedPatient, setEditedPatient] = useState<Patient | null>(null);
   const [toothConditions, setToothConditions] = useState<ToothCondition[]>(mockToothConditions);
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans);
+  const [dentalProcedures, setDentalProcedures] = useState<DentalProcedure[]>(mockDentalProcedures);
+  const [selectedProcedure, setSelectedProcedure] = useState<DentalProcedure | null>(null);
+  const [isEditingProcedure, setIsEditingProcedure] = useState(false);
+  const [editedProcedure, setEditedProcedure] = useState<DentalProcedure | null>(null);
   const [selectedTooth, setSelectedTooth] = useState<string | null>(null);
   const [toothStates, setToothStates] = useState<Record<string, string>>({
     "18": "Decayed",
@@ -334,6 +435,11 @@ export default function PatientDetailsPage() {
   
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<"condition" | "treatment">("condition");
+  
+  // Procedure modals
+  const { isOpen: isViewModalOpen, onOpen: onViewModalOpen, onClose: onViewModalClose } = useDisclosure();
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
 
   const cardBg = useColorModeValue("white", "gray.800");
 
@@ -473,6 +579,56 @@ export default function PatientDetailsPage() {
 
   const canEditAll = () => {
     return user?.role === "admin" || user?.role === "dentist";
+  };
+
+  // Procedure action handlers
+  const handleViewProcedure = (procedure: DentalProcedure) => {
+    setSelectedProcedure(procedure);
+    onViewModalOpen();
+  };
+
+  const handleEditProcedure = (procedure: DentalProcedure) => {
+    setSelectedProcedure(procedure);
+    setEditedProcedure({ ...procedure });
+    setIsEditingProcedure(true);
+    onEditModalOpen();
+  };
+
+  const handleDeleteProcedure = (procedure: DentalProcedure) => {
+    setSelectedProcedure(procedure);
+    onDeleteModalOpen();
+  };
+
+  const handleSaveProcedure = () => {
+    if (editedProcedure) {
+      setDentalProcedures(prev => 
+        prev.map(proc => 
+          proc.id === editedProcedure.id ? editedProcedure : proc
+        )
+      );
+      setIsEditingProcedure(false);
+      setEditedProcedure(null);
+      onEditModalClose();
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedProcedure) {
+      setDentalProcedures(prev => 
+        prev.filter(proc => proc.id !== selectedProcedure.id)
+      );
+      setSelectedProcedure(null);
+      onDeleteModalClose();
+    }
+  };
+
+  const handleProcedureFieldChange = (field: keyof DentalProcedure, value: string | boolean) => {
+    if (editedProcedure) {
+      setEditedProcedure({
+        ...editedProcedure,
+        [field]: value,
+      });
+    }
   };
 
   if (!patient) {
@@ -625,6 +781,7 @@ export default function PatientDetailsPage() {
                  <Tab>Personal Information</Tab>
                  <Tab>Medical History</Tab>
                  <Tab>Dental Chart</Tab>
+                 <Tab>Dental Procedures</Tab>
                </TabList>
 
               <TabPanels>
@@ -1802,9 +1959,380 @@ export default function PatientDetailsPage() {
                    </VStack>
                  </TabPanel>
 
+                 {/* Dental Procedures Tab */}
+                 <TabPanel>
+                   <VStack spacing={6} align="stretch">
+                     <Card bg={cardBg}>
+                       <CardHeader>
+                         <Heading size="md">Dental Procedures History</Heading>
+                         <Text fontSize="sm" color="gray.600">
+                           Complete history of dental procedures performed on this patient
+                         </Text>
+                       </CardHeader>
+                       <CardBody>
+                         <Box overflowX="auto">
+                           <Table variant="simple" size="sm">
+                             <Thead>
+                               <Tr>
+                                 <Th>Date</Th>
+                                 <Th>Procedure</Th>
+                                 <Th>Tooth</Th>
+                                 <Th>Dentist</Th>
+                                 <Th>Status</Th>
+                                 <Th>Cost</Th>
+                                 <Th>Follow-up</Th>
+                                 <Th>Notes</Th>
+                                 <Th>Actions</Th>
+                               </Tr>
+                             </Thead>
+                             <Tbody>
+                               {dentalProcedures
+                                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                                 .map((procedure) => (
+                                   <Tr key={procedure.id}>
+                                     <Td>
+                                       <Text fontSize="sm">
+                                         {new Date(procedure.date).toLocaleDateString()}
+                                       </Text>
+                                     </Td>
+                                     <Td>
+                                       <Text fontWeight="medium" fontSize="sm">
+                                         {procedure.procedureName}
+                                       </Text>
+                                     </Td>
+                                     <Td>
+                                       {procedure.toothNumber ? (
+                                         <Badge colorScheme="blue" variant="subtle" fontSize="xs">
+                                           {procedure.toothNumber}
+                                         </Badge>
+                                       ) : (
+                                         <Text fontSize="sm" color="gray.500">N/A</Text>
+                                       )}
+                                     </Td>
+                                     <Td>
+                                       <Text fontSize="sm">{procedure.dentist}</Text>
+                                     </Td>
+                                     <Td>
+                                       <Badge
+                                         colorScheme={
+                                           procedure.status === "Completed"
+                                             ? "green"
+                                             : procedure.status === "In Progress"
+                                             ? "yellow"
+                                             : "red"
+                                         }
+                                         variant="subtle"
+                                         fontSize="xs"
+                                       >
+                                         {procedure.status}
+                                       </Badge>
+                                     </Td>
+                                     <Td>
+                                       <Text fontSize="sm" fontWeight="medium">
+                                         ₱{procedure.cost.toLocaleString()}
+                                       </Text>
+                                     </Td>
+                                     <Td>
+                                       {procedure.followUpRequired ? (
+                                         <VStack spacing={1} align="start">
+                                           <Badge colorScheme="orange" variant="subtle" fontSize="xs">
+                                             Required
+                                           </Badge>
+                                           {procedure.followUpDate && (
+                                             <Text fontSize="xs" color="gray.600">
+                                               {new Date(procedure.followUpDate).toLocaleDateString()}
+                                             </Text>
+                                           )}
+                                         </VStack>
+                                       ) : (
+                                         <Text fontSize="sm" color="gray.500">None</Text>
+                                       )}
+                                     </Td>
+                                     <Td>
+                                       <Text fontSize="sm" color="gray.600" maxW="200px" isTruncated>
+                                         {procedure.notes}
+                                       </Text>
+                                     </Td>
+                                     <Td>
+                                       <Menu>
+                                         <MenuButton
+                                           as={IconButton}
+                                           icon={<FiMoreVertical />}
+                                           variant="ghost"
+                                           size="sm"
+                                         />
+                                         <MenuList>
+                                           <MenuItem
+                                             icon={<FiEye />}
+                                             onClick={() => handleViewProcedure(procedure)}
+                                           >
+                                             View Details
+                                           </MenuItem>
+                                           <MenuItem
+                                             icon={<FiEdit />}
+                                             onClick={() => handleEditProcedure(procedure)}
+                                           >
+                                             Edit Record
+                                           </MenuItem>
+                                           {user?.role === "admin" && (
+                                             <MenuItem
+                                               icon={<FiTrash2 />}
+                                               onClick={() => handleDeleteProcedure(procedure)}
+                                               color="red.500"
+                                             >
+                                               Delete Record
+                                             </MenuItem>
+                                           )}
+                                         </MenuList>
+                                       </Menu>
+                                     </Td>
+                                   </Tr>
+                                 ))}
+                             </Tbody>
+                           </Table>
+                         </Box>
+                         
+                         {/* Summary Statistics */}
+                         <Box mt={6} p={4} bg="gray.50" borderRadius="md">
+                           <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4}>
+                             <GridItem>
+                               <VStack align="start" spacing={1}>
+                                 <Text fontSize="sm" color="gray.600">Total Procedures</Text>
+                                 <Text fontSize="lg" fontWeight="bold">
+                                   {dentalProcedures.length}
+                                 </Text>
+                               </VStack>
+                             </GridItem>
+                             <GridItem>
+                               <VStack align="start" spacing={1}>
+                                 <Text fontSize="sm" color="gray.600">Total Cost</Text>
+                                 <Text fontSize="lg" fontWeight="bold" color="green.600">
+                                   ₱{dentalProcedures.reduce((sum, proc) => sum + proc.cost, 0).toLocaleString()}
+                                 </Text>
+                               </VStack>
+                             </GridItem>
+                             <GridItem>
+                               <VStack align="start" spacing={1}>
+                                 <Text fontSize="sm" color="gray.600">Completed</Text>
+                                 <Text fontSize="lg" fontWeight="bold" color="green.600">
+                                   {dentalProcedures.filter(proc => proc.status === "Completed").length}
+                                 </Text>
+                               </VStack>
+                             </GridItem>
+                           </Grid>
+                         </Box>
+                       </CardBody>
+                     </Card>
+                   </VStack>
+                 </TabPanel>
+
               </TabPanels>
             </Tabs>
           </VStack>
+
+          {/* Procedure Modals */}
+          {/* View Procedure Modal */}
+          <Modal isOpen={isViewModalOpen} onClose={onViewModalClose} size="lg">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Procedure Details</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                {selectedProcedure && (
+                  <VStack spacing={4} align="stretch">
+                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Procedure Name</Text>
+                        <Text>{selectedProcedure.procedureName}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Date</Text>
+                        <Text>{new Date(selectedProcedure.date).toLocaleDateString()}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Dentist</Text>
+                        <Text>{selectedProcedure.dentist}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Status</Text>
+                        <Badge
+                          colorScheme={
+                            selectedProcedure.status === "Completed"
+                              ? "green"
+                              : selectedProcedure.status === "In Progress"
+                              ? "yellow"
+                              : "red"
+                          }
+                          variant="subtle"
+                        >
+                          {selectedProcedure.status}
+                        </Badge>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Cost</Text>
+                        <Text fontWeight="bold" color="green.600">
+                          ₱{selectedProcedure.cost.toLocaleString()}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Tooth Number</Text>
+                        <Text>{selectedProcedure.toothNumber || "N/A"}</Text>
+                      </Box>
+                    </Grid>
+                    <Box>
+                      <Text fontWeight="medium" color="gray.600">Notes</Text>
+                      <Text>{selectedProcedure.notes}</Text>
+                    </Box>
+                    {selectedProcedure.followUpRequired && (
+                      <Box>
+                        <Text fontWeight="medium" color="gray.600">Follow-up Information</Text>
+                        <VStack align="start" spacing={2}>
+                          <Badge colorScheme="orange" variant="subtle">
+                            Follow-up Required
+                          </Badge>
+                          {selectedProcedure.followUpDate && (
+                            <Text>Follow-up Date: {new Date(selectedProcedure.followUpDate).toLocaleDateString()}</Text>
+                          )}
+                        </VStack>
+                      </Box>
+                    )}
+                  </VStack>
+                )}
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          {/* Edit Procedure Modal */}
+          <Modal isOpen={isEditModalOpen} onClose={onEditModalClose} size="lg">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Edit Procedure</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                {editedProcedure && (
+                  <VStack spacing={4} align="stretch">
+                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                      <FormControl>
+                        <FormLabel>Procedure Name</FormLabel>
+                        <Input
+                          value={editedProcedure.procedureName}
+                          onChange={(e) => handleProcedureFieldChange("procedureName", e.target.value)}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Date</FormLabel>
+                        <Input
+                          type="date"
+                          value={editedProcedure.date}
+                          onChange={(e) => handleProcedureFieldChange("date", e.target.value)}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Dentist</FormLabel>
+                        <Input
+                          value={editedProcedure.dentist}
+                          onChange={(e) => handleProcedureFieldChange("dentist", e.target.value)}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          value={editedProcedure.status}
+                          onChange={(e) => handleProcedureFieldChange("status", e.target.value)}
+                        >
+                          <option value="Completed">Completed</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </Select>
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Cost (₱)</FormLabel>
+                        <Input
+                          type="number"
+                          value={editedProcedure.cost}
+                          onChange={(e) => handleProcedureFieldChange("cost", e.target.value)}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Tooth Number</FormLabel>
+                        <Input
+                          value={editedProcedure.toothNumber || ""}
+                          onChange={(e) => handleProcedureFieldChange("toothNumber", e.target.value)}
+                          placeholder="Optional"
+                        />
+                      </FormControl>
+                    </Grid>
+                    <FormControl>
+                      <FormLabel>Notes</FormLabel>
+                      <Textarea
+                        value={editedProcedure.notes}
+                        onChange={(e) => handleProcedureFieldChange("notes", e.target.value)}
+                        rows={3}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Follow-up Required</FormLabel>
+                      <Select
+                        value={editedProcedure.followUpRequired ? "true" : "false"}
+                        onChange={(e) => handleProcedureFieldChange("followUpRequired", e.target.value === "true")}
+                      >
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                      </Select>
+                    </FormControl>
+                    {editedProcedure.followUpRequired && (
+                      <FormControl>
+                        <FormLabel>Follow-up Date</FormLabel>
+                        <Input
+                          type="date"
+                          value={editedProcedure.followUpDate || ""}
+                          onChange={(e) => handleProcedureFieldChange("followUpDate", e.target.value)}
+                        />
+                      </FormControl>
+                    )}
+                    <HStack spacing={3} justify="flex-end">
+                      <Button variant="outline" onClick={onEditModalClose}>
+                        Cancel
+                      </Button>
+                      <Button colorScheme="blue" onClick={handleSaveProcedure}>
+                        Save Changes
+                      </Button>
+                    </HStack>
+                  </VStack>
+                )}
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          {/* Delete Procedure Modal */}
+          <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} size="md">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Delete Procedure</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                {selectedProcedure && (
+                  <VStack spacing={4} align="stretch">
+                    <Text>
+                      Are you sure you want to delete the procedure "{selectedProcedure.procedureName}" 
+                      performed on {new Date(selectedProcedure.date).toLocaleDateString()}?
+                    </Text>
+                    <Text color="red.500" fontSize="sm">
+                      This action cannot be undone.
+                    </Text>
+                    <HStack spacing={3} justify="flex-end">
+                      <Button variant="outline" onClick={onDeleteModalClose}>
+                        Cancel
+                      </Button>
+                      <Button colorScheme="red" onClick={handleConfirmDelete}>
+                        Delete
+                      </Button>
+                    </HStack>
+                  </VStack>
+                )}
+              </ModalBody>
+            </ModalContent>
+          </Modal>
 
           {/* Tooth Modal */}
           <ToothModal
