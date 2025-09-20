@@ -67,6 +67,7 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import Layout from "../../components/Layout";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface Patient {
   id: string;
@@ -313,8 +314,11 @@ export default function PatientDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const patientId = params.id as string;
+  const { user } = useAuth();
   
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPatient, setEditedPatient] = useState<Patient | null>(null);
   const [toothConditions, setToothConditions] = useState<ToothCondition[]>(mockToothConditions);
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans);
   const [selectedTooth, setSelectedTooth] = useState<string | null>(null);
@@ -338,6 +342,7 @@ export default function PatientDetailsPage() {
     const foundPatient = mockPatients.find(p => p.id === patientId);
     if (foundPatient) {
       setPatient(foundPatient);
+      setEditedPatient(foundPatient);
     } else {
       // Patient not found, redirect to patients page
       router.push("/patients");
@@ -420,6 +425,56 @@ export default function PatientDetailsPage() {
     }
   };
 
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // Save changes
+      if (editedPatient) {
+        setPatient(editedPatient);
+        // In a real app, you would make an API call here to save the patient data
+        console.log("Saving patient:", editedPatient);
+      }
+    } else {
+      // Start editing - reset edited patient to current patient data
+      if (patient) {
+        setEditedPatient({ ...patient });
+      }
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleCancelEdit = () => {
+    if (patient) {
+      setEditedPatient({ ...patient });
+    }
+    setIsEditing(false);
+  };
+
+  const handleFieldChange = (field: keyof Patient, value: string) => {
+    if (editedPatient) {
+      setEditedPatient({
+        ...editedPatient,
+        [field]: value,
+      });
+    }
+  };
+
+  // Check if user can edit based on their role
+  const canEditPersonalInfo = () => {
+    return user?.role === "admin" || user?.role === "dentist" || user?.role === "staff" || user?.role === "patient";
+  };
+
+  const canEditMedicalHistory = () => {
+    return user?.role === "admin" || user?.role === "dentist";
+  };
+
+  const canEditDentalChart = () => {
+    return user?.role === "admin" || user?.role === "dentist";
+  };
+
+  const canEditAll = () => {
+    return user?.role === "admin" || user?.role === "dentist";
+  };
+
   if (!patient) {
     return (
       <ProtectedRoute allowedRoles={["admin", "dentist", "staff"]}>
@@ -439,8 +494,8 @@ export default function PatientDetailsPage() {
           <VStack spacing={8} align="stretch">
             {/* Header */}
             <VStack spacing={4} align="stretch">
-              {/* Back Button - Always on top for mobile */}
-              <Box display={{ base: "block", lg: "none" }}>
+              {/* Back Button - Always on top */}
+              <Box>
                 <Button
                   leftIcon={<FiArrowLeft />}
                   variant="ghost"
@@ -457,62 +512,109 @@ export default function PatientDetailsPage() {
                 direction={{ base: "column", md: "row" }}
                 gap={4}
               >
-                {/* Left Side - Back Button (lg+) and Profile Details */}
-                <HStack spacing={4} align="center">
-                  {/* Back Button - Hidden on mobile, shown on lg+ */}
-                  <Box display={{ base: "none", lg: "block" }}>
-                    <Button
-                      leftIcon={<FiArrowLeft />}
-                      variant="ghost"
-                      onClick={() => router.push("/patients")}
-                    >
-                      Back to Patients
-                    </Button>
-                  </Box>
-                  
-                  {/* Divider - Only shown on lg+ when back button is visible */}
-                  <Box display={{ base: "none", lg: "block" }}>
-                    <Divider orientation="vertical" height="40px" />
-                  </Box>
-                  
-                  {/* Profile Details */}
-                  <HStack spacing={4}>
-                    <Avatar
-                      size="lg"
-                      src={patient.avatar}
-                      name={patient.name}
-                    />
-                    <Box>
+                {/* Left Side - Profile Details */}
+                <HStack spacing={4}>
+                  <Avatar
+                    size="lg"
+                    src={isEditing ? editedPatient?.avatar : patient.avatar}
+                    name={isEditing ? editedPatient?.name : patient.name}
+                  />
+                  <Box>
+                    {isEditing && canEditPersonalInfo() ? (
+                      <Input
+                        value={editedPatient?.name || ""}
+                        onChange={(e) => handleFieldChange("name", e.target.value)}
+                        fontSize="lg"
+                        fontWeight="bold"
+                        variant="flushed"
+                        mb={2}
+                      />
+                    ) : (
                       <Heading size="lg">{patient.name}</Heading>
-                      <Text color="gray.600">
-                        {patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old
-                      </Text>
+                    )}
+                    <Text color="gray.600">
+                      {isEditing && canEditPersonalInfo() ? (
+                        <HStack spacing={2}>
+                          <Select
+                            value={editedPatient?.gender || ""}
+                            onChange={(e) => handleFieldChange("gender", e.target.value)}
+                            size="sm"
+                            variant="flushed"
+                            w="auto"
+                          >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                          </Select>
+                          <Text>{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                        </HStack>
+                      ) : (
+                        `${patient.gender}, ${new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old`
+                      )}
+                    </Text>
+                    {isEditing && canEditPersonalInfo() ? (
+                      <Select
+                        value={editedPatient?.status || ""}
+                        onChange={(e) => handleFieldChange("status", e.target.value)}
+                        size="sm"
+                        variant="flushed"
+                        w="auto"
+                        mt={1}
+                      >
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                      </Select>
+                    ) : (
                       <Badge
                         colorScheme={patient.status === "Active" ? "green" : "gray"}
                         mt={1}
                       >
                         {patient.status}
                       </Badge>
-                    </Box>
-                  </HStack>
+                    )}
+                  </Box>
                 </HStack>
 
                 {/* Right Side - Action Buttons */}
                 <HStack spacing={2} w={{ base: "full", md: "auto" }}>
-                  <Button 
-                    leftIcon={<FiEdit />} 
-                    variant="outline"
-                    w={{ base: "full", md: "auto" }}
-                  >
-                    Edit Patient
-                  </Button>
-                  <Button 
-                    leftIcon={<FiCalendar />} 
-                    colorScheme="dental"
-                    w={{ base: "full", md: "auto" }}
-                  >
-                    Schedule Appointment
-                  </Button>
+                  {isEditing ? (
+                    <>
+                      <Button 
+                        leftIcon={<FiSave />} 
+                        colorScheme="green"
+                        w={{ base: "full", md: "auto" }}
+                        onClick={handleEditToggle}
+                      >
+                        Save
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        w={{ base: "full", md: "auto" }}
+                        onClick={handleCancelEdit}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      {canEditPersonalInfo() && (
+                        <Button 
+                          leftIcon={<FiEdit />} 
+                          variant="outline"
+                          w={{ base: "full", md: "auto" }}
+                          onClick={handleEditToggle}
+                        >
+                          Edit Patient
+                        </Button>
+                      )}
+                      <Button 
+                        leftIcon={<FiCalendar />} 
+                        colorScheme="dental"
+                        w={{ base: "full", md: "auto" }}
+                      >
+                        Schedule Appointment
+                      </Button>
+                    </>
+                  )}
                 </HStack>
               </Flex>
             </VStack>
@@ -540,19 +642,64 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiPhone} color="gray.500" />
-                                 <Text>{patient.phone}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.phone || ""}
+                                     onChange={(e) => handleFieldChange("phone", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.phone}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiMail} color="gray.500" />
-                                 <Text>{patient.email}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.email || ""}
+                                     onChange={(e) => handleFieldChange("email", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     type="email"
+                                   />
+                                 ) : (
+                                   <Text>{patient.email}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3} align="start">
                                  <Icon as={FiMapPin} color="gray.500" />
-                                 <Text>{patient.address}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.address || ""}
+                                     onChange={(e) => handleFieldChange("address", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.address}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiMessageCircle} color="gray.500" />
-                                 <Text>Preferred: {patient.preferredContactMethod}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Preferred:</Text>
+                                     <Select
+                                       value={editedPatient?.preferredContactMethod || ""}
+                                       onChange={(e) => handleFieldChange("preferredContactMethod", e.target.value)}
+                                       size="sm"
+                                       variant="flushed"
+                                       w="auto"
+                                     >
+                                       <option value="Phone">Phone</option>
+                                       <option value="Email">Email</option>
+                                       <option value="SMS">SMS</option>
+                                     </Select>
+                                   </HStack>
+                                 ) : (
+                                   <Text>Preferred: {patient.preferredContactMethod}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -567,23 +714,81 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiUser} color="gray.500" />
-                                 <Text>{patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Select
+                                       value={editedPatient?.gender || ""}
+                                       onChange={(e) => handleFieldChange("gender", e.target.value)}
+                                       size="sm"
+                                       variant="flushed"
+                                       w="auto"
+                                     >
+                                       <option value="Male">Male</option>
+                                       <option value="Female">Female</option>
+                                     </Select>
+                                     <Text>, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                                   </HStack>
+                                 ) : (
+                                   <Text>{patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiGlobe} color="gray.500" />
-                                 <Text>{patient.nationality}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.nationality || ""}
+                                     onChange={(e) => handleFieldChange("nationality", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.nationality}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiMessageCircle} color="gray.500" />
-                                 <Text>Languages: {patient.language}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.language || ""}
+                                     onChange={(e) => handleFieldChange("language", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>Languages: {patient.language}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiUsers} color="gray.500" />
-                                 <Text>{patient.maritalStatus}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Select
+                                     value={editedPatient?.maritalStatus || ""}
+                                     onChange={(e) => handleFieldChange("maritalStatus", e.target.value)}
+                                     size="sm"
+                                     variant="flushed"
+                                     w="auto"
+                                   >
+                                     <option value="Single">Single</option>
+                                     <option value="Married">Married</option>
+                                     <option value="Divorced">Divorced</option>
+                                     <option value="Widowed">Widowed</option>
+                                   </Select>
+                                 ) : (
+                                   <Text>{patient.maritalStatus}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiBriefcase} color="gray.500" />
-                                 <Text>{patient.occupation}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.occupation || ""}
+                                     onChange={(e) => handleFieldChange("occupation", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.occupation}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -602,11 +807,29 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiUser} color="gray.500" />
-                                 <Text>{patient.emergencyContact}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.emergencyContact || ""}
+                                     onChange={(e) => handleFieldChange("emergencyContact", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.emergencyContact}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiPhone} color="gray.500" />
-                                 <Text>{patient.emergencyPhone}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.emergencyPhone || ""}
+                                     onChange={(e) => handleFieldChange("emergencyPhone", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.emergencyPhone}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -621,15 +844,46 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiShield} color="gray.500" />
-                                 <Text>{patient.insuranceProvider}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.insuranceProvider || ""}
+                                     onChange={(e) => handleFieldChange("insuranceProvider", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.insuranceProvider}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiFileText} color="gray.500" />
-                                 <Text>{patient.insuranceNumber}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     value={editedPatient?.insuranceNumber || ""}
+                                     onChange={(e) => handleFieldChange("insuranceNumber", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                   />
+                                 ) : (
+                                   <Text>{patient.insuranceNumber}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiUser} color="gray.500" />
-                                 <Text>Referred by: {patient.referringDoctor}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Referred by:</Text>
+                                     <Input
+                                       value={editedPatient?.referringDoctor || ""}
+                                       onChange={(e) => handleFieldChange("referringDoctor", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       w="auto"
+                                     />
+                                   </HStack>
+                                 ) : (
+                                   <Text>Referred by: {patient.referringDoctor}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -648,15 +902,54 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiDroplet} color="gray.500" />
-                                 <Text>Blood Type: {patient.bloodType}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Blood Type:</Text>
+                                     <Input
+                                       value={editedPatient?.bloodType || ""}
+                                       onChange={(e) => handleFieldChange("bloodType", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       w="auto"
+                                     />
+                                   </HStack>
+                                 ) : (
+                                   <Text>Blood Type: {patient.bloodType}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3} align="start">
                                  <Icon as={FiHeart} color="gray.500" />
-                                 <Text>Medications: {patient.medications}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Medications:</Text>
+                                     <Input
+                                       value={editedPatient?.medications || ""}
+                                       onChange={(e) => handleFieldChange("medications", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       w="auto"
+                                     />
+                                   </HStack>
+                                 ) : (
+                                   <Text>Medications: {patient.medications}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3} align="start">
                                  <Icon as={FiAlertTriangle} color="gray.500" />
-                                 <Text>Allergies: {patient.allergies}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Allergies:</Text>
+                                     <Input
+                                       value={editedPatient?.allergies || ""}
+                                       onChange={(e) => handleFieldChange("allergies", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       w="auto"
+                                     />
+                                   </HStack>
+                                 ) : (
+                                   <Text>Allergies: {patient.allergies}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -671,15 +964,67 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
                                  <Icon as={FiZap} color="gray.500" />
-                                 <Text>Smoking: {patient.smokingStatus}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Smoking:</Text>
+                                     <Select
+                                       value={editedPatient?.smokingStatus || ""}
+                                       onChange={(e) => handleFieldChange("smokingStatus", e.target.value)}
+                                       size="sm"
+                                       variant="flushed"
+                                       w="auto"
+                                     >
+                                       <option value="Non-smoker">Non-smoker</option>
+                                       <option value="Former smoker">Former smoker</option>
+                                       <option value="Current smoker">Current smoker</option>
+                                     </Select>
+                                   </HStack>
+                                 ) : (
+                                   <Text>Smoking: {patient.smokingStatus}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiCoffee} color="gray.500" />
-                                 <Text>Alcohol: {patient.alcoholConsumption}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Alcohol:</Text>
+                                     <Select
+                                       value={editedPatient?.alcoholConsumption || ""}
+                                       onChange={(e) => handleFieldChange("alcoholConsumption", e.target.value)}
+                                       size="sm"
+                                       variant="flushed"
+                                       w="auto"
+                                     >
+                                       <option value="None">None</option>
+                                       <option value="Occasional">Occasional</option>
+                                       <option value="Regular">Regular</option>
+                                     </Select>
+                                   </HStack>
+                                 ) : (
+                                   <Text>Alcohol: {patient.alcoholConsumption}</Text>
+                                 )}
                                </HStack>
                                <HStack spacing={3}>
                                  <Icon as={FiExercise} color="gray.500" />
-                                 <Text>Exercise: {patient.exerciseFrequency}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <HStack spacing={2}>
+                                     <Text>Exercise:</Text>
+                                     <Select
+                                       value={editedPatient?.exerciseFrequency || ""}
+                                       onChange={(e) => handleFieldChange("exerciseFrequency", e.target.value)}
+                                       size="sm"
+                                       variant="flushed"
+                                       w="auto"
+                                     >
+                                       <option value="None">None</option>
+                                       <option value="Light">Light</option>
+                                       <option value="Moderate">Moderate</option>
+                                       <option value="Heavy">Heavy</option>
+                                     </Select>
+                                   </HStack>
+                                 ) : (
+                                   <Text>Exercise: {patient.exerciseFrequency}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -699,7 +1044,18 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Last Visit</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiCalendar} color="gray.500" />
-                                 <Text>{new Date(patient.lastVisit).toLocaleDateString()}</Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     type="date"
+                                     value={editedPatient?.lastVisit ? new Date(editedPatient.lastVisit).toISOString().split('T')[0] : ""}
+                                     onChange={(e) => handleFieldChange("lastVisit", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     w="auto"
+                                   />
+                                 ) : (
+                                   <Text>{new Date(patient.lastVisit).toLocaleDateString()}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -708,11 +1064,22 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Next Appointment</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiCalendar} color="gray.500" />
-                                 <Text>
-                                   {patient.nextAppointment
-                                     ? new Date(patient.nextAppointment).toLocaleDateString()
-                                     : "None scheduled"}
-                                 </Text>
+                                 {isEditing && canEditPersonalInfo() ? (
+                                   <Input
+                                     type="date"
+                                     value={editedPatient?.nextAppointment ? new Date(editedPatient.nextAppointment).toISOString().split('T')[0] : ""}
+                                     onChange={(e) => handleFieldChange("nextAppointment", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     w="auto"
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.nextAppointment
+                                       ? new Date(patient.nextAppointment).toLocaleDateString()
+                                       : "None scheduled"}
+                                   </Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -749,17 +1116,37 @@ export default function PatientDetailsPage() {
                                  <Text fontWeight="medium" mb={2} color="gray.600">
                                    Medical Conditions
                                  </Text>
-                                 <Text>
-                                   {patient.medicalHistory || "No significant medical history recorded"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.medicalHistory || ""}
+                                     onChange={(e) => handleFieldChange("medicalHistory", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter medical conditions..."
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.medicalHistory || "No significant medical history recorded"}
+                                   </Text>
+                                 )}
                                </Box>
                                <Box>
                                  <Text fontWeight="medium" mb={2} color="gray.600">
                                    Chronic Conditions
                                  </Text>
-                                 <Text>
-                                   {patient.chronicConditions || "None"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.chronicConditions || ""}
+                                     onChange={(e) => handleFieldChange("chronicConditions", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter chronic conditions..."
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.chronicConditions || "None"}
+                                   </Text>
+                                 )}
                                </Box>
                              </VStack>
                            </CardBody>
@@ -778,7 +1165,18 @@ export default function PatientDetailsPage() {
                                  </Text>
                                  <HStack spacing={2} align="start">
                                    <Icon as={FiAlertTriangle} color="red.500" />
-                                   <Text>{patient.allergies || "No known allergies"}</Text>
+                                   {isEditing && canEditMedicalHistory() ? (
+                                     <Textarea
+                                       value={editedPatient?.allergies || ""}
+                                       onChange={(e) => handleFieldChange("allergies", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       placeholder="Enter known allergies..."
+                                       flex={1}
+                                     />
+                                   ) : (
+                                     <Text>{patient.allergies || "No known allergies"}</Text>
+                                   )}
                                  </HStack>
                                </Box>
                                <Box>
@@ -787,7 +1185,18 @@ export default function PatientDetailsPage() {
                                  </Text>
                                  <HStack spacing={2} align="start">
                                    <Icon as={FiHeart} color="blue.500" />
-                                   <Text>{patient.medications || "None"}</Text>
+                                   {isEditing && canEditMedicalHistory() ? (
+                                     <Textarea
+                                       value={editedPatient?.medications || ""}
+                                       onChange={(e) => handleFieldChange("medications", e.target.value)}
+                                       variant="flushed"
+                                       size="sm"
+                                       placeholder="Enter current medications..."
+                                       flex={1}
+                                     />
+                                   ) : (
+                                     <Text>{patient.medications || "None"}</Text>
+                                   )}
                                  </HStack>
                                </Box>
                              </VStack>
@@ -807,9 +1216,20 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3} align="start">
                                  <Icon as={FiUsers} color="gray.500" />
-                                 <Text>
-                                   {patient.familyHistory || "No significant family medical history recorded"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.familyHistory || ""}
+                                     onChange={(e) => handleFieldChange("familyHistory", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter family medical history..."
+                                     flex={1}
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.familyHistory || "No significant family medical history recorded"}
+                                   </Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -824,9 +1244,20 @@ export default function PatientDetailsPage() {
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3} align="start">
                                  <Icon as={FiScissors} color="gray.500" />
-                                 <Text>
-                                   {patient.previousSurgeries || "No previous surgeries recorded"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.previousSurgeries || ""}
+                                     onChange={(e) => handleFieldChange("previousSurgeries", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter previous surgeries..."
+                                     flex={1}
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.previousSurgeries || "No previous surgeries recorded"}
+                                   </Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </CardBody>
@@ -846,7 +1277,21 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Smoking Status</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiZap} color="gray.500" />
-                                 <Text>{patient.smokingStatus}</Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Select
+                                     value={editedPatient?.smokingStatus || ""}
+                                     onChange={(e) => handleFieldChange("smokingStatus", e.target.value)}
+                                     size="sm"
+                                     variant="flushed"
+                                     w="auto"
+                                   >
+                                     <option value="Non-smoker">Non-smoker</option>
+                                     <option value="Former smoker">Former smoker</option>
+                                     <option value="Current smoker">Current smoker</option>
+                                   </Select>
+                                 ) : (
+                                   <Text>{patient.smokingStatus}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -855,7 +1300,21 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Alcohol Consumption</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiCoffee} color="gray.500" />
-                                 <Text>{patient.alcoholConsumption}</Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Select
+                                     value={editedPatient?.alcoholConsumption || ""}
+                                     onChange={(e) => handleFieldChange("alcoholConsumption", e.target.value)}
+                                     size="sm"
+                                     variant="flushed"
+                                     w="auto"
+                                   >
+                                     <option value="None">None</option>
+                                     <option value="Occasional">Occasional</option>
+                                     <option value="Regular">Regular</option>
+                                   </Select>
+                                 ) : (
+                                   <Text>{patient.alcoholConsumption}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -864,7 +1323,22 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Exercise Frequency</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiExercise} color="gray.500" />
-                                 <Text>{patient.exerciseFrequency}</Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Select
+                                     value={editedPatient?.exerciseFrequency || ""}
+                                     onChange={(e) => handleFieldChange("exerciseFrequency", e.target.value)}
+                                     size="sm"
+                                     variant="flushed"
+                                     w="auto"
+                                   >
+                                     <option value="None">None</option>
+                                     <option value="Light">Light</option>
+                                     <option value="Moderate">Moderate</option>
+                                     <option value="Heavy">Heavy</option>
+                                   </Select>
+                                 ) : (
+                                   <Text>{patient.exerciseFrequency}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -873,7 +1347,17 @@ export default function PatientDetailsPage() {
                                <Text fontWeight="medium" color="gray.600">Blood Type</Text>
                                <HStack spacing={2}>
                                  <Icon as={FiDroplet} color="red.500" />
-                                 <Text>{patient.bloodType}</Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Input
+                                     value={editedPatient?.bloodType || ""}
+                                     onChange={(e) => handleFieldChange("bloodType", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     w="auto"
+                                   />
+                                 ) : (
+                                   <Text>{patient.bloodType}</Text>
+                                 )}
                                </HStack>
                              </VStack>
                            </GridItem>
@@ -894,11 +1378,21 @@ export default function PatientDetailsPage() {
                                  <Text fontWeight="medium" mb={2} color="gray.600">
                                    Dental Allergies
                                  </Text>
-                                 <Text>
-                                   {patient.allergies.includes("Latex") || patient.allergies.includes("Penicillin") 
-                                     ? patient.allergies 
-                                     : "No dental-specific allergies noted"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.allergies || ""}
+                                     onChange={(e) => handleFieldChange("allergies", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter dental-specific allergies..."
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.allergies.includes("Latex") || patient.allergies.includes("Penicillin") 
+                                       ? patient.allergies 
+                                       : "No dental-specific allergies noted"}
+                                   </Text>
+                                 )}
                                </Box>
                              </GridItem>
                              <GridItem>
@@ -906,11 +1400,21 @@ export default function PatientDetailsPage() {
                                  <Text fontWeight="medium" mb={2} color="gray.600">
                                    Medications Affecting Dental Care
                                  </Text>
-                                 <Text>
-                                   {patient.medications.includes("blood") || patient.medications.includes("anticoagulant")
-                                     ? "Please consult with physician before dental procedures"
-                                     : "No medications affecting dental care noted"}
-                                 </Text>
+                                 {isEditing && canEditMedicalHistory() ? (
+                                   <Textarea
+                                     value={editedPatient?.medications || ""}
+                                     onChange={(e) => handleFieldChange("medications", e.target.value)}
+                                     variant="flushed"
+                                     size="sm"
+                                     placeholder="Enter medications affecting dental care..."
+                                   />
+                                 ) : (
+                                   <Text>
+                                     {patient.medications.includes("blood") || patient.medications.includes("anticoagulant")
+                                       ? "Please consult with physician before dental procedures"
+                                       : "No medications affecting dental care noted"}
+                                   </Text>
+                                 )}
                                </Box>
                              </GridItem>
                            </Grid>
@@ -918,11 +1422,21 @@ export default function PatientDetailsPage() {
                              <Text fontWeight="medium" mb={2} color="gray.600">
                                Special Considerations
                              </Text>
-                             <Text>
-                               {patient.chronicConditions.includes("Diabetes") || patient.chronicConditions.includes("Hypertension")
-                                 ? "Patient has chronic conditions that may affect dental treatment. Monitor blood pressure and blood sugar levels during procedures."
-                                 : "No special considerations noted"}
-                             </Text>
+                             {isEditing && canEditMedicalHistory() ? (
+                               <Textarea
+                                 value={editedPatient?.chronicConditions || ""}
+                                 onChange={(e) => handleFieldChange("chronicConditions", e.target.value)}
+                                 variant="flushed"
+                                 size="sm"
+                                 placeholder="Enter special considerations for dental care..."
+                               />
+                             ) : (
+                               <Text>
+                                 {patient.chronicConditions.includes("Diabetes") || patient.chronicConditions.includes("Hypertension")
+                                   ? "Patient has chronic conditions that may affect dental treatment. Monitor blood pressure and blood sugar levels during procedures."
+                                   : "No special considerations noted"}
+                               </Text>
+                             )}
                            </Box>
                          </VStack>
                        </CardBody>
