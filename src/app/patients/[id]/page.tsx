@@ -438,8 +438,9 @@ export default function PatientDetailsPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-            <Flex justify="space-between" align="center">
-              <HStack spacing={4}>
+            <VStack spacing={4} align="stretch">
+              {/* Back Button - Always on top for mobile */}
+              <Box display={{ base: "block", lg: "none" }}>
                 <Button
                   leftIcon={<FiArrowLeft />}
                   variant="ghost"
@@ -447,36 +448,74 @@ export default function PatientDetailsPage() {
                 >
                   Back to Patients
                 </Button>
-                <Divider orientation="vertical" height="40px" />
-                <HStack spacing={4}>
-                  <Avatar
-                    size="lg"
-                    src={patient.avatar}
-                    name={patient.name}
-                  />
-                  <Box>
-                    <Heading size="lg">{patient.name}</Heading>
-                    <Text color="gray.600">
-                      {patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old
-                    </Text>
-                    <Badge
-                      colorScheme={patient.status === "Active" ? "green" : "gray"}
-                      mt={1}
+              </Box>
+
+              {/* Main Header Content */}
+              <Flex 
+                justify="space-between" 
+                align="center"
+                direction={{ base: "column", md: "row" }}
+                gap={4}
+              >
+                {/* Left Side - Back Button (lg+) and Profile Details */}
+                <HStack spacing={4} align="center">
+                  {/* Back Button - Hidden on mobile, shown on lg+ */}
+                  <Box display={{ base: "none", lg: "block" }}>
+                    <Button
+                      leftIcon={<FiArrowLeft />}
+                      variant="ghost"
+                      onClick={() => router.push("/patients")}
                     >
-                      {patient.status}
-                    </Badge>
+                      Back to Patients
+                    </Button>
                   </Box>
+                  
+                  {/* Divider - Only shown on lg+ when back button is visible */}
+                  <Box display={{ base: "none", lg: "block" }}>
+                    <Divider orientation="vertical" height="40px" />
+                  </Box>
+                  
+                  {/* Profile Details */}
+                  <HStack spacing={4}>
+                    <Avatar
+                      size="lg"
+                      src={patient.avatar}
+                      name={patient.name}
+                    />
+                    <Box>
+                      <Heading size="lg">{patient.name}</Heading>
+                      <Text color="gray.600">
+                        {patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old
+                      </Text>
+                      <Badge
+                        colorScheme={patient.status === "Active" ? "green" : "gray"}
+                        mt={1}
+                      >
+                        {patient.status}
+                      </Badge>
+                    </Box>
+                  </HStack>
                 </HStack>
-              </HStack>
-              <HStack spacing={2}>
-                <Button leftIcon={<FiEdit />} variant="outline">
-                  Edit Patient
-                </Button>
-                <Button leftIcon={<FiCalendar />} colorScheme="dental">
-                  Schedule Appointment
-                </Button>
-              </HStack>
-            </Flex>
+
+                {/* Right Side - Action Buttons */}
+                <HStack spacing={2} w={{ base: "full", md: "auto" }}>
+                  <Button 
+                    leftIcon={<FiEdit />} 
+                    variant="outline"
+                    w={{ base: "full", md: "auto" }}
+                  >
+                    Edit Patient
+                  </Button>
+                  <Button 
+                    leftIcon={<FiCalendar />} 
+                    colorScheme="dental"
+                    w={{ base: "full", md: "auto" }}
+                  >
+                    Schedule Appointment
+                  </Button>
+                </HStack>
+              </Flex>
+            </VStack>
 
             {/* Patient Information Tabs */}
             <Tabs>
