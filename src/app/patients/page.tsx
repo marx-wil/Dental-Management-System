@@ -65,6 +65,7 @@ import {
 } from "react-icons/fi";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Link from "next/link";
 
 interface Patient {
   id: string;
@@ -141,7 +142,6 @@ export default function PatientsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const cardBg = useColorModeValue("white", "gray.800");
@@ -247,26 +247,28 @@ export default function PatientsPage() {
                   </Thead>
                   <Tbody>
                     {filteredPatients.map((patient) => (
-                      <Tr key={patient.id}>
+                      <Tr key={patient.id} _hover={{ bg: "gray.50" }} cursor="pointer">
                         <Td>
-                          <HStack spacing={3}>
-                            <Avatar
-                              size="sm"
-                              src={patient.avatar}
-                              name={patient.name}
-                            />
-                            <Box>
-                              <Text fontWeight="medium">{patient.name}</Text>
-                              <Text fontSize="sm" color="gray.600">
-                                {patient.gender},{" "}
-                                {new Date().getFullYear() -
-                                  new Date(
-                                    patient.dateOfBirth
-                                  ).getFullYear()}{" "}
-                                years old
-                              </Text>
-                            </Box>
-                          </HStack>
+                          <Link href={`/patients/${patient.id}`}>
+                            <HStack spacing={3}>
+                              <Avatar
+                                size="sm"
+                                src={patient.avatar}
+                                name={patient.name}
+                              />
+                              <Box>
+                                <Text fontWeight="medium">{patient.name}</Text>
+                                <Text fontSize="sm" color="gray.600">
+                                  {patient.gender},{" "}
+                                  {new Date().getFullYear() -
+                                    new Date(
+                                      patient.dateOfBirth
+                                    ).getFullYear()}{" "}
+                                  years old
+                                </Text>
+                              </Box>
+                            </HStack>
+                          </Link>
                         </Td>
                         <Td>
                           <VStack align="start" spacing={1}>
@@ -310,10 +312,8 @@ export default function PatientsPage() {
                             <MenuList>
                               <MenuItem
                                 icon={<FiEye />}
-                                onClick={() => {
-                                  setSelectedPatient(patient);
-                                  setIsViewModalOpen(true);
-                                }}
+                                as={Link}
+                                href={`/patients/${patient.id}`}
                               >
                                 View Details
                               </MenuItem>
@@ -359,12 +359,6 @@ export default function PatientsPage() {
             onSave={handleAddPatient}
           />
 
-          {/* View Patient Modal */}
-          <ViewPatientModal
-            isOpen={isViewModalOpen}
-            onClose={() => setIsViewModalOpen(false)}
-            patient={selectedPatient}
-          />
 
           {/* Edit Patient Modal */}
           <EditPatientModal
@@ -583,124 +577,6 @@ function AddPatientModal({
   );
 }
 
-// View Patient Modal Component
-function ViewPatientModal({
-  isOpen,
-  onClose,
-  patient,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  patient: Patient | null;
-}) {
-  if (!patient) return null;
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Patient Details</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          <Tabs>
-            <TabList>
-              <Tab>Personal Info</Tab>
-              <Tab>Medical History</Tab>
-              <Tab>Documents</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                  <GridItem>
-                    <VStack align="start" spacing={4}>
-                      <HStack spacing={4}>
-                        <Avatar
-                          size="lg"
-                          src={patient.avatar}
-                          name={patient.name}
-                        />
-                        <Box>
-                          <Heading size="md">{patient.name}</Heading>
-                          <Text color="gray.600">
-                            {patient.gender},{" "}
-                            {new Date().getFullYear() -
-                              new Date(patient.dateOfBirth).getFullYear()}{" "}
-                            years old
-                          </Text>
-                          <Badge
-                            colorScheme={
-                              patient.status === "Active" ? "green" : "gray"
-                            }
-                            mt={2}
-                          >
-                            {patient.status}
-                          </Badge>
-                        </Box>
-                      </HStack>
-                    </VStack>
-                  </GridItem>
-                  <GridItem>
-                    <VStack align="start" spacing={3}>
-                      <HStack spacing={3}>
-                        <FiPhone />
-                        <Text>{patient.phone}</Text>
-                      </HStack>
-                      <HStack spacing={3}>
-                        <FiMail />
-                        <Text>{patient.email}</Text>
-                      </HStack>
-                      <HStack spacing={3} align="start">
-                        <FiMapPin />
-                        <Text>{patient.address}</Text>
-                      </HStack>
-                    </VStack>
-                  </GridItem>
-                </Grid>
-              </TabPanel>
-              <TabPanel>
-                <VStack align="stretch" spacing={4}>
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Medical History
-                    </Text>
-                    <Text>
-                      {patient.medicalHistory || "No medical history recorded"}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Allergies
-                    </Text>
-                    <Text>{patient.allergies || "No known allergies"}</Text>
-                  </Box>
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Emergency Contact
-                    </Text>
-                    <Text>
-                      {patient.emergencyContact ||
-                        "No emergency contact recorded"}
-                    </Text>
-                  </Box>
-                </VStack>
-              </TabPanel>
-              <TabPanel>
-                <VStack spacing={4}>
-                  <Button leftIcon={<FiUpload />} variant="outline" w="full">
-                    Upload Document
-                  </Button>
-                  <Text color="gray.600" textAlign="center">
-                    No documents uploaded yet
-                  </Text>
-                </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-}
 
 // Edit Patient Modal Component
 function EditPatientModal({
