@@ -2314,7 +2314,7 @@ export default function PatientDetailsPage() {
                 {selectedProcedure && (
                   <VStack spacing={4} align="stretch">
                     <Text>
-                      Are you sure you want to delete the procedure "{selectedProcedure.procedureName}" 
+                      Are you sure you want to delete the procedure &quot;{selectedProcedure.procedureName}&quot; 
                       performed on {new Date(selectedProcedure.date).toLocaleDateString()}?
                     </Text>
                     <Text color="red.500" fontSize="sm">
