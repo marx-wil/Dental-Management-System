@@ -32,6 +32,14 @@ import {
   useDisclosure,
   SimpleGrid,
   Flex,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   FiCalendar,
@@ -44,6 +52,9 @@ import {
   FiChevronRight,
   FiMapPin,
   FiPhone,
+  FiGrid,
+  FiList,
+  FiEye,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Layout from "../components/Layout";
@@ -255,6 +266,9 @@ export default function AppointmentsPage() {
     Appointment[]
   >([]);
   const [selectedDayDate, setSelectedDayDate] = useState<Date | null>(null);
+  const [viewMode, setViewMode] = useState<"calendar" | "table" | "cards">(
+    "calendar"
+  );
 
   const cardBg = useColorModeValue("white", "gray.800");
   const calendarDayBorderColor = useColorModeValue("gray.200", "gray.600");
@@ -431,15 +445,26 @@ export default function AppointmentsPage() {
                       ? "dental.50"
                       : isSelected
                       ? "dental.100"
+                      : dayAppointments.length > 0
+                      ? "blue.50"
                       : "transparent"
                   }
-                  _hover={{ bg: "dental.50" }}
+                  _hover={{
+                    bg: dayAppointments.length > 0 ? "blue.100" : "dental.50",
+                  }}
                   position="relative"
                   onClick={() => handleDateClick(day)}
                 >
                   <Text
                     fontSize={{ base: "xs", md: "sm" }}
-                    fontWeight={isToday ? "bold" : "normal"}
+                    fontWeight={
+                      isToday
+                        ? "bold"
+                        : dayAppointments.length > 0
+                        ? "semibold"
+                        : "normal"
+                    }
+                    color={dayAppointments.length > 0 ? "blue.600" : "inherit"}
                   >
                     {day.getDate()}
                   </Text>
@@ -518,7 +543,38 @@ export default function AppointmentsPage() {
                   Schedule and manage patient appointments
                 </Text>
               </Box>
-              <Flex justifyContent={"flex-end"}>
+              <Flex justifyContent={"flex-end"} gap={2}>
+                {/* View Toggle */}
+                <HStack spacing={1} bg="gray.100" p={1} borderRadius="md">
+                  <Button
+                    size="sm"
+                    variant={viewMode === "calendar" ? "solid" : "ghost"}
+                    colorScheme={viewMode === "calendar" ? "dental" : "gray"}
+                    onClick={() => setViewMode("calendar")}
+                    leftIcon={<FiCalendar />}
+                    display={{ base: "none", sm: "flex" }}
+                  >
+                    Calendar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={viewMode === "table" ? "solid" : "ghost"}
+                    colorScheme={viewMode === "table" ? "dental" : "gray"}
+                    onClick={() => setViewMode("table")}
+                    leftIcon={<FiList />}
+                  >
+                    Table
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={viewMode === "cards" ? "solid" : "ghost"}
+                    colorScheme={viewMode === "cards" ? "dental" : "gray"}
+                    onClick={() => setViewMode("cards")}
+                    leftIcon={<FiGrid />}
+                  >
+                    Cards
+                  </Button>
+                </HStack>
                 <Button
                   w={{ base: "full", md: "fit-content" }}
                   leftIcon={<FiPlus />}
@@ -610,17 +666,259 @@ export default function AppointmentsPage() {
               </CardBody>
             </Card>
 
-            {/* Calendar View */}
-            <Card bg={cardBg}>
-              <CardHeader>
-                <Heading size="md">Appointment Calendar</Heading>
-                <Text fontSize="sm" color="gray.600">
-                  Click on a date to view appointments. Days with 3+
-                  appointments show an orange indicator.
-                </Text>
-              </CardHeader>
-              <CardBody>{renderCalendarView()}</CardBody>
-            </Card>
+            {/* Main Content View */}
+            {viewMode === "calendar" && (
+              <Card bg={cardBg}>
+                <CardHeader>
+                  <Heading size="md">Appointment Calendar</Heading>
+                  <Text fontSize="sm" color="gray.600">
+                    Click on a date to view appointments. Days with appointments
+                    are highlighted in blue.
+                  </Text>
+                </CardHeader>
+                <CardBody>{renderCalendarView()}</CardBody>
+              </Card>
+            )}
+
+            {viewMode === "table" && (
+              <Card bg={cardBg}>
+                <CardHeader>
+                  <Heading size="md">Appointments Table</Heading>
+                  <Text fontSize="sm" color="gray.600">
+                    All appointments in a tabular format
+                  </Text>
+                </CardHeader>
+                <CardBody p={0}>
+                  <TableContainer>
+                    <Table variant="simple" size="sm">
+                      <Thead>
+                        <Tr>
+                          <Th>Patient</Th>
+                          <Th>Dentist</Th>
+                          <Th>Date & Time</Th>
+                          <Th>Type</Th>
+                          <Th>Status</Th>
+                          <Th>Actions</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {appointments.map((appointment) => (
+                          <Tr key={appointment.id} _hover={{ bg: "gray.50" }}>
+                            <Td>
+                              <HStack spacing={2}>
+                                <Avatar
+                                  size="sm"
+                                  name={appointment.patientName}
+                                />
+                                <VStack align="start" spacing={0}>
+                                  <Text fontSize="sm" fontWeight="medium">
+                                    {appointment.patientName}
+                                  </Text>
+                                  <Text fontSize="xs" color="gray.600">
+                                    {appointment.patientPhone}
+                                  </Text>
+                                </VStack>
+                              </HStack>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm">
+                                {appointment.dentistName}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <VStack align="start" spacing={0}>
+                                <Text fontSize="sm">
+                                  {new Date(
+                                    appointment.date
+                                  ).toLocaleDateString()}
+                                </Text>
+                                <Text fontSize="xs" color="gray.600">
+                                  {formatTime(appointment.time)}
+                                </Text>
+                              </VStack>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm">{appointment.type}</Text>
+                            </Td>
+                            <Td>
+                              <Badge
+                                colorScheme={getStatusColor(appointment.status)}
+                                size="sm"
+                              >
+                                {appointment.status}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <HStack spacing={1}>
+                                <IconButton
+                                  aria-label="View appointment"
+                                  icon={<FiEye />}
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() =>
+                                    handleAppointmentClick(appointment)
+                                  }
+                                />
+                                <IconButton
+                                  aria-label="Edit appointment"
+                                  icon={<FiEdit />}
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedAppointment(appointment);
+                                    onOpen();
+                                  }}
+                                />
+                                <IconButton
+                                  aria-label="Delete appointment"
+                                  icon={<FiTrash2 />}
+                                  size="sm"
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  onClick={() =>
+                                    handleDeleteAppointment(appointment.id)
+                                  }
+                                />
+                              </HStack>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </CardBody>
+              </Card>
+            )}
+
+            {viewMode === "cards" && (
+              <Card bg={cardBg}>
+                <CardHeader>
+                  <Heading size="md">Appointments Cards</Heading>
+                  <Text fontSize="sm" color="gray.600">
+                    All appointments in a card layout
+                  </Text>
+                </CardHeader>
+                <CardBody>
+                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+                    {appointments.map((appointment) => (
+                      <Card
+                        key={appointment.id}
+                        bg={cardBg}
+                        border="1px"
+                        borderColor="gray.200"
+                        cursor="pointer"
+                        _hover={{
+                          borderColor: "dental.300",
+                          boxShadow: "md",
+                          transform: "translateY(-2px)",
+                        }}
+                        transition="all 0.2s"
+                        onClick={() => handleAppointmentClick(appointment)}
+                      >
+                        <CardBody p={4}>
+                          <VStack align="stretch" spacing={3}>
+                            <HStack justify="space-between" align="start">
+                              <HStack spacing={3}>
+                                <Avatar
+                                  size="md"
+                                  name={appointment.patientName}
+                                />
+                                <VStack align="start" spacing={0}>
+                                  <Text fontWeight="medium" fontSize="sm">
+                                    {appointment.patientName}
+                                  </Text>
+                                  <Text fontSize="xs" color="gray.600">
+                                    {appointment.dentistName}
+                                  </Text>
+                                </VStack>
+                              </HStack>
+                              <Badge
+                                colorScheme={getStatusColor(appointment.status)}
+                                size="sm"
+                              >
+                                {appointment.status}
+                              </Badge>
+                            </HStack>
+
+                            <VStack align="stretch" spacing={2}>
+                              <HStack spacing={2}>
+                                <Icon
+                                  as={FiCalendar}
+                                  boxSize={4}
+                                  color="gray.500"
+                                />
+                                <Text fontSize="sm">
+                                  {new Date(
+                                    appointment.date
+                                  ).toLocaleDateString("en-US", {
+                                    weekday: "short",
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </Text>
+                              </HStack>
+                              <HStack spacing={2}>
+                                <Icon
+                                  as={FiClock}
+                                  boxSize={4}
+                                  color="gray.500"
+                                />
+                                <Text fontSize="sm">
+                                  {formatTime(appointment.time)}
+                                </Text>
+                              </HStack>
+                              <HStack spacing={2}>
+                                <Icon
+                                  as={FiUser}
+                                  boxSize={4}
+                                  color="gray.500"
+                                />
+                                <Text fontSize="sm">{appointment.type}</Text>
+                              </HStack>
+                            </VStack>
+
+                            {appointment.notes && (
+                              <Text
+                                fontSize="xs"
+                                color="gray.600"
+                                noOfLines={2}
+                              >
+                                {appointment.notes}
+                              </Text>
+                            )}
+
+                            <HStack justify="flex-end" spacing={1}>
+                              <IconButton
+                                aria-label="Edit appointment"
+                                icon={<FiEdit />}
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedAppointment(appointment);
+                                  onOpen();
+                                }}
+                              />
+                              <IconButton
+                                aria-label="Delete appointment"
+                                icon={<FiTrash2 />}
+                                size="sm"
+                                variant="ghost"
+                                colorScheme="red"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteAppointment(appointment.id);
+                                }}
+                              />
+                            </HStack>
+                          </VStack>
+                        </CardBody>
+                      </Card>
+                    ))}
+                  </SimpleGrid>
+                </CardBody>
+              </Card>
+            )}
           </VStack>
 
           {/* Add/Edit Appointment Modal */}

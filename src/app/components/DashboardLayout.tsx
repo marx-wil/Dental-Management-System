@@ -25,6 +25,7 @@ import {
   MenuItem,
   Divider,
   useBreakpointValue,
+  Button,
 } from '@chakra-ui/react';
 import {
   FiMenu,
@@ -43,6 +44,9 @@ import {
   FiMessageSquare,
   FiTrendingUp,
   FiUserCheck,
+  FiChevronDown,
+  FiClock,
+  FiMapPin,
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -249,24 +253,167 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Right Side - User Info */}
             <HStack spacing={2}>
-              <IconButton
-                aria-label="Notifications"
-                icon={<FiBell />}
-                variant="ghost"
-                size="sm"
-                position="relative"
-              >
-                <Badge
-                  position="absolute"
-                  top="-1"
-                  right="-1"
-                  colorScheme="red"
-                  borderRadius="full"
-                  fontSize="xs"
+              {/* Notifications Dropdown */}
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  aria-label="Notifications"
+                  icon={<FiBell />}
+                  variant="ghost"
+                  size="sm"
+                  position="relative"
                 >
-                  3
-                </Badge>
-              </IconButton>
+                  <Badge
+                    position="absolute"
+                    top="-1"
+                    right="-1"
+                    colorScheme="red"
+                    borderRadius="full"
+                    fontSize="xs"
+                  >
+                    3
+                  </Badge>
+                </MenuButton>
+                <MenuList maxW="320px" p={0}>
+                  <Box p={3} borderBottom="1px" borderColor="gray.200">
+                    <Text fontWeight="semibold" fontSize="sm">Notifications</Text>
+                  </Box>
+                  <VStack spacing={0} align="stretch" maxH="400px" overflowY="auto">
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <VStack align="start" spacing={1}>
+                        <Text fontSize="sm" fontWeight="medium">
+                          New appointment scheduled
+                        </Text>
+                        <Text fontSize="xs" color="gray.600">
+                          Maria Santos - Tomorrow at 9:00 AM
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          2 hours ago
+                        </Text>
+                      </VStack>
+                    </MenuItem>
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <VStack align="start" spacing={1}>
+                        <Text fontSize="sm" fontWeight="medium">
+                          Payment received
+                        </Text>
+                        <Text fontSize="xs" color="gray.600">
+                          $150 from Carlos Mendoza
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          4 hours ago
+                        </Text>
+                      </VStack>
+                    </MenuItem>
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <VStack align="start" spacing={1}>
+                        <Text fontSize="sm" fontWeight="medium">
+                          Appointment reminder
+                        </Text>
+                        <Text fontSize="xs" color="gray.600">
+                          Ana Rodriguez - Today at 2:00 PM
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          6 hours ago
+                        </Text>
+                      </VStack>
+                    </MenuItem>
+                  </VStack>
+                  <Box p={2} borderTop="1px" borderColor="gray.200">
+                    <Button size="sm" variant="ghost" w="full">
+                      View all notifications
+                    </Button>
+                  </Box>
+                </MenuList>
+              </Menu>
+
+              {/* Calendar Dropdown */}
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  aria-label="Calendar"
+                  icon={<FiCalendar />}
+                  variant="ghost"
+                  size="sm"
+                />
+                <MenuList maxW="320px" p={0}>
+                  <Box p={3} borderBottom="1px" borderColor="gray.200">
+                    <Text fontWeight="semibold" fontSize="sm">Today's Schedule</Text>
+                    <Text fontSize="xs" color="gray.600">
+                      {new Date().toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </Text>
+                  </Box>
+                  <VStack spacing={0} align="stretch" maxH="400px" overflowY="auto">
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <HStack spacing={3}>
+                        <Box
+                          w="4px"
+                          h="full"
+                          bg="blue.400"
+                          borderRadius="full"
+                        />
+                        <VStack align="start" spacing={1} flex="1">
+                          <Text fontSize="sm" fontWeight="medium">
+                            9:00 AM - Maria Santos
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Cleaning - Dr. Juan Dela Cruz
+                          </Text>
+                        </VStack>
+                        <Badge colorScheme="green" size="sm">Confirmed</Badge>
+                      </HStack>
+                    </MenuItem>
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <HStack spacing={3}>
+                        <Box
+                          w="4px"
+                          h="full"
+                          bg="orange.400"
+                          borderRadius="full"
+                        />
+                        <VStack align="start" spacing={1} flex="1">
+                          <Text fontSize="sm" fontWeight="medium">
+                            2:00 PM - Ana Rodriguez
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Root Canal - Dr. Maria Santos
+                          </Text>
+                        </VStack>
+                        <Badge colorScheme="blue" size="sm">Scheduled</Badge>
+                      </HStack>
+                    </MenuItem>
+                    <MenuItem p={3} _hover={{ bg: 'gray.50' }}>
+                      <HStack spacing={3}>
+                        <Box
+                          w="4px"
+                          h="full"
+                          bg="green.400"
+                          borderRadius="full"
+                        />
+                        <VStack align="start" spacing={1} flex="1">
+                          <Text fontSize="sm" fontWeight="medium">
+                            4:00 PM - Luis Garcia
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Check-up - Dr. Juan Dela Cruz
+                          </Text>
+                        </VStack>
+                        <Badge colorScheme="green" size="sm">Confirmed</Badge>
+                      </HStack>
+                    </MenuItem>
+                  </VStack>
+                  <Box p={2} borderTop="1px" borderColor="gray.200">
+                    <Button size="sm" variant="ghost" w="full" onClick={() => router.push('/appointments')}>
+                      View full calendar
+                    </Button>
+                  </Box>
+                </MenuList>
+              </Menu>
 
               <Menu>
                 <MenuButton>
