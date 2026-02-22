@@ -325,7 +325,7 @@ export default function BillingPage() {
   };
 
   return (
-    <ProtectedRoute allowedRoles={["admin", "dentist", "staff"]}>
+    <ProtectedRoute allowedRoles={["admin", "staff", "patient"]}>
       <Layout>
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">

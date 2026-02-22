@@ -154,7 +154,7 @@ export default function ReportsPage() {
   );
 
   return (
-    <ProtectedRoute allowedRoles={["admin", "dentist"]}>
+    <ProtectedRoute allowedRoles={["admin", "staff"]}>
       <Layout>
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
