@@ -356,46 +356,168 @@ export default function Home() {
         />
 
         {/* Footer */}
-        <Box py={14} bg="navy.950" borderTop="1px solid rgba(255,255,255,0.05)">
-          <Container maxW="7xl">
-            <Flex
-              justify="space-between"
-              align="center"
-              wrap="wrap"
-              gap={8}
+        <Box bg="navy.950" borderTop="1px solid rgba(255,255,255,0.06)">
+          {/* Main footer columns */}
+          <Container maxW="7xl" py={{ base: 14, md: 16 }}>
+            <Grid
+              templateColumns={{ base: '1fr', sm: 'repeat(2,1fr)', lg: '2fr 1fr 1fr 1fr' }}
+              gap={{ base: 10, md: 12 }}
             >
-              <VStack align="start" spacing={3}>
-                <HStack spacing={3}>
-                  <Box
-                    w={9}
-                    h={9}
-                    borderRadius="xl"
-                    bg="linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <FaTooth size={16} color="white" />
-                  </Box>
-                  <Text color="white" fontSize="lg" fontWeight="700" letterSpacing="-0.02em">
-                    DentalCare
+              {/* Brand */}
+              <GridItem>
+                <VStack align="start" spacing={5}>
+                  <HStack spacing={3}>
+                    <Box
+                      w={9}
+                      h={9}
+                      borderRadius="xl"
+                      bg="linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      flexShrink={0}
+                    >
+                      <FaTooth size={16} color="white" />
+                    </Box>
+                    <Text color="white" fontSize="lg" fontWeight="700" letterSpacing="-0.02em">
+                      DentalCare
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm" color="whiteAlpha.400" lineHeight="1.9" maxW="xs">
+                    Empowering Philippine dental clinics with modern technology
+                    and comprehensive practice management solutions.
                   </Text>
-                </HStack>
-                <Text fontSize="sm" color="whiteAlpha.400" maxW="xs" lineHeight="1.8">
-                  Empowering Philippine dental clinics with modern technology
-                  and comprehensive practice management solutions.
-                </Text>
-              </VStack>
+                  <HStack spacing={1}>
+                    <Box
+                      as="span"
+                      display="inline-flex"
+                      alignItems="center"
+                      px={2.5}
+                      py={1}
+                      borderRadius="full"
+                      bg="rgba(16,185,129,0.1)"
+                      border="1px solid rgba(16,185,129,0.2)"
+                    >
+                      <Box w={1.5} h={1.5} borderRadius="full" bg="emerald.400" mr={1.5} />
+                      <Text fontSize="xs" color="emerald.400" fontWeight="600">
+                        System Operational
+                      </Text>
+                    </Box>
+                  </HStack>
+                </VStack>
+              </GridItem>
 
-              <VStack align="end" spacing={3}>
+              {/* Product links */}
+              <GridItem>
+                <VStack align="start" spacing={4}>
+                  <Text fontSize="xs" fontWeight="700" color="whiteAlpha.500" letterSpacing="0.12em" textTransform="uppercase">
+                    Product
+                  </Text>
+                  <VStack align="start" spacing={3}>
+                    {[
+                      { label: 'Features', href: '#features' },
+                      { label: 'Pricing', href: '#' },
+                      { label: 'Changelog', href: '#' },
+                      { label: 'Roadmap', href: '#' },
+                    ].map(({ label, href }) => (
+                      <Text
+                        key={label}
+                        as="a"
+                        href={href}
+                        fontSize="sm"
+                        color="whiteAlpha.500"
+                        cursor="pointer"
+                        _hover={{ color: 'cyan.400' }}
+                        transition="color 0.2s"
+                      >
+                        {label}
+                      </Text>
+                    ))}
+                  </VStack>
+                </VStack>
+              </GridItem>
+
+              {/* Company links */}
+              <GridItem>
+                <VStack align="start" spacing={4}>
+                  <Text fontSize="xs" fontWeight="700" color="whiteAlpha.500" letterSpacing="0.12em" textTransform="uppercase">
+                    Company
+                  </Text>
+                  <VStack align="start" spacing={3}>
+                    {[
+                      { label: 'About Us', href: '#' },
+                      { label: 'Blog', href: '#' },
+                      { label: 'Careers', href: '#' },
+                      { label: 'Contact', href: '#' },
+                    ].map(({ label, href }) => (
+                      <Text
+                        key={label}
+                        as="a"
+                        href={href}
+                        fontSize="sm"
+                        color="whiteAlpha.500"
+                        cursor="pointer"
+                        _hover={{ color: 'cyan.400' }}
+                        transition="color 0.2s"
+                      >
+                        {label}
+                      </Text>
+                    ))}
+                  </VStack>
+                </VStack>
+              </GridItem>
+
+              {/* Support links */}
+              <GridItem>
+                <VStack align="start" spacing={4}>
+                  <Text fontSize="xs" fontWeight="700" color="whiteAlpha.500" letterSpacing="0.12em" textTransform="uppercase">
+                    Support
+                  </Text>
+                  <VStack align="start" spacing={3}>
+                    {[
+                      { label: 'Help Center', href: '#' },
+                      { label: 'Documentation', href: '#' },
+                      { label: 'System Status', href: '#' },
+                      { label: 'Privacy Policy', href: '#' },
+                    ].map(({ label, href }) => (
+                      <Text
+                        key={label}
+                        as="a"
+                        href={href}
+                        fontSize="sm"
+                        color="whiteAlpha.500"
+                        cursor="pointer"
+                        _hover={{ color: 'cyan.400' }}
+                        transition="color 0.2s"
+                      >
+                        {label}
+                      </Text>
+                    ))}
+                  </VStack>
+                </VStack>
+              </GridItem>
+            </Grid>
+          </Container>
+
+          {/* Bottom bar */}
+          <Box borderTop="1px solid rgba(255,255,255,0.05)">
+            <Container maxW="7xl" py={5}>
+              <Flex
+                justify="space-between"
+                align="center"
+                wrap="wrap"
+                gap={4}
+              >
                 <Text fontSize="sm" color="whiteAlpha.300">
-                  © 2025 DentalCare. All rights reserved.
+                  © 2026 DentalCare. All rights reserved. Made with care for Philippine clinics.
                 </Text>
                 <HStack spacing={6}>
-                  {['Privacy Policy', 'Terms of Service', 'Support'].map((l) => (
+                  {['Terms of Service', 'Privacy Policy', 'Cookie Policy'].map((l) => (
                     <Text
                       key={l}
-                      fontSize="sm"
+                      as="a"
+                      href="#"
+                      fontSize="xs"
                       color="whiteAlpha.300"
                       cursor="pointer"
                       _hover={{ color: 'cyan.400' }}
@@ -405,9 +527,9 @@ export default function Home() {
                     </Text>
                   ))}
                 </HStack>
-              </VStack>
-            </Flex>
-          </Container>
+              </Flex>
+            </Container>
+          </Box>
         </Box>
       </Box>
     </Layout>
