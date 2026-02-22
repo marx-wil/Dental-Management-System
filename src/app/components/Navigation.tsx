@@ -23,7 +23,6 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Link as ChakraLink,
   Badge,
 } from '@chakra-ui/react';
 import {
@@ -38,7 +37,6 @@ import {
   FiHome,
   FiUsers,
   FiCalendar,
-  FiActivity,
   FiDollarSign,
   FiPackage,
   FiBarChart,

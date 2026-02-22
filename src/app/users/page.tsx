@@ -21,7 +21,6 @@ import {
   Badge,
   Avatar,
   Icon,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -37,8 +36,6 @@ import {
   CardBody,
   CardHeader,
   useDisclosure,
-  Alert,
-  AlertIcon,
   IconButton,
   Menu,
   MenuButton,
@@ -54,7 +51,6 @@ import {
   FiEye,
   FiMoreVertical,
   FiUser,
-  FiMail,
   FiShield,
   FiUsers,
 } from "react-icons/fi";
@@ -120,6 +116,25 @@ const mockUsers: User[] = [
   },
 ];
 
+const cardStyle = {
+  bg: "rgba(15,22,41,0.7)",
+  border: "1px solid",
+  borderColor: "rgba(255,255,255,0.07)",
+  backdropFilter: "blur(12px)",
+  borderRadius: "2xl",
+  _hover: { borderColor: "rgba(255,255,255,0.12)" },
+} as const;
+
+const inputStyle = {
+  bg: "rgba(255,255,255,0.05)",
+  border: "1.5px solid",
+  borderColor: "rgba(255,255,255,0.1)",
+  color: "white",
+  _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+  _hover: { borderColor: "rgba(255,255,255,0.2)" },
+  _placeholder: { color: "whiteAlpha.300" },
+} as const;
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [searchTerm, setSearchTerm] = useState("");
@@ -127,8 +142,6 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const cardBg = useColorModeValue("white", "gray.800");
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -222,25 +235,27 @@ export default function UsersPage() {
             {/* Header */}
             <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
-                <Heading size="lg">User Management</Heading>
-                <Text color="gray.600">
+                <Heading size="lg" color="white">User Management</Heading>
+                <Text color="whiteAlpha.700">
                   Manage clinic staff, dentists, and administrators
                 </Text>
               </Box>
               <Flex justifyContent={"flex-end"}>
                 <Button
-                w={{ base: "full", md: "fit-content" }}
-                leftIcon={<FiPlus />}
-                colorScheme="dental"
-                onClick={() => {
-                  setSelectedUser(null);
-                  onOpen();
-                }}
-                size={{ base: "sm", md: "md" }}
-                minW={{ base: "full", md: "fit-content" }}
-              >
-                Add User
-              </Button>
+                  w={{ base: "full", md: "fit-content" }}
+                  leftIcon={<FiPlus />}
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
+                  onClick={() => {
+                    setSelectedUser(null);
+                    onOpen();
+                  }}
+                  size={{ base: "sm", md: "md" }}
+                  minW={{ base: "full", md: "fit-content" }}
+                >
+                  Add User
+                </Button>
               </Flex>
             </Grid>
 
@@ -250,69 +265,69 @@ export default function UsersPage() {
               gap={6}
             >
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Total Users
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold">
+                        <Text fontSize="2xl" fontWeight="bold" color="white">
                           {stats.total}
                         </Text>
                       </Box>
-                      <Icon as={FiUsers} boxSize={8} color="dental.500" />
+                      <Icon as={FiUsers} boxSize={8} color="cyan.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Administrators
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold" color="red.500">
+                        <Text fontSize="2xl" fontWeight="bold" color="red.400">
                           {stats.admin}
                         </Text>
                       </Box>
-                      <Icon as={FiShield} boxSize={8} color="red.500" />
+                      <Icon as={FiShield} boxSize={8} color="red.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Dentists
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+                        <Text fontSize="2xl" fontWeight="bold" color="blue.400">
                           {stats.dentist}
                         </Text>
                       </Box>
-                      <Icon as={FiUser} boxSize={8} color="blue.500" />
+                      <Icon as={FiUser} boxSize={8} color="blue.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Staff
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                        <Text fontSize="2xl" fontWeight="bold" color="green.400">
                           {stats.staff}
                         </Text>
                       </Box>
-                      <Icon as={FiUsers} boxSize={8} color="green.500" />
+                      <Icon as={FiUsers} boxSize={8} color="green.400" />
                     </HStack>
                   </CardBody>
                 </Card>
@@ -320,23 +335,25 @@ export default function UsersPage() {
             </Grid>
 
             {/* Search and Filters */}
-            <Card bg={cardBg}>
+            <Card {...cardStyle}>
               <CardBody>
                 <HStack spacing={4}>
                   <InputGroup flex={1}>
-                    <InputLeftElement>
+                    <InputLeftElement color="whiteAlpha.400">
                       <FiSearch />
                     </InputLeftElement>
                     <Input
                       placeholder="Search users by name or email..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      {...inputStyle}
                     />
                   </InputGroup>
                   <Select
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                     w="150px"
+                    {...inputStyle}
                   >
                     <option value="all">All Roles</option>
                     <option value="admin">Admin</option>
@@ -347,6 +364,7 @@ export default function UsersPage() {
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     w="150px"
+                    {...inputStyle}
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -357,28 +375,82 @@ export default function UsersPage() {
             </Card>
 
             {/* Users Table */}
-            <Card bg={cardBg}>
+            <Card {...cardStyle}>
               <CardHeader>
-                <Heading size="md">
+                <Heading size="md" color="white">
                   Users ({filteredUsers.length})
                 </Heading>
               </CardHeader>
               <CardBody overflow={"auto"}>
-                <Table variant="simple">
+                <Table variant="unstyled">
                   <Thead>
                     <Tr>
-                      <Th>User</Th>
-                      <Th>Role</Th>
-                      <Th>Status</Th>
-                      <Th>Created</Th>
-                      <Th>Last Login</Th>
-                      <Th>Actions</Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        User
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Role
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Status
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Created
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Last Login
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Actions
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {filteredUsers.map((user) => (
-                      <Tr key={user.id}>
-                        <Td>
+                      <Tr key={user.id} _hover={{ bg: "rgba(255,255,255,0.03)" }}>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <HStack spacing={3}>
                             <Avatar
                               size="sm"
@@ -386,25 +458,25 @@ export default function UsersPage() {
                               src={user.avatar}
                             />
                             <Box>
-                              <Text fontWeight="medium">{user.name}</Text>
-                              <Text fontSize="sm" color="gray.600">
+                              <Text fontWeight="medium" color="whiteAlpha.800">{user.name}</Text>
+                              <Text fontSize="sm" color="whiteAlpha.500">
                                 {user.email}
                               </Text>
                             </Box>
                           </HStack>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <HStack spacing={2}>
                             <Icon
                               as={getRoleIcon(user.role)}
-                              color={`${getRoleColor(user.role)}.500`}
+                              color={`${getRoleColor(user.role)}.400`}
                             />
                             <Badge colorScheme={getRoleColor(user.role)}>
                               {user.role}
                             </Badge>
                           </HStack>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <Badge
                             colorScheme={user.isActive ? "green" : "red"}
                             variant="subtle"
@@ -412,23 +484,24 @@ export default function UsersPage() {
                             {user.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </Td>
-                        <Td>
-                          <Text fontSize="sm">
+                        <Td borderColor="rgba(255,255,255,0.05)">
+                          <Text fontSize="sm" color="whiteAlpha.800">
                             {new Date(user.createdAt).toLocaleDateString()}
                           </Text>
                         </Td>
-                        <Td>
-                          <Text fontSize="sm">
+                        <Td borderColor="rgba(255,255,255,0.05)">
+                          <Text fontSize="sm" color="whiteAlpha.800">
                             {user.lastLogin
                               ? new Date(user.lastLogin).toLocaleDateString()
                               : "Never"}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <HStack spacing={2}>
                             <Button
                               size="sm"
                               variant="outline"
+                              colorScheme="cyan"
                               onClick={() => {
                                 setSelectedUser(user);
                                 onOpen();
@@ -450,10 +523,19 @@ export default function UsersPage() {
                                 icon={<FiMoreVertical />}
                                 size="sm"
                                 variant="outline"
+                                colorScheme="whiteAlpha"
+                                color="whiteAlpha.600"
                               />
-                              <MenuList>
+                              <MenuList
+                                bg="#0f1629"
+                                border="1px solid rgba(255,255,255,0.1)"
+                                boxShadow="0 16px 40px rgba(0,0,0,0.5)"
+                              >
                                 <MenuItem
                                   icon={<FiEye />}
+                                  bg="transparent"
+                                  color="whiteAlpha.800"
+                                  _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                                   onClick={() => {
                                     // View user details
                                   }}
@@ -462,7 +544,9 @@ export default function UsersPage() {
                                 </MenuItem>
                                 <MenuItem
                                   icon={<FiTrash2 />}
-                                  color="red.500"
+                                  color="red.400"
+                                  bg="transparent"
+                                  _hover={{ bg: "rgba(255,255,255,0.07)", color: "red.300" }}
                                   onClick={() => handleDeleteUser(user.id)}
                                 >
                                   Delete User
@@ -514,6 +598,24 @@ function UserModal({
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const inputStyle = {
+    bg: "rgba(255,255,255,0.05)",
+    border: "1.5px solid",
+    borderColor: "rgba(255,255,255,0.1)",
+    color: "white",
+    _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+    _hover: { borderColor: "rgba(255,255,255,0.2)" },
+    _placeholder: { color: "whiteAlpha.300" },
+  };
+
+  const labelStyle = {
+    fontSize: "xs",
+    fontWeight: "600",
+    color: "whiteAlpha.500",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.06em",
+  };
 
   React.useEffect(() => {
     if (user) {
@@ -573,7 +675,7 @@ function UserModal({
         onSave(newUser);
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("An error occurred. Please try again." + err);
     } finally {
       setIsLoading(false);
     }
@@ -581,24 +683,36 @@ function UserModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+      <ModalContent
+        bg="#0f1629"
+        border="1px solid rgba(255,255,255,0.08)"
+        boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+        borderRadius="2xl"
+      >
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
           {user ? "Edit User" : "Add New User"}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="whiteAlpha.600" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               {error && (
-                <Alert status="error" borderRadius="md">
-                  <AlertIcon />
+                <Box
+                  bg="rgba(244,63,94,0.1)"
+                  border="1px solid rgba(244,63,94,0.2)"
+                  color="rose.300"
+                  borderRadius="md"
+                  p={3}
+                  fontSize="sm"
+                  w="full"
+                >
                   {error}
-                </Alert>
+                </Box>
               )}
 
               <FormControl isRequired>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel {...labelStyle}>Full Name</FormLabel>
                 <Input
                   type="text"
                   placeholder="Enter full name"
@@ -606,11 +720,12 @@ function UserModal({
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
+                  {...inputStyle}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel {...labelStyle}>Email Address</FormLabel>
                 <Input
                   type="email"
                   placeholder="Enter email address"
@@ -618,11 +733,12 @@ function UserModal({
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
+                  {...inputStyle}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Role</FormLabel>
+                <FormLabel {...labelStyle}>Role</FormLabel>
                 <Select
                   value={formData.role}
                   onChange={(e) =>
@@ -631,6 +747,7 @@ function UserModal({
                       role: e.target.value as UserRole,
                     })
                   }
+                  {...inputStyle}
                 >
                   <option value="admin">Administrator</option>
                   <option value="dentist">Dentist</option>
@@ -641,7 +758,7 @@ function UserModal({
               {!user && (
                 <>
                   <FormControl isRequired>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel {...labelStyle}>Password</FormLabel>
                     <Input
                       type="password"
                       placeholder="Enter password"
@@ -649,11 +766,12 @@ function UserModal({
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
+                      {...inputStyle}
                     />
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel {...labelStyle}>Confirm Password</FormLabel>
                     <Input
                       type="password"
                       placeholder="Confirm password"
@@ -664,13 +782,14 @@ function UserModal({
                           confirmPassword: e.target.value,
                         })
                       }
+                      {...inputStyle}
                     />
                   </FormControl>
                 </>
               )}
 
               <FormControl>
-                <FormLabel>Status</FormLabel>
+                <FormLabel {...labelStyle}>Status</FormLabel>
                 <Select
                   value={formData.isActive ? "active" : "inactive"}
                   onChange={(e) =>
@@ -679,6 +798,7 @@ function UserModal({
                       isActive: e.target.value === "active",
                     })
                   }
+                  {...inputStyle}
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -686,12 +806,19 @@ function UserModal({
               </FormControl>
 
               <HStack spacing={4} w="full" justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                <Button
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  colorScheme="dental"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
                   isLoading={isLoading}
                   loadingText={user ? "Updating..." : "Creating..."}
                 >

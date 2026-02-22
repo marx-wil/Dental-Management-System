@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Box, Text, VStack, Icon } from '@chakra-ui/react';
-import { FiLock } from 'react-icons/fi';
 import { hasPermission } from '../utils/permissions';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -18,6 +16,7 @@ interface RoleGuardProps {
 export default function RoleGuard({ 
   children, 
   requiredPermission, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fallback 
 }: RoleGuardProps) {
   const { user } = useAuth();

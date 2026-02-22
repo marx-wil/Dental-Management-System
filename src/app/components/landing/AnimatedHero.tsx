@@ -1,43 +1,34 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { 
-  Box, 
-  Container, 
-  VStack, 
-  HStack, 
-  Heading, 
-  Text, 
-  Button, 
+import {
+  Box,
+  Container,
+  VStack,
+  HStack,
+  Heading,
+  Text,
+  Button,
   Badge,
   Grid,
   GridItem,
   Icon,
   Avatar,
-  Flex,
-  Circle,
-  Progress,
-  Divider
 } from '@chakra-ui/react';
-import { 
-  FiArrowRight, 
-  FiPlay, 
-  FiUsers, 
-  FiFileText, 
+import {
+  FiArrowRight,
+  FiPlay,
+  FiUsers,
+  FiCalendar,
   FiThumbsUp,
   FiStar,
-  FiCheck,
   FiPlus,
-  FiBarChart,
-  FiClock,
-  FiUser,
-  FiSettings
+  FiTrendingUp,
 } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -69,112 +60,125 @@ export default function AnimatedHero({
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const socialProofRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
+  const mockupRef = useRef<HTMLDivElement>(null);
+  const orb1Ref = useRef<HTMLDivElement>(null);
+  const orb2Ref = useRef<HTMLDivElement>(null);
+  const orb3Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!heroRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Initial state - elements start hidden/transformed
-      gsap.set([titleRef.current, descriptionRef.current, buttonsRef.current, badgeRef.current, featuresRef.current, socialProofRef.current], {
-        opacity: 0,
-        y: 50,
-      });
-
-      gsap.set(backgroundRef.current, {
+      // Animate orbs continuously
+      gsap.to(orb1Ref.current, {
+        x: 30,
+        y: -20,
         scale: 1.1,
-        opacity: 0,
+        duration: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
+      gsap.to(orb2Ref.current, {
+        x: -20,
+        y: 30,
+        scale: 0.9,
+        duration: 10,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 1,
+      });
+      gsap.to(orb3Ref.current, {
+        x: 15,
+        y: 25,
+        scale: 1.05,
+        duration: 7,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 2,
       });
 
-      // Create timeline for hero animation
-      const tl = gsap.timeline({ delay: 0.5 });
-
-      // Animate background first
-      tl.to(backgroundRef.current, {
-        scale: 1,
-        opacity: 1,
-        duration: 1.5,
-        ease: "power2.out",
-      });
-
-      // Animate badge
-      tl.to(badgeRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      }, "-=1");
-
-      // Animate title
-      tl.to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out",
-      }, "-=0.6");
-
-      // Animate description
-      tl.to(descriptionRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-      }, "-=0.4");
-
-      // Animate features with stagger
-      tl.to(featuresRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-      }, "-=0.3");
-
-      // Animate individual feature icons with stagger
-      if (featuresRef.current) {
-        const featureIcons = featuresRef.current.querySelectorAll('.feature-icon');
-        gsap.set(featureIcons, { opacity: 0, scale: 0.8, rotation: -10 });
-        
-        tl.to(featureIcons, {
-          opacity: 1,
-          scale: 1,
-          rotation: 0,
-          duration: 0.6,
-          ease: "back.out(1.7)",
-          stagger: 0.1,
-        }, "-=0.5");
+      // Animate particles
+      if (particlesRef.current) {
+        const particles = particlesRef.current.querySelectorAll('.hero-particle');
+        particles.forEach((p) => {
+          gsap.to(p, {
+            y: `random(-30, 30)`,
+            x: `random(-20, 20)`,
+            opacity: `random(0.3, 0.8)`,
+            duration: `random(4, 8)`,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: `random(0, 3)`,
+          });
+        });
       }
 
-      // Animate buttons with stagger
-      tl.to(buttonsRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "back.out(1.7)",
-      }, "-=0.2");
+      // Initial state
+      gsap.set([badgeRef.current, titleRef.current, subtitleRef.current, descriptionRef.current, featuresRef.current, buttonsRef.current, socialProofRef.current], {
+        opacity: 0,
+        y: 40,
+      });
+      gsap.set(mockupRef.current, {
+        opacity: 0,
+        x: 60,
+        scale: 0.95,
+      });
 
-      // Animate social proof
-      tl.to(socialProofRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out",
-      }, "-=0.1");
+      const tl = gsap.timeline({ delay: 0.3 });
 
-      // Animate dashboard cards with stagger
-      if (heroRef.current) {
-        const dashboardCards = heroRef.current.querySelectorAll('[data-dashboard-card]');
-        gsap.set(dashboardCards, { opacity: 0, y: 30, scale: 0.9 });
-        
-        tl.to(dashboardCards, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.7)",
-          stagger: 0.2,
-        }, "-=0.4");
+      tl.to(badgeRef.current, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'back.out(2)',
+      })
+      .to(titleRef.current, {
+        opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+      }, '-=0.4')
+      .to(subtitleRef.current, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+      }, '-=0.5')
+      .to(descriptionRef.current, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+      }, '-=0.4')
+      .to(featuresRef.current, {
+        opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+      }, '-=0.3')
+      .to(buttonsRef.current, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'back.out(1.5)',
+      }, '-=0.4')
+      .to(socialProofRef.current, {
+        opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+      }, '-=0.3')
+      .to(mockupRef.current, {
+        opacity: 1, x: 0, scale: 1, duration: 1.2, ease: 'power3.out',
+      }, '-=1.2');
+
+      // Floating mockup
+      gsap.to(mockupRef.current, {
+        y: -12,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+        delay: 2,
+      });
+
+      // Stagger dashboard cards
+      const cards = heroRef.current?.querySelectorAll('[data-card]');
+      if (cards) {
+        gsap.set(cards, { opacity: 0, y: 20, scale: 0.95 });
+        gsap.to(cards, {
+          opacity: 1, y: 0, scale: 1,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'back.out(1.7)',
+          delay: 1.5,
+        });
       }
 
     }, heroRef);
@@ -190,121 +194,186 @@ export default function AnimatedHero({
       display="flex"
       alignItems="center"
       overflow="hidden"
-      bg="gray.50"
+      bg="navy.900"
+      pt={20}
     >
-      {/* Animated Background */}
+      {/* Mesh gradient orbs */}
       <Box
-        ref={backgroundRef}
+        ref={orb1Ref}
         position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bgGradient="linear(135deg, purple.50 0%, blue.50 50%, purple.100 100%)"
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 20% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
-        }}
+        top="-10%"
+        left="-5%"
+        w="600px"
+        h="600px"
+        borderRadius="full"
+        bg="radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
+      <Box
+        ref={orb2Ref}
+        position="absolute"
+        top="30%"
+        right="-10%"
+        w="500px"
+        h="500px"
+        borderRadius="full"
+        bg="radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
+      <Box
+        ref={orb3Ref}
+        position="absolute"
+        bottom="-10%"
+        left="30%"
+        w="400px"
+        h="400px"
+        borderRadius="full"
+        bg="radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)"
+        pointerEvents="none"
       />
 
-      <Container maxW="7xl" position="relative" zIndex={1}>
-        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={16} alignItems="center">
-          {/* Left Column - Text Content */}
+      {/* Grid lines background */}
+      <Box
+        position="absolute"
+        inset={0}
+        opacity={0.04}
+        backgroundImage="linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)"
+        backgroundSize="60px 60px"
+        pointerEvents="none"
+      />
+
+      {/* Floating particles */}
+      <Box ref={particlesRef} position="absolute" inset={0} pointerEvents="none">
+        {[...Array(12)].map((_, i) => (
+          <Box
+            key={i}
+            className="hero-particle"
+            position="absolute"
+            borderRadius="full"
+            bg={i % 3 === 0 ? 'cyan.400' : i % 3 === 1 ? 'violet.400' : 'emerald.400'}
+            opacity={0.4}
+            w={`${Math.random() * 6 + 2}px`}
+            h={`${Math.random() * 6 + 2}px`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          />
+        ))}
+      </Box>
+
+      <Container maxW="7xl" position="relative" zIndex={1} py={16}>
+        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={{ base: 12, lg: 16 }} alignItems="center">
+          {/* Left — Text Content */}
           <GridItem>
-            <VStack spacing={8} align="start" textAlign="left">
-              <Badge
-                ref={badgeRef}
-                colorScheme="purple"
-                fontSize="sm"
-                px={4}
-                py={2}
-                borderRadius="full"
-                bg="white"
-                color="purple.600"
-                boxShadow="lg"
-                border="1px solid"
-                borderColor="purple.100"
-              >
-                {badgeText}
-              </Badge>
+            <VStack spacing={7} align="start">
+              {/* Badge */}
+              <Box ref={badgeRef}>
+                <Badge
+                  px={4}
+                  py={2}
+                  borderRadius="full"
+                  bg="rgba(6,182,212,0.1)"
+                  color="cyan.300"
+                  border="1px solid rgba(6,182,212,0.3)"
+                  fontSize="xs"
+                  fontWeight="600"
+                  letterSpacing="0.05em"
+                  textTransform="uppercase"
+                >
+                  ✦ {badgeText}
+                </Badge>
+              </Box>
 
-              <Heading
-                ref={titleRef}
-                as="h1"
-                size="4xl"
-                color="gray.900"
-                fontWeight="bold"
-                lineHeight="shorter"
-                maxW="2xl"
-              >
-                {title}
-              </Heading>
+              {/* Title */}
+              <Box ref={titleRef}>
+                <Heading
+                  as="h1"
+                  fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
+                  fontWeight="800"
+                  color="white"
+                  lineHeight="1.1"
+                  letterSpacing="-0.03em"
+                >
+                  {title.split(' ').slice(0, 2).join(' ')}{' '}
+                  <Box
+                    as="span"
+                    bgGradient="linear(135deg, cyan.400, violet.400)"
+                    bgClip="text"
+                  >
+                    {title.split(' ').slice(2).join(' ')}
+                  </Box>
+                </Heading>
+              </Box>
 
-              <Text
-                ref={descriptionRef}
-                fontSize="xl"
-                color="gray.600"
-                maxW="2xl"
-                lineHeight="tall"
-              >
-                {description}
-              </Text>
+              {/* Subtitle */}
+              <Box ref={subtitleRef}>
+                <Text
+                  fontSize={{ base: 'lg', md: 'xl' }}
+                  color="cyan.300"
+                  fontWeight="600"
+                  letterSpacing="-0.01em"
+                >
+                  {subtitle}
+                </Text>
+              </Box>
 
-              {/* Feature Icons */}
-              <HStack ref={featuresRef} spacing={8} pt={4} flexWrap="wrap">
-                <HStack spacing={3} className="feature-icon">
-                  <Circle size="12" bg="dental.100" color="dental.600">
-                    <Icon as={FiUsers} boxSize={6} />
-                  </Circle>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
-                    Manage patients efficiently
-                  </Text>
-                </HStack>
-                <HStack spacing={3} className="feature-icon">
-                  <Circle size="12" bg="brand.100" color="brand.600">
-                    <Icon as={FiFileText} boxSize={6} />
-                  </Circle>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
-                    Keep records organized
-                  </Text>
-                </HStack>
-                <HStack spacing={3} className="feature-icon">
-                  <Circle size="12" bg="green.100" color="green.600">
-                    <Icon as={FiThumbsUp} boxSize={6} />
-                  </Circle>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
-                    Improve patient care
-                  </Text>
-                </HStack>
+              {/* Description */}
+              <Box ref={descriptionRef}>
+                <Text
+                  fontSize={{ base: 'md', md: 'lg' }}
+                  color="whiteAlpha.600"
+                  lineHeight="1.8"
+                  maxW="lg"
+                >
+                  {description}
+                </Text>
+              </Box>
+
+              {/* Feature Pills */}
+              <HStack ref={featuresRef} spacing={4} flexWrap="wrap">
+                {[
+                  { icon: FiUsers, text: 'Patient Records' },
+                  { icon: FiCalendar, text: 'Smart Scheduling' },
+                  { icon: FiThumbsUp, text: 'Better Care' },
+                ].map((f, i) => (
+                  <HStack
+                    key={i}
+                    spacing={2}
+                    px={4}
+                    py={2}
+                    borderRadius="full"
+                    bg="whiteAlpha.50"
+                    border="1px solid"
+                    borderColor="whiteAlpha.100"
+                    backdropFilter="blur(10px)"
+                  >
+                    <Icon as={f.icon} color="cyan.400" boxSize={4} />
+                    <Text fontSize="sm" color="whiteAlpha.800" fontWeight="500">
+                      {f.text}
+                    </Text>
+                  </HStack>
+                ))}
               </HStack>
 
-              <HStack
-                ref={buttonsRef}
-                spacing={4}
-                pt={6}
-                flexWrap="wrap"
-              >
+              {/* Buttons */}
+              <HStack ref={buttonsRef} spacing={4} flexWrap="wrap" pt={2}>
                 <Link href={primaryButtonLink}>
                   <Button
                     size="lg"
-                    bg="dental.500"
+                    px={8}
+                    py={7}
+                    fontSize="md"
+                    fontWeight="700"
+                    borderRadius="2xl"
+                    bg="linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)"
                     color="white"
                     rightIcon={<FiArrowRight />}
-                    px={8}
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="semibold"
-                    borderRadius="xl"
-                    boxShadow="xl"
+                    boxShadow="0 8px 32px rgba(6,182,212,0.35)"
                     _hover={{
-                      bg: 'dental.600',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '2xl',
+                      bg: 'linear-gradient(135deg, #0891b2 0%, #7c3aed 100%)',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 16px 40px rgba(6,182,212,0.5)',
                     }}
                     transition="all 0.3s ease"
                   >
@@ -314,19 +383,20 @@ export default function AnimatedHero({
                 <Link href={secondaryButtonLink}>
                   <Button
                     size="lg"
-                    variant="outline"
-                    borderColor="dental.200"
-                    color="dental.600"
-                    leftIcon={<FiPlay />}
                     px={8}
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="semibold"
-                    borderRadius="xl"
-                    borderWidth="2px"
+                    py={7}
+                    fontSize="md"
+                    fontWeight="600"
+                    borderRadius="2xl"
+                    variant="outline"
+                    borderColor="whiteAlpha.200"
+                    color="whiteAlpha.900"
+                    leftIcon={<FiPlay />}
                     _hover={{
-                      bg: 'dental.50',
-                      transform: 'translateY(-2px)',
+                      bg: 'whiteAlpha.100',
+                      borderColor: 'cyan.400',
+                      color: 'white',
+                      transform: 'translateY(-3px)',
                     }}
                     transition="all 0.3s ease"
                   >
@@ -336,196 +406,227 @@ export default function AnimatedHero({
               </HStack>
 
               {/* Social Proof */}
-              <HStack ref={socialProofRef} spacing={4} pt={4}>
-                <HStack spacing={1}>
-                  {[...Array(5)].map((_, i) => (
-                    <Icon key={i} as={FiStar} color="yellow.400" boxSize={4} />
+              <HStack ref={socialProofRef} spacing={4} pt={2}>
+                <HStack spacing={-3}>
+                  {['#0891b2', '#8b5cf6', '#10b981', '#f59e0b'].map((color, i) => (
+                    <Avatar
+                      key={i}
+                      size="sm"
+                      bg={color}
+                      border="2px solid"
+                      borderColor="navy.900"
+                      name={`User ${i}`}
+                    />
                   ))}
                 </HStack>
-                <Text fontSize="sm" fontWeight="bold" color="gray.700">
-                  5-STAR RATING
-                </Text>
+                <Box>
+                  <HStack spacing={1} mb={0.5}>
+                    {[...Array(5)].map((_, i) => (
+                      <Icon key={i} as={FiStar} color="amber.400" boxSize={3} />
+                    ))}
+                  </HStack>
+                  <Text fontSize="xs" color="whiteAlpha.500">
+                    Trusted by <Text as="span" color="cyan.400" fontWeight="700">500+</Text> dental clinics
+                  </Text>
+                </Box>
               </HStack>
             </VStack>
           </GridItem>
 
-          {/* Right Column - Dashboard Mockups */}
-          <GridItem>
-            <Box position="relative" h="600px">
+          {/* Right — Dashboard Mockup */}
+          <GridItem display={{ base: 'none', lg: 'block' }}>
+            <Box ref={mockupRef} position="relative" h="580px">
               {/* Main Dashboard Card */}
               <Box
-                ref={backgroundRef}
+                data-card
                 position="absolute"
                 top={0}
                 right={0}
-                w="400px"
-                bg="white"
+                w="380px"
+                bg="rgba(15,22,41,0.8)"
+                border="1px solid rgba(255,255,255,0.08)"
                 borderRadius="2xl"
-                boxShadow="2xl"
-                p={6}
-                border="1px solid"
-                borderColor="gray.100"
-                data-dashboard-card
+                boxShadow="0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)"
+                p={5}
+                backdropFilter="blur(20px)"
               >
-                <VStack spacing={6} align="stretch">
-                  {/* Header */}
-                  <HStack justify="space-between" align="center">
-                    <HStack spacing={3}>
-                      <Circle size="8" bg="gray.100">
-                        <Icon as={FiBarChart} color="gray.600" />
-                      </Circle>
-                      <Circle size="8" bg="gray.100">
-                        <Icon as={FiClock} color="gray.600" />
-                      </Circle>
-                      <Circle size="8" bg="gray.100">
-                        <Icon as={FiFileText} color="gray.600" />
-                      </Circle>
-                      <Circle size="8" bg="gray.100">
-                        <Icon as={FiUser} color="gray.600" />
-                      </Circle>
-                    </HStack>
-                    <Avatar size="sm" name="Dr. Smith" bg="yellow.400" />
+                {/* Card Header */}
+                <HStack justify="space-between" mb={5}>
+                  <HStack spacing={2}>
+                    <Box w={2} h={2} borderRadius="full" bg="rose.400" />
+                    <Box w={2} h={2} borderRadius="full" bg="amber.400" />
+                    <Box w={2} h={2} borderRadius="full" bg="emerald.400" />
                   </HStack>
+                  <Text fontSize="xs" color="whiteAlpha.400" fontWeight="500">
+                    Dashboard Overview
+                  </Text>
+                  <Avatar size="xs" name="Dr. Cruz" bg="cyan.500" />
+                </HStack>
 
-                  {/* Stats */}
-                  <VStack spacing={3} align="stretch">
-                    <HStack justify="space-between">
-                      <Text fontSize="sm" color="gray.500">Active Patients</Text>
-                      <Text fontSize="lg" fontWeight="bold" color="gray.900">1,247</Text>
-                    </HStack>
-                    <HStack justify="space-between">
-                      <Text fontSize="sm" color="gray.500">Appointments Today</Text>
-                      <Text fontSize="lg" fontWeight="bold" color="gray.900">23</Text>
-                    </HStack>
-                    <HStack justify="space-between">
-                      <Text fontSize="sm" color="gray.500">Monthly Revenue</Text>
-                      <Text fontSize="lg" fontWeight="bold" color="gray.900">₱2.4M</Text>
-                    </HStack>
-                  </VStack>
+                {/* Stats Row */}
+                <Grid templateColumns="repeat(3,1fr)" gap={3} mb={5}>
+                  {[
+                    { label: 'Patients', value: '1,247', color: 'cyan' },
+                    { label: 'Today', value: '23', color: 'violet' },
+                    { label: 'Revenue', value: '₱2.4M', color: 'emerald' },
+                  ].map((s, i) => (
+                    <Box
+                      key={i}
+                      bg="whiteAlpha.50"
+                      border="1px solid rgba(255,255,255,0.06)"
+                      borderRadius="xl"
+                      p={3}
+                    >
+                      <Text fontSize="xs" color="whiteAlpha.500" mb={1}>{s.label}</Text>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="700"
+                        color={`${s.color}.300`}
+                        lineHeight={1}
+                      >
+                        {s.value}
+                      </Text>
+                    </Box>
+                  ))}
+                </Grid>
 
-                  {/* Chart Placeholder */}
-                  <Box>
-                    <Text fontSize="sm" fontWeight="semibold" color="gray.700" mb={3}>
+                {/* Mini Chart */}
+                <Box
+                  bg="whiteAlpha.50"
+                  border="1px solid rgba(255,255,255,0.06)"
+                  borderRadius="xl"
+                  p={4}
+                  mb={4}
+                >
+                  <HStack justify="space-between" mb={3}>
+                    <Text fontSize="xs" fontWeight="600" color="whiteAlpha.700">
                       Patient Demographics
                     </Text>
-                    <Box h="120px" bg="gray.50" borderRadius="lg" p={4}>
-                      <HStack spacing={4} h="full">
-                        <VStack spacing={2} flex={1}>
-                          <Box w="full" h="60px" bg="dental.400" borderRadius="md" />
-                          <Text fontSize="xs" color="gray.500">Adults</Text>
-                        </VStack>
-                        <VStack spacing={2} flex={1}>
-                          <Box w="full" h="40px" bg="brand.400" borderRadius="md" />
-                          <Text fontSize="xs" color="gray.500">Children</Text>
-                        </VStack>
-                        <VStack spacing={2} flex={1}>
-                          <Box w="full" h="80px" bg="green.400" borderRadius="md" />
-                          <Text fontSize="xs" color="gray.500">Seniors</Text>
-                        </VStack>
-                      </HStack>
-                    </Box>
-                  </Box>
-
-                  {/* Action Buttons */}
-                  <HStack spacing={3}>
-                    <Button size="sm" bg="dental.500" color="white" leftIcon={<FiPlus />}>
-                      New Patient
-                    </Button>
-                    <Button size="sm" variant="outline" borderColor="dental.200" color="dental.600">
-                      Schedule
-                    </Button>
-                    <Button size="sm" variant="outline" borderColor="dental.200" color="dental.600">
-                      Reports
-                    </Button>
+                    <Icon as={FiTrendingUp} color="emerald.400" boxSize={4} />
                   </HStack>
-                </VStack>
+                  <HStack spacing={2} align="end" h="60px">
+                    {[45, 70, 35, 85, 55, 90, 65].map((h, i) => (
+                      <Box
+                        key={i}
+                        flex={1}
+                        h={`${h}%`}
+                        borderRadius="sm"
+                        bg={i === 5
+                          ? 'linear-gradient(180deg, #06b6d4 0%, #8b5cf6 100%)'
+                          : 'rgba(255,255,255,0.08)'
+                        }
+                        transition="all 0.3s"
+                      />
+                    ))}
+                  </HStack>
+                </Box>
+
+                {/* Action Buttons Row */}
+                <HStack spacing={2}>
+                  <Button size="xs" flex={1} bg="cyan.600" color="white" borderRadius="lg" leftIcon={<FiPlus />} _hover={{ bg: 'cyan.500' }}>
+                    New Patient
+                  </Button>
+                  <Button size="xs" flex={1} bg="whiteAlpha.100" color="whiteAlpha.800" borderRadius="lg" border="1px solid rgba(255,255,255,0.1)" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Schedule
+                  </Button>
+                  <Button size="xs" flex={1} bg="whiteAlpha.100" color="whiteAlpha.800" borderRadius="lg" border="1px solid rgba(255,255,255,0.1)" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Reports
+                  </Button>
+                </HStack>
               </Box>
 
-              {/* Top Patients Card */}
+              {/* Recent Patients Card */}
               <Box
+                data-card
                 position="absolute"
-                bottom={20}
-                right={20}
-                w="300px"
-                bg="white"
-                borderRadius="xl"
-                boxShadow="xl"
-                p={5}
-                border="1px solid"
-                borderColor="gray.100"
-                data-dashboard-card
+                bottom={24}
+                right={24}
+                w="260px"
+                bg="rgba(15,22,41,0.85)"
+                border="1px solid rgba(255,255,255,0.08)"
+                borderRadius="2xl"
+                boxShadow="0 24px 48px rgba(0,0,0,0.4)"
+                p={4}
+                backdropFilter="blur(20px)"
               >
-                <VStack spacing={4} align="stretch">
-                  <Text fontSize="sm" fontWeight="semibold" color="gray.700">
-                    Recent Patients
-                  </Text>
-                  
-                  <VStack spacing={3} align="stretch">
-                    <HStack spacing={3}>
-                      <Avatar size="sm" name="Maria Santos" bg="blue.400" />
-                      <VStack spacing={0} align="start" flex={1}>
-                        <Text fontSize="sm" fontWeight="medium" color="gray.900">Maria Santos</Text>
-                        <Text fontSize="xs" color="gray.500">Regular Checkup</Text>
-                      </VStack>
-                      <Badge colorScheme="green" size="sm">Completed</Badge>
+                <Text fontSize="xs" fontWeight="600" color="whiteAlpha.700" mb={3}>
+                  Recent Patients
+                </Text>
+                <VStack spacing={3} align="stretch">
+                  {[
+                    { name: 'Maria Santos', type: 'Checkup', status: 'Done', statusColor: 'emerald' },
+                    { name: 'Juan Cruz', type: 'Cleaning', status: 'Today', statusColor: 'cyan' },
+                  ].map((p, i) => (
+                    <HStack key={i} spacing={3}>
+                      <Avatar size="xs" name={p.name} bg={i === 0 ? 'cyan.500' : 'violet.500'} />
+                      <Box flex={1}>
+                        <Text fontSize="xs" fontWeight="600" color="white">{p.name}</Text>
+                        <Text fontSize="xs" color="whiteAlpha.400">{p.type}</Text>
+                      </Box>
+                      <Badge
+                        fontSize="9px"
+                        px={2}
+                        py={0.5}
+                        borderRadius="full"
+                        bg={`${p.statusColor}.900`}
+                        color={`${p.statusColor}.300`}
+                        border="1px solid"
+                        borderColor={`${p.statusColor}.700`}
+                      >
+                        {p.status}
+                      </Badge>
                     </HStack>
-                    
-                    <HStack spacing={3}>
-                      <Avatar size="sm" name="Juan Cruz" bg="green.400" />
-                      <VStack spacing={0} align="start" flex={1}>
-                        <Text fontSize="sm" fontWeight="medium" color="gray.900">Juan Cruz</Text>
-                        <Text fontSize="xs" color="gray.500">Dental Cleaning</Text>
-                      </VStack>
-                      <Badge colorScheme="blue" size="sm">Scheduled</Badge>
-                    </HStack>
-                  </VStack>
+                  ))}
                 </VStack>
               </Box>
 
-              {/* Appointment Card */}
+              {/* Schedule Card */}
               <Box
+                data-card
                 position="absolute"
                 bottom={0}
                 left={0}
-                w="250px"
-                bg="white"
-                borderRadius="xl"
-                boxShadow="xl"
-                p={5}
-                border="1px solid"
-                borderColor="gray.100"
-                data-dashboard-card
+                w="220px"
+                bg="rgba(6,182,212,0.1)"
+                border="1px solid rgba(6,182,212,0.2)"
+                borderRadius="2xl"
+                boxShadow="0 0 40px rgba(6,182,212,0.15)"
+                p={4}
+                backdropFilter="blur(20px)"
               >
-                <VStack spacing={4} align="stretch">
-                  <HStack justify="space-between" align="center">
-                    <Text fontSize="sm" fontWeight="semibold" color="gray.700">
-                      Today&apos;s Schedule
-                    </Text>
-                    <Button size="xs" bg="dental.500" color="white" leftIcon={<FiPlus />}>
-                      Add
-                    </Button>
-                  </HStack>
-                  
-                  <VStack spacing={2} align="stretch">
-                    <HStack spacing={2}>
-                      <Circle size="2" bg="dental.400" />
-                      <Text fontSize="xs" color="gray.600">9:00 AM - Maria Santos</Text>
+                <HStack justify="space-between" mb={3}>
+                  <Text fontSize="xs" fontWeight="600" color="cyan.300">Today&apos;s Schedule</Text>
+                  <Icon as={FiCalendar} color="cyan.400" boxSize={3.5} />
+                </HStack>
+                <VStack spacing={2} align="stretch">
+                  {[
+                    { time: '9:00 AM', name: 'Maria S.', color: 'cyan.400' },
+                    { time: '10:30 AM', name: 'Juan C.', color: 'violet.400' },
+                    { time: '2:00 PM', name: 'Ana R.', color: 'emerald.400' },
+                  ].map((a, i) => (
+                    <HStack key={i} spacing={2}>
+                      <Box w={1.5} h={1.5} borderRadius="full" bg={a.color} flexShrink={0} />
+                      <Text fontSize="xs" color="whiteAlpha.500">{a.time}</Text>
+                      <Text fontSize="xs" color="whiteAlpha.800" fontWeight="500">{a.name}</Text>
                     </HStack>
-                    <HStack spacing={2}>
-                      <Circle size="2" bg="brand.400" />
-                      <Text fontSize="xs" color="gray.600">10:30 AM - Juan Cruz</Text>
-                    </HStack>
-                    <HStack spacing={2}>
-                      <Circle size="2" bg="green.400" />
-                      <Text fontSize="xs" color="gray.600">2:00 PM - Ana Reyes</Text>
-                    </HStack>
-                  </VStack>
+                  ))}
                 </VStack>
               </Box>
             </Box>
           </GridItem>
         </Grid>
       </Container>
+
+      {/* Bottom gradient fade */}
+      <Box
+        position="absolute"
+        bottom={0}
+        left={0}
+        right={0}
+        h="200px"
+        bgGradient="linear(to-t, navy.900, transparent)"
+        pointerEvents="none"
+      />
     </Box>
   );
 }

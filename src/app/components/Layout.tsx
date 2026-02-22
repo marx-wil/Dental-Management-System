@@ -20,7 +20,7 @@ export default function Layout({ children }: LayoutProps) {
     return (
       <Box minH="100vh">
         <LandingNavigation />
-        <Box pt={16}>{children}</Box>
+        {children}
       </Box>
     );
   }

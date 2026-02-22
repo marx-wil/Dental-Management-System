@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { Card, CardBody, CardHeader, Heading, Text, Icon, Box } from '@chakra-ui/react';
+import { Box, Heading, Text, Icon } from '@chakra-ui/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -16,122 +15,123 @@ interface AnimatedFeatureCardProps {
   description: string;
   index: number;
   color?: string;
+  gradient?: string;
+  glowColor?: string;
 }
+
+const colorMap: Record<string, { icon: string; glow: string; gradient: string; border: string; bg: string }> = {
+  'cyan.500': {
+    icon: 'cyan.400',
+    glow: 'rgba(6,182,212,0.2)',
+    gradient: 'linear(135deg, cyan.600, cyan.400)',
+    border: 'rgba(6,182,212,0.2)',
+    bg: 'rgba(6,182,212,0.06)',
+  },
+  'violet.500': {
+    icon: 'violet.400',
+    glow: 'rgba(139,92,246,0.2)',
+    gradient: 'linear(135deg, violet.600, violet.400)',
+    border: 'rgba(139,92,246,0.2)',
+    bg: 'rgba(139,92,246,0.06)',
+  },
+  'emerald.500': {
+    icon: 'emerald.400',
+    glow: 'rgba(16,185,129,0.2)',
+    gradient: 'linear(135deg, emerald.600, emerald.400)',
+    border: 'rgba(16,185,129,0.2)',
+    bg: 'rgba(16,185,129,0.06)',
+  },
+  'amber.500': {
+    icon: 'amber.400',
+    glow: 'rgba(245,158,11,0.2)',
+    gradient: 'linear(135deg, amber.600, amber.400)',
+    border: 'rgba(245,158,11,0.2)',
+    bg: 'rgba(245,158,11,0.06)',
+  },
+  'rose.500': {
+    icon: 'rose.400',
+    glow: 'rgba(244,63,94,0.2)',
+    gradient: 'linear(135deg, rose.600, rose.400)',
+    border: 'rgba(244,63,94,0.2)',
+    bg: 'rgba(244,63,94,0.06)',
+  },
+};
+
+// Cycle through palette when color doesn't match
+const palette = Object.keys(colorMap);
 
 export default function AnimatedFeatureCard({
   icon,
   title,
   description,
   index,
-  color = 'dental.500',
+  color = 'cyan.500',
 }: AnimatedFeatureCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const iconRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const iconBoxRef = useRef<HTMLDivElement>(null);
+
+  const colorKey = colorMap[color] ? color : palette[index % palette.length];
+  const colors = colorMap[colorKey];
 
   useEffect(() => {
     if (!cardRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Initial state
-      gsap.set([iconRef.current, titleRef.current, descriptionRef.current], {
-        opacity: 0,
-        y: 30,
-      });
+      gsap.set(cardRef.current, { opacity: 0, y: 50, scale: 0.95 });
 
-      gsap.set(cardRef.current, {
-        y: 50,
-        opacity: 0,
-        scale: 0.9,
-      });
-
-      // Create scroll trigger animation
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 80%',
-          end: 'bottom 20%',
-          toggleActions: 'play none none reverse',
+      const st = ScrollTrigger.create({
+        trigger: cardRef.current,
+        start: 'top 85%',
+        onEnter: () => {
+          gsap.to(cardRef.current, {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            delay: index * 0.08,
+          });
         },
       });
 
-      // Animate card entrance
-      tl.to(cardRef.current, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: index * 0.1, // Stagger animation
-      });
+      // Hover: 3D tilt + icon scale
+      const card = cardRef.current;
+      const iconBox = iconBoxRef.current;
 
-      // Animate icon with bounce
-      tl.to(iconRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'back.out(1.7)',
-      }, '-=0.4');
-
-      // Animate title
-      tl.to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-      }, '-=0.3');
-
-      // Animate description
-      tl.to(descriptionRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-      }, '-=0.2');
-
-      // Hover animation
-      const handleMouseEnter = () => {
-        gsap.to(cardRef.current, {
-          y: -10,
-          scale: 1.02,
-          duration: 0.3,
+      const handleMove = (e: MouseEvent) => {
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 12;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * -12;
+        gsap.to(card, {
+          rotateY: x,
+          rotateX: y,
+          duration: 0.4,
           ease: 'power2.out',
-        });
-        gsap.to(iconRef.current, {
-          scale: 1.1,
-          rotation: 5,
-          duration: 0.3,
-          ease: 'power2.out',
+          transformPerspective: 800,
         });
       };
 
-      const handleMouseLeave = () => {
-        gsap.to(cardRef.current, {
-          y: 0,
-          scale: 1,
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-        gsap.to(iconRef.current, {
-          scale: 1,
-          rotation: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        });
+      const handleEnter = () => {
+        gsap.to(card, { y: -8, scale: 1.02, duration: 0.3, ease: 'power2.out' });
+        gsap.to(iconBox, { scale: 1.15, rotation: 5, duration: 0.3, ease: 'back.out(2)' });
       };
 
-      const cardElement = cardRef.current;
-      if (cardElement) {
-        cardElement.addEventListener('mouseenter', handleMouseEnter);
-        cardElement.addEventListener('mouseleave', handleMouseLeave);
-      }
+      const handleLeave = () => {
+        gsap.to(card, {
+          y: 0, scale: 1, rotateX: 0, rotateY: 0,
+          duration: 0.5, ease: 'power2.out',
+        });
+        gsap.to(iconBox, { scale: 1, rotation: 0, duration: 0.3, ease: 'power2.out' });
+      };
+
+      card?.addEventListener('mousemove', handleMove);
+      card?.addEventListener('mouseenter', handleEnter);
+      card?.addEventListener('mouseleave', handleLeave);
 
       return () => {
-        if (cardElement) {
-          cardElement.removeEventListener('mouseenter', handleMouseEnter);
-          cardElement.removeEventListener('mouseleave', handleMouseLeave);
-        }
+        card?.removeEventListener('mousemove', handleMove);
+        card?.removeEventListener('mouseenter', handleEnter);
+        card?.removeEventListener('mouseleave', handleLeave);
+        st.kill();
       };
     }, cardRef);
 
@@ -139,58 +139,85 @@ export default function AnimatedFeatureCard({
   }, [index]);
 
   return (
-    <Card
+    <Box
       ref={cardRef}
       h="full"
-      borderRadius="2xl"
-      boxShadow="xl"
-      border="1px solid"
-      borderColor="gray.100"
-      bg="white"
-      overflow="hidden"
+      p={7}
       position="relative"
+      borderRadius="2xl"
+      bg="rgba(15,22,41,0.5)"
+      border="1px solid rgba(255,255,255,0.07)"
+      backdropFilter="blur(16px)"
+      overflow="hidden"
+      cursor="default"
+      style={{ transformStyle: 'preserve-3d' }}
       _before={{
         content: '""',
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        height: '4px',
-        bgGradient: `linear(90deg, ${color} 0%, ${color.replace('500', '300')} 100%)`,
+        h: '2px',
+        bgGradient: colors.gradient,
+        borderTopRadius: '2xl',
+      }}
+      transition="border-color 0.3s ease, box-shadow 0.3s ease"
+      _hover={{
+        borderColor: colors.border,
+        boxShadow: `0 24px 60px ${colors.glow}, 0 0 0 1px ${colors.border}`,
       }}
     >
-      <CardHeader pb={2}>
-        <Box
-          ref={iconRef}
-          p={4}
-          borderRadius="xl"
-          bg={`${color.replace('500', '50')}`}
-          display="inline-flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Icon as={icon} boxSize={8} color={color} />
-        </Box>
-      </CardHeader>
-      <CardBody pt={0}>
-        <Heading
-          ref={titleRef}
-          size="lg"
-          mb={3}
-          color="gray.800"
-          fontWeight="bold"
-        >
-          {title}
-        </Heading>
-        <Text
-          ref={descriptionRef}
-          color="gray.600"
-          lineHeight="tall"
-          fontSize="md"
-        >
-          {description}
-        </Text>
-      </CardBody>
-    </Card>
+      {/* Glow blob */}
+      <Box
+        position="absolute"
+        top="-40%"
+        right="-20%"
+        w="200px"
+        h="200px"
+        borderRadius="full"
+        bg={colors.glow}
+        filter="blur(50px)"
+        pointerEvents="none"
+        opacity={0.8}
+      />
+
+      {/* Icon */}
+      <Box
+        ref={iconBoxRef}
+        display="inline-flex"
+        alignItems="center"
+        justifyContent="center"
+        p={4}
+        borderRadius="xl"
+        bg={colors.bg}
+        border="1px solid"
+        borderColor={colors.border}
+        mb={5}
+        position="relative"
+      >
+        <Icon as={icon} boxSize={7} color={colors.icon} />
+      </Box>
+
+      {/* Content */}
+      <Heading
+        as="h3"
+        fontSize="xl"
+        fontWeight="700"
+        color="white"
+        mb={3}
+        letterSpacing="-0.02em"
+        position="relative"
+      >
+        {title}
+      </Heading>
+      <Text
+        color="whiteAlpha.500"
+        lineHeight="1.75"
+        fontSize="sm"
+        position="relative"
+      >
+        {description}
+      </Text>
+    </Box>
   );
 }

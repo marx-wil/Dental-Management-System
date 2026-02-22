@@ -18,7 +18,6 @@ import {
   Badge,
   Avatar,
   Icon,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -30,24 +29,24 @@ import {
   Input,
   Textarea,
   useDisclosure,
-  SimpleGrid,
   Flex,
 } from "@chakra-ui/react";
 import {
-  FiCalendar,
   FiClock,
-  FiUser,
   FiPlus,
-  FiEdit,
-  FiTrash2,
   FiChevronLeft,
   FiChevronRight,
-  FiMapPin,
-  FiPhone,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
+import {
+  darkCard,
+  darkInput,
+  darkModalContent,
+  darkOverlay,
+  darkLabel,
+} from "../styles/dashboard";
 
 interface Appointment {
   id: string;
@@ -256,8 +255,8 @@ export default function AppointmentsPage() {
   >([]);
   const [selectedDayDate, setSelectedDayDate] = useState<Date | null>(null);
 
-  const cardBg = useColorModeValue("white", "gray.800");
-  const calendarDayBorderColor = useColorModeValue("gray.200", "gray.600");
+  const calendarDayBorderColor = "rgba(255,255,255,0.07)";
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -302,12 +301,10 @@ export default function AppointmentsPage() {
 
     const days = [];
 
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null);
     }
 
-    // Add all days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day));
     }
@@ -321,15 +318,12 @@ export default function AppointmentsPage() {
     if (dayAppointments.length === 0) {
       return;
     } else if (dayAppointments.length === 1) {
-      // Single appointment - redirect to details page
       router.push(`/appointments/${dayAppointments[0].id}`);
     } else if (dayAppointments.length >= 3) {
-      // Multiple appointments - show modal
       setSelectedDayAppointments(dayAppointments);
       setSelectedDayDate(date);
       onModalOpen();
     } else {
-      // 2 appointments - still show modal for consistency
       setSelectedDayAppointments(dayAppointments);
       setSelectedDayDate(date);
       onModalOpen();
@@ -385,7 +379,7 @@ export default function AppointmentsPage() {
 
     return (
       <VStack spacing={4} align="stretch">
-        <Heading size="md" textAlign="center">
+        <Heading size="md" textAlign="center" color="white">
           {monthName}
         </Heading>
 
@@ -398,6 +392,7 @@ export default function AppointmentsPage() {
                 fontWeight="bold"
                 textAlign="center"
                 py={{ base: 1, md: 2 }}
+                color="whiteAlpha.500"
               >
                 {day}
               </Text>
@@ -423,23 +418,28 @@ export default function AppointmentsPage() {
                   h={{ base: "60px", md: "80px" }}
                   p={{ base: 1, md: 2 }}
                   border="1px solid"
-                  borderColor={calendarDayBorderColor}
+                  borderColor={
+                    isToday
+                      ? "cyan.500"
+                      : calendarDayBorderColor
+                  }
                   borderRadius="md"
                   cursor="pointer"
                   bg={
                     isToday
-                      ? "dental.50"
+                      ? "rgba(6,182,212,0.12)"
                       : isSelected
-                      ? "dental.100"
+                      ? "rgba(6,182,212,0.08)"
                       : "transparent"
                   }
-                  _hover={{ bg: "dental.50" }}
+                  _hover={{ bg: "rgba(255,255,255,0.04)" }}
                   position="relative"
                   onClick={() => handleDateClick(day)}
                 >
                   <Text
                     fontSize={{ base: "xs", md: "sm" }}
                     fontWeight={isToday ? "bold" : "normal"}
+                    color="white"
                   >
                     {day.getDate()}
                   </Text>
@@ -447,7 +447,7 @@ export default function AppointmentsPage() {
                   {/* Appointment indicators */}
                   {dayAppointments.length > 0 && (
                     <VStack spacing={0.5} align="stretch" mt={0.5}>
-                      {dayAppointments.slice(0, 2).map((appointment, idx) => (
+                      {dayAppointments.slice(0, 2).map((appointment) => (
                         <Box
                           key={appointment.id}
                           h={{ base: "3px", md: "4px" }}
@@ -491,7 +491,8 @@ export default function AppointmentsPage() {
                       h={{ base: "6px", md: "8px" }}
                       bg="orange.500"
                       borderRadius="full"
-                      border="1px solid white"
+                      border="1px solid"
+                      borderColor="rgba(255,255,255,0.2)"
                     />
                   )}
                 </Box>
@@ -511,18 +512,23 @@ export default function AppointmentsPage() {
             {/* Header */}
             <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box flex="1" minW="200px">
-                <Heading size={{ base: "md", md: "lg" }}>
+                <Heading size={{ base: "md", md: "lg" }} color="white">
                   Appointment Management
                 </Heading>
-                <Text color="gray.600" fontSize={{ base: "sm", md: "md" }}>
+                <Text color="whiteAlpha.500" fontSize={{ base: "sm", md: "md" }}>
                   Schedule and manage patient appointments
                 </Text>
               </Box>
-              <Flex justifyContent={"flex-end"}>
+              <Flex justifyContent="flex-end">
                 <Button
                   w={{ base: "full", md: "fit-content" }}
                   leftIcon={<FiPlus />}
-                  colorScheme="dental"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{
+                    bgGradient: "linear(135deg, cyan.400, violet.400)",
+                    boxShadow: "0 0 20px rgba(6,182,212,0.3)",
+                  }}
                   onClick={onOpen}
                   size={{ base: "sm", md: "md" }}
                   minW={{ base: "full", md: "fit-content" }}
@@ -536,7 +542,7 @@ export default function AppointmentsPage() {
             </Grid>
 
             {/* Controls */}
-            <Card bg={cardBg}>
+            <Card {...darkCard}>
               <CardBody>
                 <VStack spacing={4} align="stretch">
                   {/* Month Navigation */}
@@ -544,6 +550,9 @@ export default function AppointmentsPage() {
                     <Button
                       size="sm"
                       variant="outline"
+                      borderColor="rgba(255,255,255,0.15)"
+                      color="whiteAlpha.700"
+                      _hover={{ bg: "rgba(255,255,255,0.07)" }}
                       onClick={() => {
                         const newDate = new Date(selectedDate);
                         newDate.setMonth(selectedDate.getMonth() - 1);
@@ -557,6 +566,7 @@ export default function AppointmentsPage() {
                       textAlign="center"
                       fontWeight="medium"
                       fontSize={{ base: "sm", md: "md" }}
+                      color="white"
                     >
                       {selectedDate.toLocaleDateString("en-US", {
                         year: "numeric",
@@ -566,6 +576,9 @@ export default function AppointmentsPage() {
                     <Button
                       size="sm"
                       variant="outline"
+                      borderColor="rgba(255,255,255,0.15)"
+                      color="whiteAlpha.700"
+                      _hover={{ bg: "rgba(255,255,255,0.07)" }}
                       onClick={() => {
                         const newDate = new Date(selectedDate);
                         newDate.setMonth(selectedDate.getMonth() + 1);
@@ -585,6 +598,9 @@ export default function AppointmentsPage() {
                     <Button
                       size="sm"
                       variant="outline"
+                      borderColor="rgba(255,255,255,0.15)"
+                      color="whiteAlpha.700"
+                      _hover={{ bg: "rgba(255,255,255,0.07)" }}
                       onClick={() => setSelectedDate(new Date())}
                       minW="80px"
                       w={{ base: "full", lg: "auto" }}
@@ -593,10 +609,10 @@ export default function AppointmentsPage() {
                     </Button>
 
                     <Select
+                      {...darkInput}
                       value={selectedDentist}
                       onChange={(e) => setSelectedDentist(e.target.value)}
                       w={{ base: "full", sm: "200px" }}
-                      // maxW=""
                     >
                       <option value="all">All Dentists</option>
                       {mockDentists.map((dentist) => (
@@ -611,10 +627,10 @@ export default function AppointmentsPage() {
             </Card>
 
             {/* Calendar View */}
-            <Card bg={cardBg}>
+            <Card {...darkCard}>
               <CardHeader>
-                <Heading size="md">Appointment Calendar</Heading>
-                <Text fontSize="sm" color="gray.600">
+                <Heading size="md" color="white">Appointment Calendar</Heading>
+                <Text fontSize="sm" color="whiteAlpha.500">
                   Click on a date to view appointments. Days with 3+
                   appointments show an orange indicator.
                 </Text>
@@ -644,9 +660,16 @@ export default function AppointmentsPage() {
             onClose={onModalClose}
             size={{ base: "full", md: "lg" }}
           >
-            <ModalOverlay />
-            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
-              <ModalHeader>
+            <ModalOverlay {...darkOverlay} />
+            <ModalContent
+              {...darkModalContent}
+              mx={{ base: 0, md: 4 }}
+              my={{ base: 0, md: 4 }}
+            >
+              <ModalHeader
+                color="white"
+                borderBottom="1px solid rgba(255,255,255,0.07)"
+              >
                 <Text fontSize={{ base: "sm", md: "md" }}>
                   Appointments for{" "}
                   {selectedDayDate?.toLocaleDateString("en-US", {
@@ -657,16 +680,20 @@ export default function AppointmentsPage() {
                   })}
                 </Text>
               </ModalHeader>
-              <ModalCloseButton />
+              <ModalCloseButton color="whiteAlpha.700" />
               <ModalBody pb={6}>
                 <VStack spacing={3} align="stretch">
                   {selectedDayAppointments.map((appointment) => (
                     <Card
                       key={appointment.id}
-                      bg={cardBg}
+                      bg="rgba(255,255,255,0.04)"
+                      border="1px solid"
+                      borderColor="rgba(255,255,255,0.07)"
+                      borderRadius="xl"
                       cursor="pointer"
                       onClick={() => handleAppointmentClick(appointment)}
-                      _hover={{ bg: "dental.50" }}
+                      _hover={{ bg: "rgba(255,255,255,0.07)", borderColor: "rgba(255,255,255,0.12)" }}
+                      transition="all 0.15s ease"
                     >
                       <CardBody p={{ base: 3, md: 4 }}>
                         <HStack
@@ -684,12 +711,13 @@ export default function AppointmentsPage() {
                                 <Text
                                   fontWeight="medium"
                                   fontSize={{ base: "sm", md: "md" }}
+                                  color="white"
                                 >
                                   {appointment.patientName}
                                 </Text>
                                 <Text
                                   fontSize={{ base: "xs", md: "sm" }}
-                                  color="gray.600"
+                                  color="whiteAlpha.500"
                                 >
                                   {appointment.dentistName}
                                 </Text>
@@ -697,8 +725,8 @@ export default function AppointmentsPage() {
                             </HStack>
                             <HStack spacing={4} wrap="wrap">
                               <HStack spacing={1}>
-                                <Icon as={FiClock} boxSize={3} />
-                                <Text fontSize={{ base: "xs", md: "sm" }}>
+                                <Icon as={FiClock} boxSize={3} color="whiteAlpha.500" />
+                                <Text fontSize={{ base: "xs", md: "sm" }} color="whiteAlpha.700">
                                   {formatTime(appointment.time)}
                                 </Text>
                               </HStack>
@@ -713,14 +741,14 @@ export default function AppointmentsPage() {
                             </HStack>
                             <Text
                               fontSize={{ base: "xs", md: "sm" }}
-                              color="gray.600"
+                              color="whiteAlpha.500"
                             >
                               {appointment.type}
                             </Text>
                           </VStack>
                           <Icon
                             as={FiChevronRight}
-                            color="gray.400"
+                            color="whiteAlpha.400"
                             boxSize={4}
                           />
                         </HStack>
@@ -806,20 +834,21 @@ function AppointmentModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
+      <ModalOverlay {...darkOverlay} />
+      <ModalContent {...darkModalContent}>
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
           {appointment ? "Edit Appointment" : "Schedule New Appointment"}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="whiteAlpha.700" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Patient</FormLabel>
+                    <FormLabel {...darkLabel}>Patient</FormLabel>
                     <Select
+                      {...darkInput}
                       value={formData.patientId}
                       onChange={(e) =>
                         setFormData({ ...formData, patientId: e.target.value })
@@ -836,8 +865,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Dentist</FormLabel>
+                    <FormLabel {...darkLabel}>Dentist</FormLabel>
                     <Select
+                      {...darkInput}
                       value={formData.dentistId}
                       onChange={(e) =>
                         setFormData({ ...formData, dentistId: e.target.value })
@@ -854,8 +884,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel {...darkLabel}>Date</FormLabel>
                     <Input
+                      {...darkInput}
                       type="date"
                       value={formData.date}
                       onChange={(e) =>
@@ -866,8 +897,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Time</FormLabel>
+                    <FormLabel {...darkLabel}>Time</FormLabel>
                     <Input
+                      {...darkInput}
                       type="time"
                       value={formData.time}
                       onChange={(e) =>
@@ -878,8 +910,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Duration (minutes)</FormLabel>
+                    <FormLabel {...darkLabel}>Duration (minutes)</FormLabel>
                     <Select
+                      {...darkInput}
                       value={formData.duration}
                       onChange={(e) =>
                         setFormData({
@@ -898,8 +931,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel {...darkLabel}>Type</FormLabel>
                     <Select
+                      {...darkInput}
                       value={formData.type}
                       onChange={(e) =>
                         setFormData({ ...formData, type: e.target.value })
@@ -918,8 +952,9 @@ function AppointmentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel {...darkLabel}>Status</FormLabel>
                     <Select
+                      {...darkInput}
                       value={formData.status}
                       onChange={(e) =>
                         setFormData({
@@ -939,8 +974,9 @@ function AppointmentModal({
               </Grid>
 
               <FormControl>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel {...darkLabel}>Notes</FormLabel>
                 <Textarea
+                  {...darkInput}
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
@@ -950,10 +986,24 @@ function AppointmentModal({
               </FormControl>
 
               <HStack spacing={4} w="full" justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  borderColor="rgba(255,255,255,0.15)"
+                  color="whiteAlpha.700"
+                  _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" colorScheme="dental">
+                <Button
+                  type="submit"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{
+                    bgGradient: "linear(135deg, cyan.400, violet.400)",
+                    boxShadow: "0 0 20px rgba(6,182,212,0.3)",
+                  }}
+                >
                   {appointment ? "Update Appointment" : "Schedule Appointment"}
                 </Button>
               </HStack>

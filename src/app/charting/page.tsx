@@ -18,11 +18,6 @@ import {
   Badge,
   Icon,
   useColorModeValue,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -34,17 +29,12 @@ import {
   Input,
   Textarea,
   useDisclosure,
-  Divider,
   Flex,
 } from "@chakra-ui/react";
 import {
   FiUser,
   FiPlus,
-  FiEdit,
-  FiSave,
   FiTrash2,
-  FiCalendar,
-  FiActivity,
 } from "react-icons/fi";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -274,11 +264,12 @@ export default function ChartingPage() {
       (condition) => condition.toothNumber === toothNumber
     );
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getToothTreatment = (toothNumber: string) => {
     return treatmentPlans.find((plan) => plan.toothNumber === toothNumber);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getToothColor = (toothNumber: string) => {
     const state = toothStates[toothNumber];
     if (state && dentalConditions[state as keyof typeof dentalConditions]) {
@@ -328,6 +319,7 @@ export default function ChartingPage() {
     onClose();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
@@ -341,6 +333,7 @@ export default function ChartingPage() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
@@ -623,7 +616,8 @@ export default function ChartingPage() {
                             py={{ base: 0.5, sm: 1, md: 2 }}
                             minW="auto"
                           >
-                            <Text display={{ base: "none", sm: "inline" }}>
+                            <Text display={{ base: "none", sm: "inline" }} 
+                            color="white">
                               Reset All
                             </Text>
                             <Text display={{ base: "inline", sm: "none" }}>

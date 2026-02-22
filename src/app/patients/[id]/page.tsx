@@ -16,7 +16,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  useColorModeValue,
   Tabs,
   TabList,
   TabPanels,
@@ -24,7 +23,6 @@ import {
   TabPanel,
   Flex,
   Icon,
-  Divider,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -57,8 +55,6 @@ import {
   FiMail,
   FiMapPin,
   FiUser,
-  FiActivity,
-  FiPlus,
   FiSave,
   FiTrash2,
   FiHeart,
@@ -407,6 +403,24 @@ const dentalConditions = {
   Healthy: { color: "gray.200", bg: "gray.200" },
 };
 
+const darkInput = {
+  bg: "rgba(255,255,255,0.05)",
+  border: "1.5px solid",
+  borderColor: "rgba(255,255,255,0.1)",
+  color: "white",
+  _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+  _hover: { borderColor: "rgba(255,255,255,0.2)" },
+  _placeholder: { color: "whiteAlpha.300" },
+};
+
+const darkFlushedInput = {
+  variant: "flushed" as const,
+  color: "white",
+  borderColor: "rgba(255,255,255,0.2)",
+  _focus: { borderColor: "cyan.400" },
+  _placeholder: { color: "whiteAlpha.300" },
+};
+
 export default function PatientDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -420,6 +434,7 @@ export default function PatientDetailsPage() {
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans);
   const [dentalProcedures, setDentalProcedures] = useState<DentalProcedure[]>(mockDentalProcedures);
   const [selectedProcedure, setSelectedProcedure] = useState<DentalProcedure | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isEditingProcedure, setIsEditingProcedure] = useState(false);
   const [editedProcedure, setEditedProcedure] = useState<DentalProcedure | null>(null);
   const [selectedTooth, setSelectedTooth] = useState<string | null>(null);
@@ -441,8 +456,6 @@ export default function PatientDetailsPage() {
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
 
-  const cardBg = useColorModeValue("white", "gray.800");
-
   useEffect(() => {
     // Find patient by ID
     const foundPatient = mockPatients.find(p => p.id === patientId);
@@ -454,17 +467,18 @@ export default function PatientDetailsPage() {
       router.push("/patients");
     }
   }, [patientId, router]);
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getToothCondition = (toothNumber: string) => {
     return toothConditions.find(
       (condition) => condition.toothNumber === toothNumber
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getToothTreatment = (toothNumber: string) => {
     return treatmentPlans.find((plan) => plan.toothNumber === toothNumber);
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getToothColor = (toothNumber: string) => {
     const state = toothStates[toothNumber];
     if (state && dentalConditions[state as keyof typeof dentalConditions]) {
@@ -572,11 +586,11 @@ export default function PatientDetailsPage() {
   const canEditMedicalHistory = () => {
     return user?.role === "admin" || user?.role === "dentist";
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const canEditDentalChart = () => {
     return user?.role === "admin" || user?.role === "dentist";
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const canEditAll = () => {
     return user?.role === "admin" || user?.role === "dentist";
   };
@@ -636,7 +650,7 @@ export default function PatientDetailsPage() {
       <ProtectedRoute allowedRoles={["admin", "dentist", "staff"]}>
         <Layout>
           <Container maxW="7xl" py={8}>
-            <Text>Loading patient details...</Text>
+            <Text color="whiteAlpha.700">Loading patient details...</Text>
           </Container>
         </Layout>
       </ProtectedRoute>
@@ -655,6 +669,8 @@ export default function PatientDetailsPage() {
                 <Button
                   leftIcon={<FiArrowLeft />}
                   variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                   onClick={() => router.push("/patients")}
                 >
                   Back to Patients
@@ -682,26 +698,26 @@ export default function PatientDetailsPage() {
                         onChange={(e) => handleFieldChange("name", e.target.value)}
                         fontSize="lg"
                         fontWeight="bold"
-                        variant="flushed"
+                        {...darkFlushedInput}
                         mb={2}
                       />
                     ) : (
-                      <Heading size="lg">{patient.name}</Heading>
+                      <Heading size="lg" color="white">{patient.name}</Heading>
                     )}
-                    <Text color="gray.600">
+                    <Text color="whiteAlpha.700">
                       {isEditing && canEditPersonalInfo() ? (
                         <HStack spacing={2}>
                           <Select
                             value={editedPatient?.gender || ""}
                             onChange={(e) => handleFieldChange("gender", e.target.value)}
                             size="sm"
-                            variant="flushed"
+                            {...darkFlushedInput}
                             w="auto"
                           >
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                           </Select>
-                          <Text>{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                          <Text color="whiteAlpha.700">{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
                         </HStack>
                       ) : (
                         `${patient.gender}, ${new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old`
@@ -712,7 +728,7 @@ export default function PatientDetailsPage() {
                         value={editedPatient?.status || ""}
                         onChange={(e) => handleFieldChange("status", e.target.value)}
                         size="sm"
-                        variant="flushed"
+                        {...darkFlushedInput}
                         w="auto"
                         mt={1}
                       >
@@ -736,14 +752,17 @@ export default function PatientDetailsPage() {
                     <>
                       <Button 
                         leftIcon={<FiSave />} 
-                        colorScheme="green"
+                        bgGradient="linear(135deg, emerald.500, cyan.500)"
+                        color="white"
                         w={{ base: "full", md: "auto" }}
                         onClick={handleEditToggle}
                       >
                         Save
                       </Button>
                       <Button 
-                        variant="outline"
+                        variant="ghost"
+                        color="whiteAlpha.600"
+                        _hover={{ bg: "rgba(255,255,255,0.07)" }}
                         w={{ base: "full", md: "auto" }}
                         onClick={handleCancelEdit}
                       >
@@ -756,6 +775,9 @@ export default function PatientDetailsPage() {
                         <Button 
                           leftIcon={<FiEdit />} 
                           variant="outline"
+                          borderColor="rgba(255,255,255,0.15)"
+                          color="whiteAlpha.700"
+                          _hover={{ bg: "rgba(255,255,255,0.07)" }}
                           w={{ base: "full", md: "auto" }}
                           onClick={handleEditToggle}
                         >
@@ -764,7 +786,9 @@ export default function PatientDetailsPage() {
                       )}
                       <Button 
                         leftIcon={<FiCalendar />} 
-                        colorScheme="dental"
+                        bgGradient="linear(135deg, cyan.500, purple.500)"
+                        color="white"
+                        _hover={{ bgGradient: "linear(135deg, cyan.400, purple.400)" }}
                         w={{ base: "full", md: "auto" }}
                       >
                         Schedule Appointment
@@ -777,11 +801,35 @@ export default function PatientDetailsPage() {
 
             {/* Patient Information Tabs */}
             <Tabs>
-               <TabList>
-                 <Tab>Personal Information</Tab>
-                 <Tab>Medical History</Tab>
-                 <Tab>Dental Chart</Tab>
-                 <Tab>Dental Procedures</Tab>
+               <TabList borderBottom="1px solid rgba(255,255,255,0.07)">
+                 <Tab
+                   color="whiteAlpha.500"
+                   _selected={{ color: "white", borderColor: "cyan.400" }}
+                   _hover={{ color: "whiteAlpha.800" }}
+                 >
+                   Personal Information
+                 </Tab>
+                 <Tab
+                   color="whiteAlpha.500"
+                   _selected={{ color: "white", borderColor: "cyan.400" }}
+                   _hover={{ color: "whiteAlpha.800" }}
+                 >
+                   Medical History
+                 </Tab>
+                 <Tab
+                   color="whiteAlpha.500"
+                   _selected={{ color: "white", borderColor: "cyan.400" }}
+                   _hover={{ color: "whiteAlpha.800" }}
+                 >
+                   Dental Chart
+                 </Tab>
+                 <Tab
+                   color="whiteAlpha.500"
+                   _selected={{ color: "white", borderColor: "cyan.400" }}
+                   _hover={{ color: "whiteAlpha.800" }}
+                 >
+                   Dental Procedures
+                 </Tab>
                </TabList>
 
               <TabPanels>
@@ -791,62 +839,68 @@ export default function PatientDetailsPage() {
                      {/* Basic Information */}
                      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Contact Information</Heading>
+                             <Heading size="md" color="white">Contact Information</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiPhone} color="gray.500" />
+                                 <Icon as={FiPhone} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.phone || ""}
                                      onChange={(e) => handleFieldChange("phone", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.phone}</Text>
+                                   <Text color="whiteAlpha.700">{patient.phone}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiMail} color="gray.500" />
+                                 <Icon as={FiMail} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.email || ""}
                                      onChange={(e) => handleFieldChange("email", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      type="email"
                                    />
                                  ) : (
-                                   <Text>{patient.email}</Text>
+                                   <Text color="whiteAlpha.700">{patient.email}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3} align="start">
-                                 <Icon as={FiMapPin} color="gray.500" />
+                                 <Icon as={FiMapPin} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.address || ""}
                                      onChange={(e) => handleFieldChange("address", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.address}</Text>
+                                   <Text color="whiteAlpha.700">{patient.address}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiMessageCircle} color="gray.500" />
+                                 <Icon as={FiMessageCircle} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Preferred:</Text>
+                                     <Text color="whiteAlpha.700">Preferred:</Text>
                                      <Select
                                        value={editedPatient?.preferredContactMethod || ""}
                                        onChange={(e) => handleFieldChange("preferredContactMethod", e.target.value)}
                                        size="sm"
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        w="auto"
                                      >
                                        <option value="Phone">Phone</option>
@@ -855,7 +909,7 @@ export default function PatientDetailsPage() {
                                      </Select>
                                    </HStack>
                                  ) : (
-                                   <Text>Preferred: {patient.preferredContactMethod}</Text>
+                                   <Text color="whiteAlpha.700">Preferred: {patient.preferredContactMethod}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -863,66 +917,72 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Personal Details</Heading>
+                             <Heading size="md" color="white">Personal Details</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiUser} color="gray.500" />
+                                 <Icon as={FiUser} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
                                      <Select
                                        value={editedPatient?.gender || ""}
                                        onChange={(e) => handleFieldChange("gender", e.target.value)}
                                        size="sm"
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        w="auto"
                                      >
                                        <option value="Male">Male</option>
                                        <option value="Female">Female</option>
                                      </Select>
-                                     <Text>, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                                     <Text color="whiteAlpha.700">, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
                                    </HStack>
                                  ) : (
-                                   <Text>{patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
+                                   <Text color="whiteAlpha.700">{patient.gender}, {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} years old</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiGlobe} color="gray.500" />
+                                 <Icon as={FiGlobe} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.nationality || ""}
                                      onChange={(e) => handleFieldChange("nationality", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.nationality}</Text>
+                                   <Text color="whiteAlpha.700">{patient.nationality}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiMessageCircle} color="gray.500" />
+                                 <Icon as={FiMessageCircle} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.language || ""}
                                      onChange={(e) => handleFieldChange("language", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>Languages: {patient.language}</Text>
+                                   <Text color="whiteAlpha.700">Languages: {patient.language}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiUsers} color="gray.500" />
+                                 <Icon as={FiUsers} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Select
                                      value={editedPatient?.maritalStatus || ""}
                                      onChange={(e) => handleFieldChange("maritalStatus", e.target.value)}
                                      size="sm"
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      w="auto"
                                    >
                                      <option value="Single">Single</option>
@@ -931,20 +991,20 @@ export default function PatientDetailsPage() {
                                      <option value="Widowed">Widowed</option>
                                    </Select>
                                  ) : (
-                                   <Text>{patient.maritalStatus}</Text>
+                                   <Text color="whiteAlpha.700">{patient.maritalStatus}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiBriefcase} color="gray.500" />
+                                 <Icon as={FiBriefcase} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.occupation || ""}
                                      onChange={(e) => handleFieldChange("occupation", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.occupation}</Text>
+                                   <Text color="whiteAlpha.700">{patient.occupation}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -956,36 +1016,42 @@ export default function PatientDetailsPage() {
                      {/* Emergency & Insurance Information */}
                      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Emergency Contact</Heading>
+                             <Heading size="md" color="white">Emergency Contact</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiUser} color="gray.500" />
+                                 <Icon as={FiUser} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.emergencyContact || ""}
                                      onChange={(e) => handleFieldChange("emergencyContact", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.emergencyContact}</Text>
+                                   <Text color="whiteAlpha.700">{patient.emergencyContact}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiPhone} color="gray.500" />
+                                 <Icon as={FiPhone} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.emergencyPhone || ""}
                                      onChange={(e) => handleFieldChange("emergencyPhone", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.emergencyPhone}</Text>
+                                   <Text color="whiteAlpha.700">{patient.emergencyPhone}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -993,53 +1059,59 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Insurance Information</Heading>
+                             <Heading size="md" color="white">Insurance Information</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiShield} color="gray.500" />
+                                 <Icon as={FiShield} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.insuranceProvider || ""}
                                      onChange={(e) => handleFieldChange("insuranceProvider", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.insuranceProvider}</Text>
+                                   <Text color="whiteAlpha.700">{patient.insuranceProvider}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiFileText} color="gray.500" />
+                                 <Icon as={FiFileText} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      value={editedPatient?.insuranceNumber || ""}
                                      onChange={(e) => handleFieldChange("insuranceNumber", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                    />
                                  ) : (
-                                   <Text>{patient.insuranceNumber}</Text>
+                                   <Text color="whiteAlpha.700">{patient.insuranceNumber}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiUser} color="gray.500" />
+                                 <Icon as={FiUser} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Referred by:</Text>
+                                     <Text color="whiteAlpha.700">Referred by:</Text>
                                      <Input
                                        value={editedPatient?.referringDoctor || ""}
                                        onChange={(e) => handleFieldChange("referringDoctor", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        w="auto"
                                      />
                                    </HStack>
                                  ) : (
-                                   <Text>Referred by: {patient.referringDoctor}</Text>
+                                   <Text color="whiteAlpha.700">Referred by: {patient.referringDoctor}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -1051,61 +1123,67 @@ export default function PatientDetailsPage() {
                      {/* Medical & Lifestyle Information */}
                      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Medical Information</Heading>
+                             <Heading size="md" color="white">Medical Information</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiDroplet} color="gray.500" />
+                                 <Icon as={FiDroplet} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Blood Type:</Text>
+                                     <Text color="whiteAlpha.700">Blood Type:</Text>
                                      <Input
                                        value={editedPatient?.bloodType || ""}
                                        onChange={(e) => handleFieldChange("bloodType", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        w="auto"
                                      />
                                    </HStack>
                                  ) : (
-                                   <Text>Blood Type: {patient.bloodType}</Text>
+                                   <Text color="whiteAlpha.700">Blood Type: {patient.bloodType}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3} align="start">
-                                 <Icon as={FiHeart} color="gray.500" />
+                                 <Icon as={FiHeart} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Medications:</Text>
+                                     <Text color="whiteAlpha.700">Medications:</Text>
                                      <Input
                                        value={editedPatient?.medications || ""}
                                        onChange={(e) => handleFieldChange("medications", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        w="auto"
                                      />
                                    </HStack>
                                  ) : (
-                                   <Text>Medications: {patient.medications}</Text>
+                                   <Text color="whiteAlpha.700">Medications: {patient.medications}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3} align="start">
-                                 <Icon as={FiAlertTriangle} color="gray.500" />
+                                 <Icon as={FiAlertTriangle} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Allergies:</Text>
+                                     <Text color="whiteAlpha.700">Allergies:</Text>
                                      <Input
                                        value={editedPatient?.allergies || ""}
                                        onChange={(e) => handleFieldChange("allergies", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        w="auto"
                                      />
                                    </HStack>
                                  ) : (
-                                   <Text>Allergies: {patient.allergies}</Text>
+                                   <Text color="whiteAlpha.700">Allergies: {patient.allergies}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -1113,22 +1191,28 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Lifestyle Information</Heading>
+                             <Heading size="md" color="white">Lifestyle Information</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3}>
-                                 <Icon as={FiZap} color="gray.500" />
+                                 <Icon as={FiZap} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Smoking:</Text>
+                                     <Text color="whiteAlpha.700">Smoking:</Text>
                                      <Select
                                        value={editedPatient?.smokingStatus || ""}
                                        onChange={(e) => handleFieldChange("smokingStatus", e.target.value)}
                                        size="sm"
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        w="auto"
                                      >
                                        <option value="Non-smoker">Non-smoker</option>
@@ -1137,19 +1221,19 @@ export default function PatientDetailsPage() {
                                      </Select>
                                    </HStack>
                                  ) : (
-                                   <Text>Smoking: {patient.smokingStatus}</Text>
+                                   <Text color="whiteAlpha.700">Smoking: {patient.smokingStatus}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiCoffee} color="gray.500" />
+                                 <Icon as={FiCoffee} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Alcohol:</Text>
+                                     <Text color="whiteAlpha.700">Alcohol:</Text>
                                      <Select
                                        value={editedPatient?.alcoholConsumption || ""}
                                        onChange={(e) => handleFieldChange("alcoholConsumption", e.target.value)}
                                        size="sm"
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        w="auto"
                                      >
                                        <option value="None">None</option>
@@ -1158,19 +1242,19 @@ export default function PatientDetailsPage() {
                                      </Select>
                                    </HStack>
                                  ) : (
-                                   <Text>Alcohol: {patient.alcoholConsumption}</Text>
+                                   <Text color="whiteAlpha.700">Alcohol: {patient.alcoholConsumption}</Text>
                                  )}
                                </HStack>
                                <HStack spacing={3}>
-                                 <Icon as={FiExercise} color="gray.500" />
+                                 <Icon as={FiExercise} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <HStack spacing={2}>
-                                     <Text>Exercise:</Text>
+                                     <Text color="whiteAlpha.700">Exercise:</Text>
                                      <Select
                                        value={editedPatient?.exerciseFrequency || ""}
                                        onChange={(e) => handleFieldChange("exerciseFrequency", e.target.value)}
                                        size="sm"
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        w="auto"
                                      >
                                        <option value="None">None</option>
@@ -1180,7 +1264,7 @@ export default function PatientDetailsPage() {
                                      </Select>
                                    </HStack>
                                  ) : (
-                                   <Text>Exercise: {patient.exerciseFrequency}</Text>
+                                   <Text color="whiteAlpha.700">Exercise: {patient.exerciseFrequency}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -1190,48 +1274,70 @@ export default function PatientDetailsPage() {
                      </Grid>
 
                      {/* Appointment Information */}
-                     <Card bg={cardBg}>
+                     <Card
+                       bg="rgba(15,22,41,0.7)"
+                       border="1px solid"
+                       borderColor="rgba(255,255,255,0.07)"
+                       backdropFilter="blur(12px)"
+                       borderRadius="2xl"
+                     >
                        <CardHeader>
-                         <Heading size="md">Appointment Information</Heading>
+                         <Heading size="md" color="white">Appointment Information</Heading>
                        </CardHeader>
                        <CardBody>
                          <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Last Visit</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Last Visit
+                               </Text>
                                <HStack spacing={2}>
-                                 <Icon as={FiCalendar} color="gray.500" />
+                                 <Icon as={FiCalendar} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      type="date"
                                      value={editedPatient?.lastVisit ? new Date(editedPatient.lastVisit).toISOString().split('T')[0] : ""}
                                      onChange={(e) => handleFieldChange("lastVisit", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      w="auto"
                                    />
                                  ) : (
-                                   <Text>{new Date(patient.lastVisit).toLocaleDateString()}</Text>
+                                   <Text color="whiteAlpha.700">{new Date(patient.lastVisit).toLocaleDateString()}</Text>
                                  )}
                                </HStack>
                              </VStack>
                            </GridItem>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Next Appointment</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Next Appointment
+                               </Text>
                                <HStack spacing={2}>
-                                 <Icon as={FiCalendar} color="gray.500" />
+                                 <Icon as={FiCalendar} color="whiteAlpha.400" />
                                  {isEditing && canEditPersonalInfo() ? (
                                    <Input
                                      type="date"
                                      value={editedPatient?.nextAppointment ? new Date(editedPatient.nextAppointment).toISOString().split('T')[0] : ""}
                                      onChange={(e) => handleFieldChange("nextAppointment", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      w="auto"
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.nextAppointment
                                        ? new Date(patient.nextAppointment).toLocaleDateString()
                                        : "None scheduled"}
@@ -1242,7 +1348,15 @@ export default function PatientDetailsPage() {
                            </GridItem>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Status</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Status
+                               </Text>
                                <Badge
                                  colorScheme={patient.status === "Active" ? "green" : "gray"}
                                  size="lg"
@@ -1263,44 +1377,64 @@ export default function PatientDetailsPage() {
                      {/* Current Medical Status */}
                      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Current Medical History</Heading>
+                             <Heading size="md" color="white">Current Medical History</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Medical Conditions
                                  </Text>
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.medicalHistory || ""}
                                      onChange={(e) => handleFieldChange("medicalHistory", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter medical conditions..."
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.medicalHistory || "No significant medical history recorded"}
                                    </Text>
                                  )}
                                </Box>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Chronic Conditions
                                  </Text>
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.chronicConditions || ""}
                                      onChange={(e) => handleFieldChange("chronicConditions", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter chronic conditions..."
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.chronicConditions || "None"}
                                    </Text>
                                  )}
@@ -1310,14 +1444,27 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Allergies & Medications</Heading>
+                             <Heading size="md" color="white">Allergies &amp; Medications</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Known Allergies
                                  </Text>
                                  <HStack spacing={2} align="start">
@@ -1326,18 +1473,25 @@ export default function PatientDetailsPage() {
                                      <Textarea
                                        value={editedPatient?.allergies || ""}
                                        onChange={(e) => handleFieldChange("allergies", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        placeholder="Enter known allergies..."
                                        flex={1}
                                      />
                                    ) : (
-                                     <Text>{patient.allergies || "No known allergies"}</Text>
+                                     <Text color="whiteAlpha.700">{patient.allergies || "No known allergies"}</Text>
                                    )}
                                  </HStack>
                                </Box>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Current Medications
                                  </Text>
                                  <HStack spacing={2} align="start">
@@ -1346,13 +1500,13 @@ export default function PatientDetailsPage() {
                                      <Textarea
                                        value={editedPatient?.medications || ""}
                                        onChange={(e) => handleFieldChange("medications", e.target.value)}
-                                       variant="flushed"
+                                       {...darkFlushedInput}
                                        size="sm"
                                        placeholder="Enter current medications..."
                                        flex={1}
                                      />
                                    ) : (
-                                     <Text>{patient.medications || "None"}</Text>
+                                     <Text color="whiteAlpha.700">{patient.medications || "None"}</Text>
                                    )}
                                  </HStack>
                                </Box>
@@ -1365,25 +1519,31 @@ export default function PatientDetailsPage() {
                      {/* Family History & Previous Surgeries */}
                      <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Family Medical History</Heading>
+                             <Heading size="md" color="white">Family Medical History</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3} align="start">
-                                 <Icon as={FiUsers} color="gray.500" />
+                                 <Icon as={FiUsers} color="whiteAlpha.400" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.familyHistory || ""}
                                      onChange={(e) => handleFieldChange("familyHistory", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter family medical history..."
                                      flex={1}
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.familyHistory || "No significant family medical history recorded"}
                                    </Text>
                                  )}
@@ -1393,25 +1553,31 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Previous Surgeries & Procedures</Heading>
+                             <Heading size="md" color="white">Previous Surgeries &amp; Procedures</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack align="stretch" spacing={4}>
                                <HStack spacing={3} align="start">
-                                 <Icon as={FiScissors} color="gray.500" />
+                                 <Icon as={FiScissors} color="whiteAlpha.400" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.previousSurgeries || ""}
                                      onChange={(e) => handleFieldChange("previousSurgeries", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter previous surgeries..."
                                      flex={1}
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.previousSurgeries || "No previous surgeries recorded"}
                                    </Text>
                                  )}
@@ -1423,23 +1589,37 @@ export default function PatientDetailsPage() {
                      </Grid>
 
                      {/* Lifestyle & Health Factors */}
-                     <Card bg={cardBg}>
+                     <Card
+                       bg="rgba(15,22,41,0.7)"
+                       border="1px solid"
+                       borderColor="rgba(255,255,255,0.07)"
+                       backdropFilter="blur(12px)"
+                       borderRadius="2xl"
+                     >
                        <CardHeader>
-                         <Heading size="md">Lifestyle & Health Factors</Heading>
+                         <Heading size="md" color="white">Lifestyle &amp; Health Factors</Heading>
                        </CardHeader>
                        <CardBody>
                          <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={6}>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Smoking Status</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Smoking Status
+                               </Text>
                                <HStack spacing={2}>
-                                 <Icon as={FiZap} color="gray.500" />
+                                 <Icon as={FiZap} color="whiteAlpha.400" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Select
                                      value={editedPatient?.smokingStatus || ""}
                                      onChange={(e) => handleFieldChange("smokingStatus", e.target.value)}
                                      size="sm"
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      w="auto"
                                    >
                                      <option value="Non-smoker">Non-smoker</option>
@@ -1447,22 +1627,30 @@ export default function PatientDetailsPage() {
                                      <option value="Current smoker">Current smoker</option>
                                    </Select>
                                  ) : (
-                                   <Text>{patient.smokingStatus}</Text>
+                                   <Text color="whiteAlpha.700">{patient.smokingStatus}</Text>
                                  )}
                                </HStack>
                              </VStack>
                            </GridItem>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Alcohol Consumption</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Alcohol Consumption
+                               </Text>
                                <HStack spacing={2}>
-                                 <Icon as={FiCoffee} color="gray.500" />
+                                 <Icon as={FiCoffee} color="whiteAlpha.400" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Select
                                      value={editedPatient?.alcoholConsumption || ""}
                                      onChange={(e) => handleFieldChange("alcoholConsumption", e.target.value)}
                                      size="sm"
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      w="auto"
                                    >
                                      <option value="None">None</option>
@@ -1470,22 +1658,30 @@ export default function PatientDetailsPage() {
                                      <option value="Regular">Regular</option>
                                    </Select>
                                  ) : (
-                                   <Text>{patient.alcoholConsumption}</Text>
+                                   <Text color="whiteAlpha.700">{patient.alcoholConsumption}</Text>
                                  )}
                                </HStack>
                              </VStack>
                            </GridItem>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Exercise Frequency</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Exercise Frequency
+                               </Text>
                                <HStack spacing={2}>
-                                 <Icon as={FiExercise} color="gray.500" />
+                                 <Icon as={FiExercise} color="whiteAlpha.400" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Select
                                      value={editedPatient?.exerciseFrequency || ""}
                                      onChange={(e) => handleFieldChange("exerciseFrequency", e.target.value)}
                                      size="sm"
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      w="auto"
                                    >
                                      <option value="None">None</option>
@@ -1494,26 +1690,34 @@ export default function PatientDetailsPage() {
                                      <option value="Heavy">Heavy</option>
                                    </Select>
                                  ) : (
-                                   <Text>{patient.exerciseFrequency}</Text>
+                                   <Text color="whiteAlpha.700">{patient.exerciseFrequency}</Text>
                                  )}
                                </HStack>
                              </VStack>
                            </GridItem>
                            <GridItem>
                              <VStack align="start" spacing={2}>
-                               <Text fontWeight="medium" color="gray.600">Blood Type</Text>
+                               <Text
+                                 color="whiteAlpha.500"
+                                 fontSize="xs"
+                                 fontWeight="600"
+                                 textTransform="uppercase"
+                                 letterSpacing="0.06em"
+                               >
+                                 Blood Type
+                               </Text>
                                <HStack spacing={2}>
                                  <Icon as={FiDroplet} color="red.500" />
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Input
                                      value={editedPatient?.bloodType || ""}
                                      onChange={(e) => handleFieldChange("bloodType", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      w="auto"
                                    />
                                  ) : (
-                                   <Text>{patient.bloodType}</Text>
+                                   <Text color="whiteAlpha.700">{patient.bloodType}</Text>
                                  )}
                                </HStack>
                              </VStack>
@@ -1523,28 +1727,41 @@ export default function PatientDetailsPage() {
                      </Card>
 
                      {/* Dental-Specific Medical Information */}
-                     <Card bg={cardBg}>
+                     <Card
+                       bg="rgba(15,22,41,0.7)"
+                       border="1px solid"
+                       borderColor="rgba(255,255,255,0.07)"
+                       backdropFilter="blur(12px)"
+                       borderRadius="2xl"
+                     >
                        <CardHeader>
-                         <Heading size="md">Dental-Specific Medical Information</Heading>
+                         <Heading size="md" color="white">Dental-Specific Medical Information</Heading>
                        </CardHeader>
                        <CardBody>
                          <VStack align="stretch" spacing={4}>
                            <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
                              <GridItem>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Dental Allergies
                                  </Text>
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.allergies || ""}
                                      onChange={(e) => handleFieldChange("allergies", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter dental-specific allergies..."
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.allergies.includes("Latex") || patient.allergies.includes("Penicillin") 
                                        ? patient.allergies 
                                        : "No dental-specific allergies noted"}
@@ -1554,19 +1771,26 @@ export default function PatientDetailsPage() {
                              </GridItem>
                              <GridItem>
                                <Box>
-                                 <Text fontWeight="medium" mb={2} color="gray.600">
+                                 <Text
+                                   color="whiteAlpha.500"
+                                   fontSize="xs"
+                                   fontWeight="600"
+                                   textTransform="uppercase"
+                                   letterSpacing="0.06em"
+                                   mb={2}
+                                 >
                                    Medications Affecting Dental Care
                                  </Text>
                                  {isEditing && canEditMedicalHistory() ? (
                                    <Textarea
                                      value={editedPatient?.medications || ""}
                                      onChange={(e) => handleFieldChange("medications", e.target.value)}
-                                     variant="flushed"
+                                     {...darkFlushedInput}
                                      size="sm"
                                      placeholder="Enter medications affecting dental care..."
                                    />
                                  ) : (
-                                   <Text>
+                                   <Text color="whiteAlpha.700">
                                      {patient.medications.includes("blood") || patient.medications.includes("anticoagulant")
                                        ? "Please consult with physician before dental procedures"
                                        : "No medications affecting dental care noted"}
@@ -1576,19 +1800,26 @@ export default function PatientDetailsPage() {
                              </GridItem>
                            </Grid>
                            <Box>
-                             <Text fontWeight="medium" mb={2} color="gray.600">
+                             <Text
+                               color="whiteAlpha.500"
+                               fontSize="xs"
+                               fontWeight="600"
+                               textTransform="uppercase"
+                               letterSpacing="0.06em"
+                               mb={2}
+                             >
                                Special Considerations
                              </Text>
                              {isEditing && canEditMedicalHistory() ? (
                                <Textarea
                                  value={editedPatient?.chronicConditions || ""}
                                  onChange={(e) => handleFieldChange("chronicConditions", e.target.value)}
-                                 variant="flushed"
+                                 {...darkFlushedInput}
                                  size="sm"
                                  placeholder="Enter special considerations for dental care..."
                                />
                              ) : (
-                               <Text>
+                               <Text color="whiteAlpha.700">
                                  {patient.chronicConditions.includes("Diabetes") || patient.chronicConditions.includes("Hypertension")
                                    ? "Patient has chronic conditions that may affect dental treatment. Monitor blood pressure and blood sugar levels during procedures."
                                    : "No special considerations noted"}
@@ -1605,12 +1836,18 @@ export default function PatientDetailsPage() {
                  <TabPanel>
                    <VStack spacing={6} align="stretch">
                      {/* Dental Chart */}
-                     <Card bg={cardBg}>
+                     <Card
+                       bg="rgba(15,22,41,0.7)"
+                       border="1px solid"
+                       borderColor="rgba(255,255,255,0.07)"
+                       backdropFilter="blur(12px)"
+                       borderRadius="2xl"
+                     >
                        <CardHeader pb={{ base: 2, sm: 4 }}>
-                         <Heading size={{ base: "sm", sm: "md" }}>
+                         <Heading size={{ base: "sm", sm: "md" }} color="white">
                            Dental Chart
                          </Heading>
-                         <Text fontSize={{ base: "xs", sm: "sm" }} color="gray.600">
+                         <Text fontSize={{ base: "xs", sm: "sm" }} color="whiteAlpha.500">
                            Click on a tooth to add conditions or view details
                          </Text>
                        </CardHeader>
@@ -1619,7 +1856,8 @@ export default function PatientDetailsPage() {
                            {/* Chart Container */}
                            <Box
                              w="100%"
-                             bg="white"
+                             bg="rgba(255,255,255,0.04)"
+                             border="1px solid rgba(255,255,255,0.07)"
                              borderRadius="md"
                              p={{ base: 1, sm: 2, md: 3, lg: 4 }}
                              position="relative"
@@ -1646,7 +1884,7 @@ export default function PatientDetailsPage() {
                                          lg: "sm",
                                        }}
                                        fontWeight="bold"
-                                       color="gray.600"
+                                       color="whiteAlpha.500"
                                        minW={{
                                          base: "25px",
                                          sm: "30px",
@@ -1678,15 +1916,15 @@ export default function PatientDetailsPage() {
                                          height: "4px",
                                        },
                                        "&::-webkit-scrollbar-track": {
-                                         background: "#F7FAFC",
+                                         background: "#0f1629",
                                          borderRadius: "2px",
                                        },
                                        "&::-webkit-scrollbar-thumb": {
-                                         background: "#A0AEC0",
+                                         background: "rgba(255,255,255,0.2)",
                                          borderRadius: "2px",
                                        },
                                        "&::-webkit-scrollbar-thumb:hover": {
-                                         background: "#718096",
+                                         background: "rgba(255,255,255,0.35)",
                                        },
                                      }}
                                    >
@@ -1723,13 +1961,13 @@ export default function PatientDetailsPage() {
                                            cursor="pointer"
                                            border="1px solid"
                                            borderColor={
-                                             isSelected ? "blue.500" : "gray.300"
+                                             isSelected ? "cyan.400" : "gray.300"
                                            }
                                            shadow="sm"
                                            _hover={{
                                              transform: "scale(1.05)",
                                              shadow: "md",
-                                             borderColor: "blue.400",
+                                             borderColor: "cyan.400",
                                            }}
                                            transition="all 0.2s"
                                            onClick={() =>
@@ -1796,12 +2034,12 @@ export default function PatientDetailsPage() {
                                    />
                                  }
                                  onClick={resetAllTeeth}
-                                 fontSize={{ base: "8px", sm: "xs", md: "sm" }}
-                                 px={{ base: 1, sm: 2, md: 3 }}
+                                 px={{ base: 1.5, sm: 2, md: 3 }}
                                  py={{ base: 0.5, sm: 1, md: 2 }}
                                  minW="auto"
                                >
-                                 <Text display={{ base: "none", sm: "inline" }}>
+                                 <Text display={{ base: "none", sm: "inline" }} 
+                                 color="white">
                                    Reset All
                                  </Text>
                                  <Text display={{ base: "inline", sm: "none" }}>
@@ -1813,17 +2051,16 @@ export default function PatientDetailsPage() {
 
                            {/* Dental Chart Legend - Bottom Position (Normal Flow) */}
                            <Box
-                             bg="white"
+                             bg="rgba(255,255,255,0.04)"
                              p={{ base: 2, sm: 3, md: 4 }}
                              borderRadius="md"
-                             shadow="md"
-                             border="1px solid"
-                             borderColor="gray.200"
+                             border="1px solid rgba(255,255,255,0.07)"
                              w="100%"
                            >
                              <Text
                                fontSize={{ base: "xs", sm: "sm", md: "md" }}
                                fontWeight="bold"
+                               color="whiteAlpha.700"
                                mb={{ base: 2, sm: 3 }}
                                textAlign="center"
                              >
@@ -1857,6 +2094,7 @@ export default function PatientDetailsPage() {
                                          sm: "xs",
                                          md: "sm",
                                        }}
+                                       color="whiteAlpha.700"
                                        lineHeight="1.2"
                                        isTruncated
                                      >
@@ -1874,9 +2112,15 @@ export default function PatientDetailsPage() {
                      {/* Treatment Plans and Tooth Conditions */}
                      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={6}>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Treatment Plans</Heading>
+                             <Heading size="md" color="white">Treatment Plans</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack spacing={4} align="stretch">
@@ -1884,12 +2128,12 @@ export default function PatientDetailsPage() {
                                  <Box
                                    key={plan.id}
                                    p={4}
-                                   border="1px solid"
-                                   borderColor="gray.200"
-                                   borderRadius="md"
+                                   bg="rgba(255,255,255,0.04)"
+                                   border="1px solid rgba(255,255,255,0.07)"
+                                   borderRadius="xl"
                                  >
                                    <HStack justify="space-between" mb={2}>
-                                     <Text fontWeight="medium">
+                                     <Text fontWeight="medium" color="white">
                                        Tooth #{plan.toothNumber}
                                      </Text>
                                      <Badge
@@ -1899,14 +2143,14 @@ export default function PatientDetailsPage() {
                                        {plan.priority}
                                      </Badge>
                                    </HStack>
-                                   <Text fontSize="sm" color="gray.600" mb={2}>
+                                   <Text fontSize="sm" color="whiteAlpha.700" mb={2}>
                                      {plan.treatment}
                                    </Text>
                                    <HStack justify="space-between" mb={2}>
-                                     <Text fontSize="sm">
+                                     <Text fontSize="sm" color="whiteAlpha.700">
                                        ₱{plan.estimatedCost.toLocaleString()}
                                      </Text>
-                                     <Text fontSize="sm">
+                                     <Text fontSize="sm" color="whiteAlpha.700">
                                        {plan.estimatedDuration} min
                                      </Text>
                                    </HStack>
@@ -1923,9 +2167,15 @@ export default function PatientDetailsPage() {
                          </Card>
                        </GridItem>
                        <GridItem>
-                         <Card bg={cardBg}>
+                         <Card
+                           bg="rgba(15,22,41,0.7)"
+                           border="1px solid"
+                           borderColor="rgba(255,255,255,0.07)"
+                           backdropFilter="blur(12px)"
+                           borderRadius="2xl"
+                         >
                            <CardHeader>
-                             <Heading size="md">Tooth Conditions History</Heading>
+                             <Heading size="md" color="white">Tooth Conditions History</Heading>
                            </CardHeader>
                            <CardBody>
                              <VStack spacing={4} align="stretch">
@@ -1933,22 +2183,22 @@ export default function PatientDetailsPage() {
                                  <Box
                                    key={condition.id}
                                    p={4}
-                                   border="1px solid"
-                                   borderColor="gray.200"
-                                   borderRadius="md"
+                                   bg="rgba(255,255,255,0.04)"
+                                   border="1px solid rgba(255,255,255,0.07)"
+                                   borderRadius="xl"
                                  >
                                    <HStack justify="space-between" mb={2}>
-                                     <Text fontWeight="medium">
+                                     <Text fontWeight="medium" color="white">
                                        Tooth #{condition.toothNumber}
                                      </Text>
-                                     <Text fontSize="sm" color="gray.600">
+                                     <Text fontSize="sm" color="whiteAlpha.500">
                                        {new Date(condition.date).toLocaleDateString()}
                                      </Text>
                                    </HStack>
-                                   <Text fontSize="sm" color="gray.600" mb={2}>
+                                   <Text fontSize="sm" color="whiteAlpha.700" mb={2}>
                                      {condition.condition} - {condition.dentist}
                                    </Text>
-                                   <Text fontSize="sm">{condition.notes}</Text>
+                                   <Text fontSize="sm" color="whiteAlpha.700">{condition.notes}</Text>
                                  </Box>
                                ))}
                              </VStack>
@@ -1962,57 +2212,162 @@ export default function PatientDetailsPage() {
                  {/* Dental Procedures Tab */}
                  <TabPanel>
                    <VStack spacing={6} align="stretch">
-                     <Card bg={cardBg}>
+                     <Card
+                       bg="rgba(15,22,41,0.7)"
+                       border="1px solid"
+                       borderColor="rgba(255,255,255,0.07)"
+                       backdropFilter="blur(12px)"
+                       borderRadius="2xl"
+                     >
                        <CardHeader>
-                         <Heading size="md">Dental Procedures History</Heading>
-                         <Text fontSize="sm" color="gray.600">
+                         <Heading size="md" color="white">Dental Procedures History</Heading>
+                         <Text fontSize="sm" color="whiteAlpha.500">
                            Complete history of dental procedures performed on this patient
                          </Text>
                        </CardHeader>
                        <CardBody>
                          <Box overflowX="auto">
-                           <Table variant="simple" size="sm">
+                           <Table variant="unstyled" size="sm">
                              <Thead>
                                <Tr>
-                                 <Th>Date</Th>
-                                 <Th>Procedure</Th>
-                                 <Th>Tooth</Th>
-                                 <Th>Dentist</Th>
-                                 <Th>Status</Th>
-                                 <Th>Cost</Th>
-                                 <Th>Follow-up</Th>
-                                 <Th>Notes</Th>
-                                 <Th>Actions</Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Date
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Procedure
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Tooth
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Dentist
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Status
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Cost
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Follow-up
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Notes
+                                 </Th>
+                                 <Th
+                                   bg="rgba(255,255,255,0.03)"
+                                   color="whiteAlpha.500"
+                                   borderColor="rgba(255,255,255,0.06)"
+                                   fontSize="xs"
+                                   fontWeight="700"
+                                   letterSpacing="0.08em"
+                                 >
+                                   Actions
+                                 </Th>
                                </Tr>
                              </Thead>
                              <Tbody>
                                {dentalProcedures
                                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                                  .map((procedure) => (
-                                   <Tr key={procedure.id}>
-                                     <Td>
+                                   <Tr
+                                     key={procedure.id}
+                                     _hover={{ bg: "rgba(255,255,255,0.03)" }}
+                                   >
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Text fontSize="sm">
                                          {new Date(procedure.date).toLocaleDateString()}
                                        </Text>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Text fontWeight="medium" fontSize="sm">
                                          {procedure.procedureName}
                                        </Text>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        {procedure.toothNumber ? (
                                          <Badge colorScheme="blue" variant="subtle" fontSize="xs">
                                            {procedure.toothNumber}
                                          </Badge>
                                        ) : (
-                                         <Text fontSize="sm" color="gray.500">N/A</Text>
+                                         <Text fontSize="sm" color="whiteAlpha.500">N/A</Text>
                                        )}
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Text fontSize="sm">{procedure.dentist}</Text>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Badge
                                          colorScheme={
                                            procedure.status === "Completed"
@@ -2027,49 +2382,73 @@ export default function PatientDetailsPage() {
                                          {procedure.status}
                                        </Badge>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Text fontSize="sm" fontWeight="medium">
                                          ₱{procedure.cost.toLocaleString()}
                                        </Text>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        {procedure.followUpRequired ? (
                                          <VStack spacing={1} align="start">
                                            <Badge colorScheme="orange" variant="subtle" fontSize="xs">
                                              Required
                                            </Badge>
                                            {procedure.followUpDate && (
-                                             <Text fontSize="xs" color="gray.600">
+                                             <Text fontSize="xs" color="whiteAlpha.500">
                                                {new Date(procedure.followUpDate).toLocaleDateString()}
                                              </Text>
                                            )}
                                          </VStack>
                                        ) : (
-                                         <Text fontSize="sm" color="gray.500">None</Text>
+                                         <Text fontSize="sm" color="whiteAlpha.500">None</Text>
                                        )}
                                      </Td>
-                                     <Td>
-                                       <Text fontSize="sm" color="gray.600" maxW="200px" isTruncated>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
+                                       <Text fontSize="sm" color="whiteAlpha.700" maxW="200px" isTruncated>
                                          {procedure.notes}
                                        </Text>
                                      </Td>
-                                     <Td>
+                                     <Td
+                                       color="whiteAlpha.800"
+                                       borderColor="rgba(255,255,255,0.05)"
+                                     >
                                        <Menu>
                                          <MenuButton
                                            as={IconButton}
                                            icon={<FiMoreVertical />}
                                            variant="ghost"
+                                           color="whiteAlpha.600"
+                                           _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                                            size="sm"
                                          />
-                                         <MenuList>
+                                         <MenuList
+                                           bg="#0f1629"
+                                           border="1px solid rgba(255,255,255,0.1)"
+                                           boxShadow="0 16px 40px rgba(0,0,0,0.5)"
+                                         >
                                            <MenuItem
                                              icon={<FiEye />}
+                                             bg="transparent"
+                                             color="whiteAlpha.800"
+                                             _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                                              onClick={() => handleViewProcedure(procedure)}
                                            >
                                              View Details
                                            </MenuItem>
                                            <MenuItem
                                              icon={<FiEdit />}
+                                             bg="transparent"
+                                             color="whiteAlpha.800"
+                                             _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                                              onClick={() => handleEditProcedure(procedure)}
                                            >
                                              Edit Record
@@ -2077,8 +2456,10 @@ export default function PatientDetailsPage() {
                                            {user?.role === "admin" && (
                                              <MenuItem
                                                icon={<FiTrash2 />}
+                                               bg="transparent"
+                                               color="red.400"
+                                               _hover={{ bg: "rgba(244,63,94,0.1)" }}
                                                onClick={() => handleDeleteProcedure(procedure)}
-                                               color="red.500"
                                              >
                                                Delete Record
                                              </MenuItem>
@@ -2093,28 +2474,34 @@ export default function PatientDetailsPage() {
                          </Box>
                          
                          {/* Summary Statistics */}
-                         <Box mt={6} p={4} bg="gray.50" borderRadius="md">
+                         <Box
+                           mt={6}
+                           p={4}
+                           bg="rgba(255,255,255,0.04)"
+                           border="1px solid rgba(255,255,255,0.07)"
+                           borderRadius="xl"
+                         >
                            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4}>
                              <GridItem>
                                <VStack align="start" spacing={1}>
-                                 <Text fontSize="sm" color="gray.600">Total Procedures</Text>
-                                 <Text fontSize="lg" fontWeight="bold">
+                                 <Text fontSize="sm" color="whiteAlpha.500">Total Procedures</Text>
+                                 <Text fontSize="lg" fontWeight="bold" color="white">
                                    {dentalProcedures.length}
                                  </Text>
                                </VStack>
                              </GridItem>
                              <GridItem>
                                <VStack align="start" spacing={1}>
-                                 <Text fontSize="sm" color="gray.600">Total Cost</Text>
-                                 <Text fontSize="lg" fontWeight="bold" color="green.600">
+                                 <Text fontSize="sm" color="whiteAlpha.500">Total Cost</Text>
+                                 <Text fontSize="lg" fontWeight="bold" color="green.400">
                                    ₱{dentalProcedures.reduce((sum, proc) => sum + proc.cost, 0).toLocaleString()}
                                  </Text>
                                </VStack>
                              </GridItem>
                              <GridItem>
                                <VStack align="start" spacing={1}>
-                                 <Text fontSize="sm" color="gray.600">Completed</Text>
-                                 <Text fontSize="lg" fontWeight="bold" color="green.600">
+                                 <Text fontSize="sm" color="whiteAlpha.500">Completed</Text>
+                                 <Text fontSize="lg" fontWeight="bold" color="green.400">
                                    {dentalProcedures.filter(proc => proc.status === "Completed").length}
                                  </Text>
                                </VStack>
@@ -2133,28 +2520,67 @@ export default function PatientDetailsPage() {
           {/* Procedure Modals */}
           {/* View Procedure Modal */}
           <Modal isOpen={isViewModalOpen} onClose={onViewModalClose} size="lg">
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Procedure Details</ModalHeader>
-              <ModalCloseButton />
+            <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+            <ModalContent
+              bg="#0f1629"
+              border="1px solid rgba(255,255,255,0.08)"
+              boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+              borderRadius="2xl"
+            >
+              <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
+                Procedure Details
+              </ModalHeader>
+              <ModalCloseButton color="whiteAlpha.600" />
               <ModalBody pb={6}>
                 {selectedProcedure && (
                   <VStack spacing={4} align="stretch">
                     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Procedure Name</Text>
-                        <Text>{selectedProcedure.procedureName}</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Procedure Name
+                        </Text>
+                        <Text color="white">{selectedProcedure.procedureName}</Text>
                       </Box>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Date</Text>
-                        <Text>{new Date(selectedProcedure.date).toLocaleDateString()}</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Date
+                        </Text>
+                        <Text color="white">{new Date(selectedProcedure.date).toLocaleDateString()}</Text>
                       </Box>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Dentist</Text>
-                        <Text>{selectedProcedure.dentist}</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Dentist
+                        </Text>
+                        <Text color="white">{selectedProcedure.dentist}</Text>
                       </Box>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Status</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Status
+                        </Text>
                         <Badge
                           colorScheme={
                             selectedProcedure.status === "Completed"
@@ -2169,29 +2595,61 @@ export default function PatientDetailsPage() {
                         </Badge>
                       </Box>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Cost</Text>
-                        <Text fontWeight="bold" color="green.600">
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Cost
+                        </Text>
+                        <Text fontWeight="bold" color="green.400">
                           ₱{selectedProcedure.cost.toLocaleString()}
                         </Text>
                       </Box>
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Tooth Number</Text>
-                        <Text>{selectedProcedure.toothNumber || "N/A"}</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Tooth Number
+                        </Text>
+                        <Text color="white">{selectedProcedure.toothNumber || "N/A"}</Text>
                       </Box>
                     </Grid>
                     <Box>
-                      <Text fontWeight="medium" color="gray.600">Notes</Text>
-                      <Text>{selectedProcedure.notes}</Text>
+                      <Text
+                        fontSize="xs"
+                        fontWeight="600"
+                        color="whiteAlpha.500"
+                        textTransform="uppercase"
+                        letterSpacing="0.06em"
+                      >
+                        Notes
+                      </Text>
+                      <Text color="white">{selectedProcedure.notes}</Text>
                     </Box>
                     {selectedProcedure.followUpRequired && (
                       <Box>
-                        <Text fontWeight="medium" color="gray.600">Follow-up Information</Text>
+                        <Text
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Follow-up Information
+                        </Text>
                         <VStack align="start" spacing={2}>
                           <Badge colorScheme="orange" variant="subtle">
                             Follow-up Required
                           </Badge>
                           {selectedProcedure.followUpDate && (
-                            <Text>Follow-up Date: {new Date(selectedProcedure.followUpDate).toLocaleDateString()}</Text>
+                            <Text color="white">Follow-up Date: {new Date(selectedProcedure.followUpDate).toLocaleDateString()}</Text>
                           )}
                         </VStack>
                       </Box>
@@ -2204,41 +2662,84 @@ export default function PatientDetailsPage() {
 
           {/* Edit Procedure Modal */}
           <Modal isOpen={isEditModalOpen} onClose={onEditModalClose} size="lg">
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Edit Procedure</ModalHeader>
-              <ModalCloseButton />
+            <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+            <ModalContent
+              bg="#0f1629"
+              border="1px solid rgba(255,255,255,0.08)"
+              boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+              borderRadius="2xl"
+            >
+              <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
+                Edit Procedure
+              </ModalHeader>
+              <ModalCloseButton color="whiteAlpha.600" />
               <ModalBody pb={6}>
                 {editedProcedure && (
                   <VStack spacing={4} align="stretch">
                     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                       <FormControl>
-                        <FormLabel>Procedure Name</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Procedure Name
+                        </FormLabel>
                         <Input
                           value={editedProcedure.procedureName}
                           onChange={(e) => handleProcedureFieldChange("procedureName", e.target.value)}
+                          {...darkInput}
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel>Date</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Date
+                        </FormLabel>
                         <Input
                           type="date"
                           value={editedProcedure.date}
                           onChange={(e) => handleProcedureFieldChange("date", e.target.value)}
+                          {...darkInput}
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel>Dentist</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Dentist
+                        </FormLabel>
                         <Input
                           value={editedProcedure.dentist}
                           onChange={(e) => handleProcedureFieldChange("dentist", e.target.value)}
+                          {...darkInput}
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Status
+                        </FormLabel>
                         <Select
                           value={editedProcedure.status}
                           onChange={(e) => handleProcedureFieldChange("status", e.target.value)}
+                          {...darkInput}
                         >
                           <option value="Completed">Completed</option>
                           <option value="In Progress">In Progress</option>
@@ -2246,35 +2747,71 @@ export default function PatientDetailsPage() {
                         </Select>
                       </FormControl>
                       <FormControl>
-                        <FormLabel>Cost (₱)</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Cost (₱)
+                        </FormLabel>
                         <Input
                           type="number"
                           value={editedProcedure.cost}
                           onChange={(e) => handleProcedureFieldChange("cost", e.target.value)}
+                          {...darkInput}
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel>Tooth Number</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Tooth Number
+                        </FormLabel>
                         <Input
                           value={editedProcedure.toothNumber || ""}
                           onChange={(e) => handleProcedureFieldChange("toothNumber", e.target.value)}
                           placeholder="Optional"
+                          {...darkInput}
                         />
                       </FormControl>
                     </Grid>
                     <FormControl>
-                      <FormLabel>Notes</FormLabel>
+                      <FormLabel
+                        fontSize="xs"
+                        fontWeight="600"
+                        color="whiteAlpha.500"
+                        textTransform="uppercase"
+                        letterSpacing="0.06em"
+                      >
+                        Notes
+                      </FormLabel>
                       <Textarea
                         value={editedProcedure.notes}
                         onChange={(e) => handleProcedureFieldChange("notes", e.target.value)}
                         rows={3}
+                        {...darkInput}
                       />
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Follow-up Required</FormLabel>
+                      <FormLabel
+                        fontSize="xs"
+                        fontWeight="600"
+                        color="whiteAlpha.500"
+                        textTransform="uppercase"
+                        letterSpacing="0.06em"
+                      >
+                        Follow-up Required
+                      </FormLabel>
                       <Select
                         value={editedProcedure.followUpRequired ? "true" : "false"}
                         onChange={(e) => handleProcedureFieldChange("followUpRequired", e.target.value === "true")}
+                        {...darkInput}
                       >
                         <option value="false">No</option>
                         <option value="true">Yes</option>
@@ -2282,16 +2819,30 @@ export default function PatientDetailsPage() {
                     </FormControl>
                     {editedProcedure.followUpRequired && (
                       <FormControl>
-                        <FormLabel>Follow-up Date</FormLabel>
+                        <FormLabel
+                          fontSize="xs"
+                          fontWeight="600"
+                          color="whiteAlpha.500"
+                          textTransform="uppercase"
+                          letterSpacing="0.06em"
+                        >
+                          Follow-up Date
+                        </FormLabel>
                         <Input
                           type="date"
                           value={editedProcedure.followUpDate || ""}
                           onChange={(e) => handleProcedureFieldChange("followUpDate", e.target.value)}
+                          {...darkInput}
                         />
                       </FormControl>
                     )}
                     <HStack spacing={3} justify="flex-end">
-                      <Button variant="outline" onClick={onEditModalClose}>
+                      <Button
+                        variant="ghost"
+                        color="whiteAlpha.600"
+                        _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                        onClick={onEditModalClose}
+                      >
                         Cancel
                       </Button>
                       <Button colorScheme="blue" onClick={handleSaveProcedure}>
@@ -2306,22 +2857,34 @@ export default function PatientDetailsPage() {
 
           {/* Delete Procedure Modal */}
           <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} size="md">
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Delete Procedure</ModalHeader>
-              <ModalCloseButton />
+            <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+            <ModalContent
+              bg="#0f1629"
+              border="1px solid rgba(255,255,255,0.08)"
+              boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+              borderRadius="2xl"
+            >
+              <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
+                Delete Procedure
+              </ModalHeader>
+              <ModalCloseButton color="whiteAlpha.600" />
               <ModalBody pb={6}>
                 {selectedProcedure && (
                   <VStack spacing={4} align="stretch">
-                    <Text>
+                    <Text color="whiteAlpha.700">
                       Are you sure you want to delete the procedure &quot;{selectedProcedure.procedureName}&quot; 
                       performed on {new Date(selectedProcedure.date).toLocaleDateString()}?
                     </Text>
-                    <Text color="red.500" fontSize="sm">
+                    <Text color="red.400" fontSize="sm">
                       This action cannot be undone.
                     </Text>
                     <HStack spacing={3} justify="flex-end">
-                      <Button variant="outline" onClick={onDeleteModalClose}>
+                      <Button
+                        variant="ghost"
+                        color="whiteAlpha.600"
+                        _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                        onClick={onDeleteModalClose}
+                      >
                         Cancel
                       </Button>
                       <Button colorScheme="red" onClick={handleConfirmDelete}>
@@ -2409,26 +2972,51 @@ function ToothModal({
     });
   };
 
+  const darkInputModal = {
+    bg: "rgba(255,255,255,0.05)",
+    border: "1.5px solid",
+    borderColor: "rgba(255,255,255,0.1)",
+    color: "white",
+    _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+    _hover: { borderColor: "rgba(255,255,255,0.2)" },
+    _placeholder: { color: "whiteAlpha.300" },
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+      <ModalContent
+        bg="#0f1629"
+        border="1px solid rgba(255,255,255,0.08)"
+        boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+        borderRadius="2xl"
+      >
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
           {type === "condition" ? "Add Tooth Condition" : "Add Treatment Plan"} - Tooth {toothNumber}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="whiteAlpha.600" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               {type === "condition" ? (
                 <>
                   <FormControl isRequired>
-                    <FormLabel>Condition</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Condition
+                    </FormLabel>
                     <Select
                       value={formData.condition}
                       onChange={(e) =>
                         setFormData({ ...formData, condition: e.target.value })
                       }
+                      {...darkInputModal}
+                      backgroundColor="#0f1629"
                     >
                       <option value="">Select condition</option>
                       <option value="Decayed">Decayed</option>
@@ -2445,17 +3033,34 @@ function ToothModal({
               ) : (
                 <>
                   <FormControl isRequired>
-                    <FormLabel>Treatment</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Treatment
+                    </FormLabel>
                     <Input
                       value={formData.treatment}
                       onChange={(e) =>
                         setFormData({ ...formData, treatment: e.target.value })
                       }
                       placeholder="Enter treatment"
+                      {...darkInputModal}
                     />
                   </FormControl>
                   <FormControl isRequired>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Priority
+                    </FormLabel>
                     <Select
                       value={formData.priority}
                       onChange={(e) =>
@@ -2464,6 +3069,7 @@ function ToothModal({
                           priority: e.target.value as "high" | "medium" | "low",
                         })
                       }
+                      {...darkInputModal}
                     >
                       <option value="high">High</option>
                       <option value="medium">Medium</option>
@@ -2471,7 +3077,15 @@ function ToothModal({
                     </Select>
                   </FormControl>
                   <FormControl isRequired>
-                    <FormLabel>Estimated Cost (₱)</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Estimated Cost (₱)
+                    </FormLabel>
                     <Input
                       type="number"
                       value={formData.estimatedCost}
@@ -2481,10 +3095,19 @@ function ToothModal({
                           estimatedCost: parseInt(e.target.value) || 0,
                         })
                       }
+                      {...darkInputModal}
                     />
                   </FormControl>
                   <FormControl isRequired>
-                    <FormLabel>Estimated Duration (minutes)</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Estimated Duration (minutes)
+                    </FormLabel>
                     <Input
                       type="number"
                       value={formData.estimatedDuration}
@@ -2494,10 +3117,19 @@ function ToothModal({
                           estimatedDuration: parseInt(e.target.value) || 60,
                         })
                       }
+                      {...darkInputModal}
                     />
                   </FormControl>
                   <FormControl isRequired>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel
+                      fontSize="xs"
+                      fontWeight="600"
+                      color="whiteAlpha.500"
+                      textTransform="uppercase"
+                      letterSpacing="0.06em"
+                    >
+                      Status
+                    </FormLabel>
                     <Select
                       value={formData.status}
                       onChange={(e) =>
@@ -2506,6 +3138,7 @@ function ToothModal({
                           status: e.target.value as "planned" | "in-progress" | "completed",
                         })
                       }
+                      {...darkInputModal}
                     >
                       <option value="planned">Planned</option>
                       <option value="in-progress">In Progress</option>
@@ -2515,21 +3148,41 @@ function ToothModal({
                 </>
               )}
               <FormControl>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel
+                  fontSize="xs"
+                  fontWeight="600"
+                  color="whiteAlpha.500"
+                  textTransform="uppercase"
+                  letterSpacing="0.06em"
+                >
+                  Notes
+                </FormLabel>
                 <Textarea
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
                   placeholder="Enter notes"
+                  {...darkInputModal}
                 />
               </FormControl>
             </VStack>
             <Flex justify="flex-end" mt={6} gap={3}>
-              <Button variant="outline" onClick={onClose}>
+              <Button
+                variant="ghost"
+                color="whiteAlpha.600"
+                _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                onClick={onClose}
+              >
                 Cancel
               </Button>
-              <Button type="submit" colorScheme="dental" leftIcon={<FiSave />}>
+              <Button
+                type="submit"
+                bgGradient="linear(135deg, cyan.500, purple.500)"
+                color="white"
+                _hover={{ bgGradient: "linear(135deg, cyan.400, purple.400)" }}
+                leftIcon={<FiSave />}
+              >
                 Save
               </Button>
             </Flex>

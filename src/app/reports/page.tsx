@@ -17,7 +17,6 @@ import {
   CardHeader,
   Badge,
   Icon,
-  useColorModeValue,
   Table,
   Thead,
   Tbody,
@@ -25,7 +24,6 @@ import {
   Th,
   Td,
   Progress,
-  Divider,
   Flex,
 } from "@chakra-ui/react";
 import {
@@ -36,7 +34,6 @@ import {
   FiCalendar,
   FiDollarSign,
   FiDownload,
-  FiFilter,
 } from "react-icons/fi";
 import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -111,11 +108,17 @@ const mockPatientDemographics = [
   { ageGroup: "65+", count: 5, percentage: 4 },
 ];
 
+const cardStyle = {
+  bg: "rgba(15,22,41,0.7)",
+  border: "1px solid",
+  borderColor: "rgba(255,255,255,0.07)",
+  backdropFilter: "blur(12px)",
+  borderRadius: "2xl",
+  _hover: { borderColor: "rgba(255,255,255,0.12)" },
+} as const;
+
 export default function ReportsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("6months");
-  const [selectedReport, setSelectedReport] = useState("revenue");
-
-  const cardBg = useColorModeValue("white", "gray.800");
 
   const currentData = mockReportData[mockReportData.length - 1];
   const previousData = mockReportData[mockReportData.length - 2];
@@ -158,8 +161,8 @@ export default function ReportsPage() {
             {/* Header */}
             <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
-                <Heading size="lg">Reports & Analytics</Heading>
-                <Text color="gray.600">
+                <Heading size="lg" color="white">Reports & Analytics</Heading>
+                <Text color="whiteAlpha.700">
                   Comprehensive clinic performance insights
                 </Text>
               </Box>
@@ -168,6 +171,12 @@ export default function ReportsPage() {
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
                   w="150px"
+                  bg="rgba(255,255,255,0.05)"
+                  border="1.5px solid"
+                  borderColor="rgba(255,255,255,0.1)"
+                  color="white"
+                  _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                  _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
                 >
                   <option value="1month">Last Month</option>
                   <option value="3months">Last 3 Months</option>
@@ -178,12 +187,12 @@ export default function ReportsPage() {
                   w={{ base: "full", md: "fit-content" }}
                   leftIcon={<FiDownload />}
                   variant="outline"
-                  colorScheme="dental"
+                  colorScheme="cyan"
                   size={{ base: "sm", md: "md" }}
                   minW={{ base: "full", md: "fit-content" }}
                 >
-                    Export Report
-                  </Button>
+                  Export Report
+                </Button>
               </Flex>
             </Grid>
 
@@ -193,17 +202,17 @@ export default function ReportsPage() {
               gap={6}
             >
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Total Revenue
                         </Text>
                         <Text
                           fontSize="2xl"
                           fontWeight="bold"
-                          color="green.500"
+                          color="green.400"
                         >
                           ₱{totalRevenue.toLocaleString()}
                         </Text>
@@ -216,36 +225,36 @@ export default function ReportsPage() {
                             }
                             color={
                               parseFloat(revenueGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           />
                           <Text
                             fontSize="sm"
                             color={
                               parseFloat(revenueGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           >
                             {revenueGrowth}%
                           </Text>
                         </HStack>
                       </Box>
-                      <Icon as={FiDollarSign} boxSize={8} color="green.500" />
+                      <Icon as={FiDollarSign} boxSize={8} color="green.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Total Patients
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold">
+                        <Text fontSize="2xl" fontWeight="bold" color="white">
                           {totalPatients}
                         </Text>
                         <HStack spacing={1}>
@@ -257,36 +266,36 @@ export default function ReportsPage() {
                             }
                             color={
                               parseFloat(patientGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           />
                           <Text
                             fontSize="sm"
                             color={
                               parseFloat(patientGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           >
                             {patientGrowth}%
                           </Text>
                         </HStack>
                       </Box>
-                      <Icon as={FiUsers} boxSize={8} color="dental.500" />
+                      <Icon as={FiUsers} boxSize={8} color="cyan.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Total Appointments
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold">
+                        <Text fontSize="2xl" fontWeight="bold" color="white">
                           {totalAppointments}
                         </Text>
                         <HStack spacing={1}>
@@ -298,50 +307,50 @@ export default function ReportsPage() {
                             }
                             color={
                               parseFloat(appointmentGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           />
                           <Text
                             fontSize="sm"
                             color={
                               parseFloat(appointmentGrowth) >= 0
-                                ? "green.500"
-                                : "red.500"
+                                ? "green.400"
+                                : "red.400"
                             }
                           >
                             {appointmentGrowth}%
                           </Text>
                         </HStack>
                       </Box>
-                      <Icon as={FiCalendar} boxSize={8} color="blue.500" />
+                      <Icon as={FiCalendar} boxSize={8} color="blue.400" />
                     </HStack>
                   </CardBody>
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.700">
                           Avg. Revenue/Patient
                         </Text>
                         <Text
                           fontSize="2xl"
                           fontWeight="bold"
-                          color="purple.500"
+                          color="purple.400"
                         >
                           ₱
                           {Math.round(
                             totalRevenue / totalPatients
                           ).toLocaleString()}
                         </Text>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.400">
                           Last 6 months
                         </Text>
                       </Box>
-                      <Icon as={FiBarChart} boxSize={8} color="purple.500" />
+                      <Icon as={FiBarChart} boxSize={8} color="purple.400" />
                     </HStack>
                   </CardBody>
                 </Card>
@@ -351,17 +360,17 @@ export default function ReportsPage() {
             <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={8}>
               {/* Revenue Trend */}
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardHeader>
-                    <Heading size="md">Revenue Trend</Heading>
+                    <Heading size="md" color="white">Revenue Trend</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={4} align="stretch">
-                      {mockReportData.map((data, index) => (
+                      {mockReportData.map((data) => (
                         <Box key={data.period}>
                           <HStack justify="space-between" mb={2}>
-                            <Text fontWeight="medium">{data.period}</Text>
-                            <Text fontWeight="bold">
+                            <Text fontWeight="medium" color="whiteAlpha.800">{data.period}</Text>
+                            <Text fontWeight="bold" color="white">
                               ₱{data.revenue.toLocaleString()}
                             </Text>
                           </HStack>
@@ -373,7 +382,7 @@ export default function ReportsPage() {
                                 )) *
                               100
                             }
-                            colorScheme="green"
+                            colorScheme="emerald"
                             size="sm"
                             borderRadius="md"
                           />
@@ -386,23 +395,23 @@ export default function ReportsPage() {
 
               {/* Patient Demographics */}
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardHeader>
-                    <Heading size="md">Patient Demographics</Heading>
+                    <Heading size="md" color="white">Patient Demographics</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={4} align="stretch">
                       {mockPatientDemographics.map((demo) => (
                         <Box key={demo.ageGroup}>
                           <HStack justify="space-between" mb={2}>
-                            <Text fontSize="sm">{demo.ageGroup} years</Text>
-                            <Text fontSize="sm" fontWeight="medium">
+                            <Text fontSize="sm" color="whiteAlpha.800">{demo.ageGroup} years</Text>
+                            <Text fontSize="sm" fontWeight="medium" color="whiteAlpha.800">
                               {demo.count} ({demo.percentage}%)
                             </Text>
                           </HStack>
                           <Progress
                             value={demo.percentage}
-                            colorScheme="dental"
+                            colorScheme="cyan"
                             size="sm"
                             borderRadius="md"
                           />
@@ -415,19 +424,64 @@ export default function ReportsPage() {
             </Grid>
 
             {/* Treatment Statistics */}
-            <Card bg={cardBg}>
+            <Card {...cardStyle}>
               <CardHeader>
-                <Heading size="md">Treatment Statistics</Heading>
+                <Heading size="md" color="white">Treatment Statistics</Heading>
               </CardHeader>
               <CardBody overflowX="auto">
                 <Table variant="simple">
                   <Thead>
                     <Tr>
-                      <Th>Treatment Type</Th>
-                      <Th>Count</Th>
-                      <Th>Revenue</Th>
-                      <Th>Avg. Price</Th>
-                      <Th>Percentage</Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Treatment Type
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Count
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Revenue
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Avg. Price
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Percentage
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -439,31 +493,34 @@ export default function ReportsPage() {
                       ).toFixed(1);
 
                       return (
-                        <Tr key={treatment.treatment}>
-                          <Td>
-                            <Text fontWeight="medium">
+                        <Tr
+                          key={treatment.treatment}
+                          _hover={{ bg: "rgba(255,255,255,0.03)" }}
+                        >
+                          <Td borderColor="rgba(255,255,255,0.05)">
+                            <Text fontWeight="medium" color="whiteAlpha.800">
                               {treatment.treatment}
                             </Text>
                           </Td>
-                          <Td>
+                          <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                             <Badge colorScheme="blue" variant="subtle">
                               {treatment.count}
                             </Badge>
                           </Td>
-                          <Td>
-                            <Text fontWeight="medium">
+                          <Td borderColor="rgba(255,255,255,0.05)">
+                            <Text fontWeight="medium" color="whiteAlpha.800">
                               ₱{treatment.revenue.toLocaleString()}
                             </Text>
                           </Td>
-                          <Td>
+                          <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                             <Text>₱{avgPrice.toLocaleString()}</Text>
                           </Td>
-                          <Td>
+                          <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                             <HStack spacing={2}>
                               <Text fontSize="sm">{percentage}%</Text>
                               <Progress
                                 value={parseFloat(percentage)}
-                                colorScheme="green"
+                                colorScheme="cyan"
                                 size="sm"
                                 w="60px"
                                 borderRadius="md"
@@ -479,43 +536,100 @@ export default function ReportsPage() {
             </Card>
 
             {/* Monthly Performance */}
-            <Card bg={cardBg}>
+            <Card {...cardStyle}>
               <CardHeader>
-                <Heading size="md">Monthly Performance</Heading>
+                <Heading size="md" color="white">Monthly Performance</Heading>
               </CardHeader>
               <CardBody overflowX="auto">
                 <Table variant="simple">
                   <Thead>
                     <Tr>
-                      <Th>Period</Th>
-                      <Th>Revenue</Th>
-                      <Th>Patients</Th>
-                      <Th>Appointments</Th>
-                      <Th>Treatments</Th>
-                      <Th>Avg. Revenue/Patient</Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Period
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Revenue
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Patients
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Appointments
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Treatments
+                      </Th>
+                      <Th
+                        bg="rgba(255,255,255,0.03)"
+                        color="whiteAlpha.500"
+                        borderColor="rgba(255,255,255,0.06)"
+                        fontSize="xs"
+                        fontWeight="700"
+                        letterSpacing="0.08em"
+                      >
+                        Avg. Revenue/Patient
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {mockReportData.map((data) => (
-                      <Tr key={data.period}>
-                        <Td>
-                          <Text fontWeight="medium">{data.period}</Text>
+                      <Tr
+                        key={data.period}
+                        _hover={{ bg: "rgba(255,255,255,0.03)" }}
+                      >
+                        <Td borderColor="rgba(255,255,255,0.05)">
+                          <Text fontWeight="medium" color="whiteAlpha.800">{data.period}</Text>
                         </Td>
-                        <Td>
-                          <Text fontWeight="medium">
+                        <Td borderColor="rgba(255,255,255,0.05)">
+                          <Text fontWeight="medium" color="whiteAlpha.800">
                             ₱{data.revenue.toLocaleString()}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <Text>{data.patients}</Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <Text>{data.appointments}</Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <Text>{data.treatments}</Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)" color="whiteAlpha.800">
                           <Text>
                             ₱
                             {Math.round(
@@ -536,9 +650,9 @@ export default function ReportsPage() {
               gap={6}
             >
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardHeader>
-                    <Heading size="md">Top Performing Treatments</Heading>
+                    <Heading size="md" color="white">Top Performing Treatments</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={3} align="stretch">
@@ -550,18 +664,19 @@ export default function ReportsPage() {
                             key={treatment.treatment}
                             justify="space-between"
                             p={3}
-                            bg="gray.50"
+                            bg="rgba(255,255,255,0.04)"
+                            border="1px solid rgba(255,255,255,0.06)"
                             borderRadius="md"
                           >
                             <HStack spacing={3}>
                               <Badge colorScheme="green" variant="solid">
                                 #{index + 1}
                               </Badge>
-                              <Text fontWeight="medium">
+                              <Text fontWeight="medium" color="whiteAlpha.800">
                                 {treatment.treatment}
                               </Text>
                             </HStack>
-                            <Text fontWeight="bold" color="green.500">
+                            <Text fontWeight="bold" color="green.400">
                               ₱{treatment.revenue.toLocaleString()}
                             </Text>
                           </HStack>
@@ -572,44 +687,44 @@ export default function ReportsPage() {
               </GridItem>
 
               <GridItem>
-                <Card bg={cardBg}>
+                <Card {...cardStyle}>
                   <CardHeader>
-                    <Heading size="md">Growth Insights</Heading>
+                    <Heading size="md" color="white">Growth Insights</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={4} align="stretch">
-                      <Box p={3} bg="green.50" borderRadius="md">
+                      <Box p={3} bg="rgba(72,187,120,0.1)" borderRadius="md">
                         <HStack justify="space-between">
-                          <Text fontWeight="medium">Revenue Growth</Text>
-                          <Text fontWeight="bold" color="green.500">
+                          <Text fontWeight="medium" color="whiteAlpha.800">Revenue Growth</Text>
+                          <Text fontWeight="bold" color="green.400">
                             +{revenueGrowth}%
                           </Text>
                         </HStack>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           Compared to previous month
                         </Text>
                       </Box>
 
-                      <Box p={3} bg="blue.50" borderRadius="md">
+                      <Box p={3} bg="rgba(66,153,225,0.1)" borderRadius="md">
                         <HStack justify="space-between">
-                          <Text fontWeight="medium">Patient Growth</Text>
-                          <Text fontWeight="bold" color="blue.500">
+                          <Text fontWeight="medium" color="whiteAlpha.800">Patient Growth</Text>
+                          <Text fontWeight="bold" color="blue.400">
                             +{patientGrowth}%
                           </Text>
                         </HStack>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           New patients this month
                         </Text>
                       </Box>
 
-                      <Box p={3} bg="purple.50" borderRadius="md">
+                      <Box p={3} bg="rgba(159,122,234,0.1)" borderRadius="md">
                         <HStack justify="space-between">
-                          <Text fontWeight="medium">Appointment Growth</Text>
-                          <Text fontWeight="bold" color="purple.500">
+                          <Text fontWeight="medium" color="whiteAlpha.800">Appointment Growth</Text>
+                          <Text fontWeight="bold" color="purple.400">
                             +{appointmentGrowth}%
                           </Text>
                         </HStack>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           More appointments scheduled
                         </Text>
                       </Box>

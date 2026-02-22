@@ -20,7 +20,6 @@ import {
   Td,
   Badge,
   Icon,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -36,8 +35,6 @@ import {
   CardBody,
   CardHeader,
   useDisclosure,
-  Alert,
-  AlertIcon,
   Flex,
 } from '@chakra-ui/react';
 import {
@@ -145,8 +142,6 @@ export default function InventoryPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
-  const cardBg = useColorModeValue('white', 'gray.800');
 
   const filteredInventory = inventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -220,45 +215,60 @@ export default function InventoryPage() {
             {/* Header */}
             <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
-                <Heading size="lg">Inventory Management</Heading>
-                <Text color="gray.600">Track dental supplies and equipment</Text>
+                <Heading size="lg" color="white">Inventory Management</Heading>
+                <Text color="whiteAlpha.700">Track dental supplies and equipment</Text>
               </Box>
               <Flex justifyContent={"flex-end"}>
                 <Button
-                w={{ base: "full", md: "fit-content" }}
-                leftIcon={<FiPlus />}
-                colorScheme="dental"
-                onClick={onOpen}
-                size={{ base: "sm", md: "md" }}
-                minW={{ base: "full", md: "fit-content" }}
-              >
-                Add Item
-              </Button>
+                  w={{ base: "full", md: "fit-content" }}
+                  leftIcon={<FiPlus />}
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                  minW={{ base: "full", md: "fit-content" }}
+                >
+                  Add Item
+                </Button>
               </Flex>
             </Grid>
 
             {/* Alerts */}
             {lowStockItems.length > 0 && (
-              <Alert status="warning">
-                <AlertIcon />
-                <Box>
-                  <Text fontWeight="bold">Low Stock Alert!</Text>
-                  <Text fontSize="sm">
-                    {lowStockItems.length} item(s) need restocking: {lowStockItems.map(item => item.name).join(', ')}
-                  </Text>
-                </Box>
-              </Alert>
+              <Box
+                p={4}
+                bg="rgba(245,158,11,0.1)"
+                border="1px solid rgba(245,158,11,0.25)"
+                borderRadius="md"
+              >
+                <HStack spacing={3} align="flex-start">
+                  <Icon as={FiAlertTriangle} color="amber.300" mt={0.5} flexShrink={0} />
+                  <Box>
+                    <Text fontWeight="bold" color="amber.300">Low Stock Alert!</Text>
+                    <Text fontSize="sm" color="amber.300">
+                      {lowStockItems.length} item(s) need restocking: {lowStockItems.map(item => item.name).join(', ')}
+                    </Text>
+                  </Box>
+                </HStack>
+              </Box>
             )}
 
             {/* Stats Cards */}
             <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={6}>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">Total Items</Text>
-                        <Text fontSize="2xl" fontWeight="bold">
+                        <Text fontSize="sm" color="whiteAlpha.500">Total Items</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color="white">
                           {inventory.length}
                         </Text>
                       </Box>
@@ -268,11 +278,17 @@ export default function InventoryPage() {
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">Low Stock</Text>
+                        <Text fontSize="sm" color="whiteAlpha.500">Low Stock</Text>
                         <Text fontSize="2xl" fontWeight="bold" color="yellow.500">
                           {lowStockItems.length}
                         </Text>
@@ -283,11 +299,17 @@ export default function InventoryPage() {
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">Out of Stock</Text>
+                        <Text fontSize="sm" color="whiteAlpha.500">Out of Stock</Text>
                         <Text fontSize="2xl" fontWeight="bold" color="red.500">
                           {inventory.filter(item => item.status === 'out-of-stock').length}
                         </Text>
@@ -298,11 +320,17 @@ export default function InventoryPage() {
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">Total Value</Text>
+                        <Text fontSize="sm" color="whiteAlpha.500">Total Value</Text>
                         <Text fontSize="2xl" fontWeight="bold" color="green.500">
                           ₱{totalValue.toLocaleString()}
                         </Text>
@@ -315,23 +343,41 @@ export default function InventoryPage() {
             </Grid>
 
             {/* Search and Filters */}
-            <Card bg={cardBg}>
+            <Card
+              bg="rgba(15,22,41,0.7)"
+              border="1px solid"
+              borderColor="rgba(255,255,255,0.07)"
+              backdropFilter="blur(12px)"
+            >
               <CardBody>
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(2, 1fr)' }} gap={6}>
+                <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(2, 1fr)' }} gap={6}>
                   <InputGroup flex={1}>
-                    <InputLeftElement>
+                    <InputLeftElement color="whiteAlpha.400">
                       <FiSearch />
                     </InputLeftElement>
                     <Input
                       placeholder="Search inventory by name or category..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      bg="rgba(255,255,255,0.05)"
+                      border="1.5px solid"
+                      borderColor="rgba(255,255,255,0.1)"
+                      color="white"
+                      _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                      _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      _placeholder={{ color: "whiteAlpha.300" }}
                     />
                   </InputGroup>
                   <Select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
                     w="200px"
+                    bg="rgba(255,255,255,0.05)"
+                    border="1.5px solid"
+                    borderColor="rgba(255,255,255,0.1)"
+                    color="white"
+                    _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                    _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
                   >
                     <option value="all">All Categories</option>
                     {categories.map((category) => (
@@ -344,6 +390,12 @@ export default function InventoryPage() {
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     w="150px"
+                    bg="rgba(255,255,255,0.05)"
+                    border="1.5px solid"
+                    borderColor="rgba(255,255,255,0.1)"
+                    color="white"
+                    _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                    _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
                   >
                     <option value="all">All Status</option>
                     <option value="in-stock">In Stock</option>
@@ -356,62 +408,69 @@ export default function InventoryPage() {
             </Card>
 
             {/* Inventory Table */}
-            <Card bg={cardBg}>
+            <Card
+              bg="rgba(15,22,41,0.7)"
+              border="1px solid"
+              borderColor="rgba(255,255,255,0.07)"
+              backdropFilter="blur(12px)"
+            >
               <CardHeader>
-                <Heading size="md">Inventory Items ({filteredInventory.length})</Heading>
+                <Heading size="md" color="white">Inventory Items ({filteredInventory.length})</Heading>
               </CardHeader>
               <CardBody overflow={"auto"}>
-                <Table variant="simple">
+                <Table variant="unstyled">
                   <Thead>
                     <Tr>
-                      <Th>Item Name</Th>
-                      <Th>Category</Th>
-                      <Th>Current Stock</Th>
-                      <Th>Min/Max</Th>
-                      <Th>Unit Price</Th>
-                      <Th>Supplier</Th>
-                      <Th>Status</Th>
-                      <Th>Actions</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Item Name</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Category</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Current Stock</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Min/Max</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Unit Price</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Supplier</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Status</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Actions</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {filteredInventory.map((item) => (
-                      <Tr key={item.id}>
-                        <Td>
+                      <Tr key={item.id} _hover={{ bg: "rgba(255,255,255,0.03)" }}>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Box>
                             <Text fontWeight="medium">{item.name}</Text>
                             {item.expiryDate && (
-                              <Text fontSize="sm" color="gray.600">
+                              <Text fontSize="sm" color="whiteAlpha.500">
                                 Expires: {new Date(item.expiryDate).toLocaleDateString()}
                               </Text>
                             )}
                           </Box>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontSize="sm">{item.category}</Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontWeight="medium">{item.currentStock} {item.unit}</Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontSize="sm">{item.minimumStock}/{item.maximumStock}</Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text>₱{item.unitPrice.toLocaleString()}</Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontSize="sm">{item.supplier}</Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <Badge colorScheme={getStatusColor(item.status)}>
                             {item.status.replace('-', ' ')}
                           </Badge>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <HStack spacing={2}>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
+                              color="whiteAlpha.600"
+                              _hover={{ bg: "rgba(255,255,255,0.07)" }}
                               onClick={() => {
                                 setSelectedItem(item);
                                 onOpen();
@@ -421,8 +480,9 @@ export default function InventoryPage() {
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
-                              colorScheme="green"
+                              variant="ghost"
+                              color="green.400"
+                              _hover={{ bg: "rgba(34,197,94,0.1)" }}
                               onClick={() => {
                                 // Restock action
                                 const updatedItem = {
@@ -437,8 +497,9 @@ export default function InventoryPage() {
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
-                              colorScheme="red"
+                              variant="ghost"
+                              color="red.400"
+                              _hover={{ bg: "rgba(239,68,68,0.1)" }}
                               onClick={() => handleDeleteItem(item.id)}
                             >
                               <FiTrash2 />
@@ -549,34 +610,54 @@ function InventoryModal({ isOpen, onClose, item, onSave }: {
     'sheets',
   ];
 
+  const inputStyles = {
+    bg: 'rgba(255,255,255,0.05)',
+    border: '1.5px solid',
+    borderColor: 'rgba(255,255,255,0.1)',
+    color: 'white',
+    _focus: { bg: 'rgba(6,182,212,0.06)', borderColor: 'cyan.500', boxShadow: '0 0 0 3px rgba(6,182,212,0.15)' },
+    _hover: { borderColor: 'rgba(255,255,255,0.2)' },
+    _placeholder: { color: 'whiteAlpha.300' },
+  };
+
+  const labelStyles = {
+    fontSize: 'xs' as const,
+    fontWeight: 600,
+    color: 'whiteAlpha.500',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.06em',
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+      <ModalContent bg="#0f1629" border="1px solid rgba(255,255,255,0.08)" boxShadow="0 24px 64px rgba(0,0,0,0.6)" borderRadius="2xl">
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
           {item ? 'Edit Inventory Item' : 'Add New Inventory Item'}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="whiteAlpha.600" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Item Name</FormLabel>
+                    <FormLabel {...labelStyles}>Item Name</FormLabel>
                     <Input
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Enter item name"
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel {...labelStyles}>Category</FormLabel>
                     <Select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      {...inputStyles}
                     >
                       <option value="">Select Category</option>
                       {categories.map((category) => (
@@ -589,20 +670,22 @@ function InventoryModal({ isOpen, onClose, item, onSave }: {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Current Stock</FormLabel>
+                    <FormLabel {...labelStyles}>Current Stock</FormLabel>
                     <Input
                       type="number"
                       value={formData.currentStock}
                       onChange={(e) => setFormData({ ...formData, currentStock: parseInt(e.target.value) || 0 })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Unit</FormLabel>
+                    <FormLabel {...labelStyles}>Unit</FormLabel>
                     <Select
                       value={formData.unit}
                       onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                      {...inputStyles}
                     >
                       <option value="">Select Unit</option>
                       {units.map((unit) => (
@@ -615,71 +698,87 @@ function InventoryModal({ isOpen, onClose, item, onSave }: {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Minimum Stock</FormLabel>
+                    <FormLabel {...labelStyles}>Minimum Stock</FormLabel>
                     <Input
                       type="number"
                       value={formData.minimumStock}
                       onChange={(e) => setFormData({ ...formData, minimumStock: parseInt(e.target.value) || 0 })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Maximum Stock</FormLabel>
+                    <FormLabel {...labelStyles}>Maximum Stock</FormLabel>
                     <Input
                       type="number"
                       value={formData.maximumStock}
                       onChange={(e) => setFormData({ ...formData, maximumStock: parseInt(e.target.value) || 0 })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Unit Price (₱)</FormLabel>
+                    <FormLabel {...labelStyles}>Unit Price (₱)</FormLabel>
                     <Input
                       type="number"
                       value={formData.unitPrice}
                       onChange={(e) => setFormData({ ...formData, unitPrice: parseFloat(e.target.value) || 0 })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Supplier</FormLabel>
+                    <FormLabel {...labelStyles}>Supplier</FormLabel>
                     <Input
                       value={formData.supplier}
                       onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
                       placeholder="Enter supplier name"
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Last Restocked</FormLabel>
+                    <FormLabel {...labelStyles}>Last Restocked</FormLabel>
                     <Input
                       type="date"
                       value={formData.lastRestocked}
                       onChange={(e) => setFormData({ ...formData, lastRestocked: e.target.value })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl>
-                    <FormLabel>Expiry Date (Optional)</FormLabel>
+                    <FormLabel {...labelStyles}>Expiry Date (Optional)</FormLabel>
                     <Input
                       type="date"
                       value={formData.expiryDate}
                       onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
               </Grid>
 
               <HStack spacing={4} w="full" justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                <Button
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: 'rgba(255,255,255,0.07)' }}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" colorScheme="dental">
+                <Button
+                  type="submit"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: 'linear(135deg, cyan.400, violet.400)', boxShadow: '0 0 20px rgba(6,182,212,0.3)' }}
+                >
                   {item ? 'Update Item' : 'Add Item'}
                 </Button>
               </HStack>

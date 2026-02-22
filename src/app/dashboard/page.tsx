@@ -3,9 +3,7 @@
 import React from "react";
 import {
   Box,
-  Container,
   Grid,
-  GridItem,
   Card,
   CardBody,
   CardHeader,
@@ -14,34 +12,14 @@ import {
   VStack,
   HStack,
   Badge,
-  Progress,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Avatar,
   Icon,
-  useColorModeValue,
+  GridItem,
 } from "@chakra-ui/react";
-import {
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-} from "@chakra-ui/stat";
 import {
   FiUsers,
   FiCalendar,
   FiDollarSign,
   FiActivity,
-  FiTrendingUp,
-  FiTrendingDown,
-  FiClock,
-  FiCheckCircle,
-  FiAlertCircle,
   FiPackage,
   FiFileText,
 } from "react-icons/fi";
@@ -50,6 +28,7 @@ import Layout from "../components/Layout";
 import ProtectedRoute from "../components/ProtectedRoute";
 import RoleGuard from "../components/RoleGuard";
 import { hasPermission } from "../utils/permissions";
+import { darkCard } from "../styles/dashboard";
 
 // Type definitions
 interface Appointment {
@@ -60,142 +39,52 @@ interface Appointment {
   status: string;
 }
 
+const cardStyle = {
+  ...darkCard,
+  borderRadius: "2xl",
+};
+
 export default function DashboardPage() {
   const { user } = useAuth();
-  const cardBg = useColorModeValue("white", "gray.800");
 
   // Mock data based on user role
   const getDashboardData = () => {
     const baseData = {
       admin: {
         stats: [
-          {
-            label: "Total Patients",
-            value: "1,247",
-            change: "+12%",
-            trend: "up",
-          },
-          {
-            label: "Monthly Revenue",
-            value: "₱245,680",
-            change: "+8%",
-            trend: "up",
-          },
-          {
-            label: "Active Appointments",
-            value: "89",
-            change: "+5%",
-            trend: "up",
-          },
-          {
-            label: "Staff Members",
-            value: "12",
-            change: "0%",
-            trend: "neutral",
-          },
+          { label: "Total Patients", value: "1,247", change: "+12%", trend: "up" },
+          { label: "Monthly Revenue", value: "₱245,680", change: "+8%", trend: "up" },
+          { label: "Active Appointments", value: "89", change: "+5%", trend: "up" },
+          { label: "Staff Members", value: "12", change: "0%", trend: "neutral" },
         ],
         recentActivity: [
-          {
-            type: "New Patient",
-            description: "Maria Santos registered",
-            time: "2 hours ago",
-          },
-          {
-            type: "Appointment",
-            description: "Dr. Juan completed treatment",
-            time: "3 hours ago",
-          },
-          {
-            type: "Payment",
-            description: "₱2,500 payment received",
-            time: "4 hours ago",
-          },
-          {
-            type: "Inventory",
-            description: "Low stock alert: Dental gloves",
-            time: "5 hours ago",
-          },
+          { type: "New Patient", description: "Maria Santos registered", time: "2 hours ago" },
+          { type: "Appointment", description: "Dr. Juan completed treatment", time: "3 hours ago" },
+          { type: "Payment", description: "₱2,500 payment received", time: "4 hours ago" },
+          { type: "Inventory", description: "Low stock alert: Dental gloves", time: "5 hours ago" },
         ],
         upcomingAppointments: [
-          {
-            patient: "Carlos Mendoza",
-            time: "9:00 AM",
-            dentist: "Dr. Juan",
-            type: "Cleaning",
-            status: "confirmed",
-          },
-          {
-            patient: "Ana Rodriguez",
-            time: "10:30 AM",
-            dentist: "Dr. Maria",
-            type: "Filling",
-            status: "confirmed",
-          },
-          {
-            patient: "Luis Garcia",
-            time: "2:00 PM",
-            dentist: "Dr. Juan",
-            type: "Extraction",
-            status: "pending",
-          },
+          { patient: "Carlos Mendoza", time: "9:00 AM", dentist: "Dr. Juan", type: "Cleaning", status: "confirmed" },
+          { patient: "Ana Rodriguez", time: "10:30 AM", dentist: "Dr. Maria", type: "Filling", status: "confirmed" },
+          { patient: "Luis Garcia", time: "2:00 PM", dentist: "Dr. Juan", type: "Extraction", status: "pending" },
         ] as Appointment[],
       },
       dentist: {
         stats: [
           { label: "My Patients", value: "156", change: "+3%", trend: "up" },
-          {
-            label: "Today&apos;s Appointments",
-            value: "8",
-            change: "+1",
-            trend: "up",
-          },
-          {
-            label: "Completed Treatments",
-            value: "23",
-            change: "+5%",
-            trend: "up",
-          },
+          { label: "Today's Appointments", value: "8", change: "+1", trend: "up" },
+          { label: "Completed Treatments", value: "23", change: "+5%", trend: "up" },
           { label: "Pending Charts", value: "4", change: "-2", trend: "down" },
         ],
         recentActivity: [
-          {
-            type: "Treatment",
-            description: "Completed root canal for Patient #1234",
-            time: "1 hour ago",
-          },
-          {
-            type: "Chart Update",
-            description: "Updated dental chart for Patient #1235",
-            time: "2 hours ago",
-          },
-          {
-            type: "Prescription",
-            description: "Prescribed antibiotics for Patient #1236",
-            time: "3 hours ago",
-          },
+          { type: "Treatment", description: "Completed root canal for Patient #1234", time: "1 hour ago" },
+          { type: "Chart Update", description: "Updated dental chart for Patient #1235", time: "2 hours ago" },
+          { type: "Prescription", description: "Prescribed antibiotics for Patient #1236", time: "3 hours ago" },
         ],
         upcomingAppointments: [
-          {
-            patient: "Carlos Mendoza",
-            time: "9:00 AM",
-            dentist: "Dr. Juan",
-            type: "Cleaning",
-            status: "confirmed",
-          },
-          {
-            patient: "Ana Rodriguez",
-            time: "10:30 AM",
-            dentist: "Dr. Maria",
-            type: "Filling",
-            status: "confirmed",
-          },
-          {
-            patient: "Luis Garcia",
-            time: "2:00 PM",
-            dentist: "Dr. Juan",
-            type: "Extraction",
-            status: "pending",
-          },
+          { patient: "Carlos Mendoza", time: "9:00 AM", dentist: "Dr. Juan", type: "Cleaning", status: "confirmed" },
+          { patient: "Ana Rodriguez", time: "10:30 AM", dentist: "Dr. Maria", type: "Filling", status: "confirmed" },
+          { patient: "Luis Garcia", time: "2:00 PM", dentist: "Dr. Juan", type: "Extraction", status: "pending" },
         ] as Appointment[],
       },
       staff: {
@@ -206,93 +95,30 @@ export default function DashboardPage() {
           { label: "No-shows", value: "2", change: "-1", trend: "down" },
         ],
         recentActivity: [
-          {
-            type: "Scheduling",
-            description: "Scheduled appointment for new patient",
-            time: "30 min ago",
-          },
-          {
-            type: "Payment",
-            description: "Processed payment of ₱1,500",
-            time: "1 hour ago",
-          },
-          {
-            type: "Reminder",
-            description: "Sent SMS reminder to 5 patients",
-            time: "2 hours ago",
-          },
+          { type: "Scheduling", description: "Scheduled appointment for new patient", time: "30 min ago" },
+          { type: "Payment", description: "Processed payment of ₱1,500", time: "1 hour ago" },
+          { type: "Reminder", description: "Sent SMS reminder to 5 patients", time: "2 hours ago" },
         ],
         upcomingAppointments: [
-          {
-            patient: "Carlos Mendoza",
-            time: "9:00 AM",
-            dentist: "Dr. Juan",
-            type: "Cleaning",
-            status: "confirmed",
-          },
-          {
-            patient: "Ana Rodriguez",
-            time: "10:30 AM",
-            dentist: "Dr. Maria",
-            type: "Filling",
-            status: "confirmed",
-          },
-          {
-            patient: "Luis Garcia",
-            time: "2:00 PM",
-            dentist: "Dr. Juan",
-            type: "Extraction",
-            status: "pending",
-          },
+          { patient: "Carlos Mendoza", time: "9:00 AM", dentist: "Dr. Juan", type: "Cleaning", status: "confirmed" },
+          { patient: "Ana Rodriguez", time: "10:30 AM", dentist: "Dr. Maria", type: "Filling", status: "confirmed" },
+          { patient: "Luis Garcia", time: "2:00 PM", dentist: "Dr. Juan", type: "Extraction", status: "pending" },
         ] as Appointment[],
       },
       patient: {
         stats: [
-          {
-            label: "Next Appointment",
-            value: "Dec 15",
-            change: "2 days",
-            trend: "neutral",
-          },
+          { label: "Next Appointment", value: "Dec 15", change: "2 days", trend: "neutral" },
           { label: "Total Visits", value: "12", change: "+1", trend: "up" },
-          {
-            label: "Outstanding Balance",
-            value: "₱0",
-            change: "Paid",
-            trend: "neutral",
-          },
-          {
-            label: "Treatment Plan",
-            value: "Active",
-            change: "2 items",
-            trend: "neutral",
-          },
+          { label: "Outstanding Balance", value: "₱0", change: "Paid", trend: "neutral" },
+          { label: "Treatment Plan", value: "Active", change: "2 items", trend: "neutral" },
         ],
         recentActivity: [
-          {
-            type: "Appointment",
-            description: "Cleaning appointment completed",
-            time: "1 week ago",
-          },
-          {
-            type: "Payment",
-            description: "Payment of ₱800 processed",
-            time: "1 week ago",
-          },
-          {
-            type: "Prescription",
-            description: "New prescription uploaded",
-            time: "2 weeks ago",
-          },
+          { type: "Appointment", description: "Cleaning appointment completed", time: "1 week ago" },
+          { type: "Payment", description: "Payment of ₱800 processed", time: "1 week ago" },
+          { type: "Prescription", description: "New prescription uploaded", time: "2 weeks ago" },
         ],
         upcomingAppointments: [
-          {
-            patient: "You",
-            time: "Dec 15, 2:00 PM",
-            dentist: "Dr. Juan",
-            type: "Check-up",
-            status: "confirmed",
-          },
+          { patient: "You", time: "Dec 15, 2:00 PM", dentist: "Dr. Juan", type: "Check-up", status: "confirmed" },
         ] as Appointment[],
       },
     };
@@ -304,33 +130,33 @@ export default function DashboardPage() {
 
   const getStatIcon = (label: string) => {
     if (label.includes("Patient")) return FiUsers;
-    if (label.includes("Revenue") || label.includes("Payment"))
-      return FiDollarSign;
+    if (label.includes("Revenue") || label.includes("Payment")) return FiDollarSign;
     if (label.includes("Appointment")) return FiCalendar;
-    if (label.includes("Treatment") || label.includes("Chart"))
-      return FiActivity;
+    if (label.includes("Treatment") || label.includes("Chart")) return FiActivity;
     return FiActivity;
   };
 
   const getActivityIcon = (type: string) => {
-    if (type.includes("Patient") || type.includes("Appointment"))
-      return FiUsers;
+    if (type.includes("Patient") || type.includes("Appointment")) return FiUsers;
     if (type.includes("Payment")) return FiDollarSign;
     if (type.includes("Treatment") || type.includes("Chart")) return FiActivity;
     return FiActivity;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "confirmed":
-        return "green";
-      case "pending":
-        return "yellow";
-      case "cancelled":
-        return "red";
-      default:
-        return "blue";
+      case "confirmed": return "green";
+      case "pending": return "yellow";
+      case "cancelled": return "red";
+      default: return "blue";
     }
+  };
+
+  const statAccent = (trend: string) => {
+    if (trend === "up") return { icon: "rgba(16,185,129,0.15)", color: "emerald.400", badge: "rgba(16,185,129,0.12)", badgeText: "emerald.300" };
+    if (trend === "down") return { icon: "rgba(244,63,94,0.15)", color: "rose.400", badge: "rgba(244,63,94,0.12)", badgeText: "rose.300" };
+    return { icon: "rgba(6,182,212,0.15)", color: "cyan.400", badge: "rgba(6,182,212,0.12)", badgeText: "cyan.300" };
   };
 
   return (
@@ -339,10 +165,20 @@ export default function DashboardPage() {
         <VStack spacing={8} align="stretch">
           {/* Welcome Header */}
           <Box>
-            <Heading size="xl" mb={2} color="gray.800">
-              Welcome back, {user?.name}!
+            <Heading
+              fontSize={{ base: "2xl", md: "3xl" }}
+              mb={2}
+              color="white"
+              fontWeight="800"
+              letterSpacing="-0.02em"
+            >
+              Welcome back,{" "}
+              <Box as="span" bgGradient="linear(135deg, cyan.400, violet.400)" bgClip="text">
+                {user?.name}
+              </Box>
+              !
             </Heading>
-            <Text color="gray.600" fontSize="lg">
+            <Text color="whiteAlpha.500" fontSize="md">
               Here&apos;s what&apos;s happening at your{" "}
               {user?.role === "patient" ? "appointments" : "clinic"} today.
             </Text>
@@ -350,157 +186,89 @@ export default function DashboardPage() {
 
           {/* Stats Grid */}
           <Grid
-            templateColumns={{
-              base: "1fr",
-              lg: "repeat(2, 1fr)",
-              xl: "repeat(4, 1fr)",
-            }}
+            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)", xl: "repeat(4, 1fr)" }}
             gap={6}
           >
             {data.stats.map((stat, index) => {
-              // Hide certain stats based on role permissions
               const shouldHideStat = () => {
-                if (stat.label.includes('Revenue') && !hasPermission(user?.role || 'patient', 'billing', 'view')) {
-                  return true;
-                }
-                if (stat.label.includes('Staff') && !hasPermission(user?.role || 'patient', 'settings', 'view')) {
-                  return true;
-                }
-                if (stat.label.includes('Inventory') && !hasPermission(user?.role || 'patient', 'inventory', 'view')) {
-                  return true;
-                }
+                if (stat.label.includes("Revenue") && !hasPermission(user?.role || "patient", "billing", "view")) return true;
+                if (stat.label.includes("Staff") && !hasPermission(user?.role || "patient", "settings", "view")) return true;
+                if (stat.label.includes("Inventory") && !hasPermission(user?.role || "patient", "inventory", "view")) return true;
                 return false;
               };
+              if (shouldHideStat()) return null;
 
-              if (shouldHideStat()) {
-                return null;
-              }
-
+              const accent = statAccent(stat.trend);
               return (
-              <GridItem key={index}>
-                <Card
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  boxShadow="lg"
-                  _hover={{ transform: "translateY(-2px)", boxShadow: "xl" }}
-                  transition="all 0.3s ease"
-                  border="1px"
-                  borderColor="gray.100"
-                >
-                  <CardBody p={6}>
-                    <HStack justify="space-between" align="start" mb={4}>
-                      <Box
-                        p={3}
-                        borderRadius="xl"
-                        bg={
-                          stat.trend === "up"
-                            ? "green.50"
-                            : stat.trend === "down"
-                            ? "red.50"
-                            : "blue.50"
-                        }
-                      >
-                        <Icon
-                          as={getStatIcon(stat.label)}
-                          boxSize={6}
-                          color={
-                            stat.trend === "up"
-                              ? "green.500"
-                              : stat.trend === "down"
-                              ? "red.500"
-                              : "blue.500"
-                          }
-                        />
-                      </Box>
-                      <Badge
-                        colorScheme={
-                          stat.trend === "up"
-                            ? "green"
-                            : stat.trend === "down"
-                            ? "red"
-                            : "blue"
-                        }
-                        borderRadius="full"
-                        px={3}
-                        py={1}
-                        fontSize="xs"
-                      >
-                        <Stat>
-                          <StatArrow
-                            type={
-                              stat.trend === "up"
-                                ? "increase"
-                                : stat.trend === "down"
-                                ? "decrease"
-                                : undefined
-                            }
-                          />
-                        </Stat>
-                      </Badge>
-                    </HStack>
-                    <VStack align="start" spacing={1}>
-                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                        {stat.label}
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="gray.800">
-                        {stat.value}
-                      </Text>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              </GridItem>
+                <GridItem key={index}>
+                  <Card {...cardStyle}>
+                    <CardBody p={6}>
+                      <HStack justify="space-between" align="start" mb={4}>
+                        <Box p={3} borderRadius="xl" bg={accent.icon}>
+                          <Icon as={getStatIcon(stat.label)} boxSize={5} color={accent.color} />
+                        </Box>
+                        <Badge
+                          px={3} py={1} borderRadius="full" fontSize="xs" fontWeight="700"
+                          bg={accent.badge} color={accent.badgeText}
+                          border="1px solid" borderColor={accent.badge}
+                        >
+                          {stat.change}
+                        </Badge>
+                      </HStack>
+                      <VStack align="start" spacing={1}>
+                        <Text fontSize="xs" color="whiteAlpha.500" fontWeight="600" textTransform="uppercase" letterSpacing="0.06em">
+                          {stat.label}
+                        </Text>
+                        <Text fontSize="3xl" fontWeight="800" color="white" letterSpacing="-0.03em">
+                          {stat.value}
+                        </Text>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
               );
             })}
           </Grid>
 
-          <Grid 
-            templateColumns={{ 
-              base: "1fr", 
-              xl: hasPermission(user?.role || 'patient', 'patients', 'view') && hasPermission(user?.role || 'patient', 'appointments', 'view') 
-                ? "2fr 1fr" 
-                : "1fr" 
-            }} 
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              xl: hasPermission(user?.role || "patient", "patients", "view") && hasPermission(user?.role || "patient", "appointments", "view")
+                ? "2fr 1fr"
+                : "1fr",
+            }}
             gap={8}
           >
-            {/* Recent Activity - Only show for users with access to view activity */}
-            <RoleGuard requiredPermission={{ module: 'patients', action: 'view' }}>
+            {/* Recent Activity */}
+            <RoleGuard requiredPermission={{ module: "patients", action: "view" }}>
               <GridItem>
-                <Card
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  boxShadow="lg"
-                  border="1px"
-                  borderColor="gray.100"
-                >
+                <Card {...cardStyle}>
                   <CardHeader pb={4}>
-                    <Heading size="lg" color="gray.800">
+                    <Heading fontSize="lg" fontWeight="700" color="white" letterSpacing="-0.01em">
                       Recent Activity
                     </Heading>
                   </CardHeader>
                   <CardBody pt={0}>
-                    <VStack spacing={4} align="stretch">
+                    <VStack spacing={3} align="stretch">
                       {data.recentActivity.map((activity, index) => (
                         <HStack
                           key={index}
                           spacing={4}
                           p={4}
-                          bg="gray.50"
+                          bg="rgba(255,255,255,0.03)"
                           borderRadius="xl"
-                          _hover={{ bg: "gray.100" }}
+                          border="1px solid rgba(255,255,255,0.05)"
+                          _hover={{ bg: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.09)" }}
                           transition="all 0.2s"
                         >
-                          <Box p={2} borderRadius="lg" bg="dental.50">
-                            <Icon
-                              as={getActivityIcon(activity.type)}
-                              color="dental.500"
-                              boxSize={5}
-                            />
+                          <Box p={2.5} borderRadius="lg" bg="rgba(6,182,212,0.12)" flexShrink={0}>
+                            <Icon as={getActivityIcon(activity.type)} color="cyan.400" boxSize={4} />
                           </Box>
                           <Box flex={1}>
-                            <Text fontWeight="medium" color="gray.800">
+                            <Text fontWeight="600" color="whiteAlpha.900" fontSize="sm">
                               {activity.description}
                             </Text>
-                            <Text fontSize="sm" color="gray.500">
+                            <Text fontSize="xs" color="whiteAlpha.400" mt={0.5}>
                               {activity.time}
                             </Text>
                           </Box>
@@ -512,71 +280,49 @@ export default function DashboardPage() {
               </GridItem>
             </RoleGuard>
 
-            {/* Upcoming Appointments - Only show for users with access to view appointments */}
-            <RoleGuard requiredPermission={{ module: 'appointments', action: 'view' }}>
+            {/* Upcoming Appointments */}
+            <RoleGuard requiredPermission={{ module: "appointments", action: "view" }}>
               <GridItem>
-                <Card
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  boxShadow="lg"
-                  border="1px"
-                  borderColor="gray.100"
-                >
+                <Card {...cardStyle}>
                   <CardHeader pb={4}>
-                    <Heading size="lg" color="gray.800">
+                    <Heading fontSize="lg" fontWeight="700" color="white" letterSpacing="-0.01em">
                       Upcoming Appointments
                     </Heading>
                   </CardHeader>
                   <CardBody pt={0}>
-                    <VStack spacing={4} align="stretch">
+                    <VStack spacing={3} align="stretch">
                       {data.upcomingAppointments.map((appointment, index) => (
                         <Box
                           key={index}
                           p={4}
-                          border="1px"
-                          borderColor="gray.200"
+                          border="1px solid rgba(255,255,255,0.07)"
                           borderRadius="xl"
-                          bg="white"
-                          _hover={{
-                            borderColor: "dental.300",
-                            transform: "translateY(-1px)",
-                          }}
+                          bg="rgba(255,255,255,0.03)"
+                          _hover={{ borderColor: "rgba(6,182,212,0.3)", bg: "rgba(6,182,212,0.05)", transform: "translateY(-1px)" }}
                           transition="all 0.2s"
                         >
-                          <HStack justify="space-between" mb={3}>
-                            <Text fontWeight="semibold" color="gray.800">
+                          <HStack justify="space-between" mb={2}>
+                            <Text fontWeight="700" color="white" fontSize="sm">
                               {appointment.patient}
                             </Text>
                             {appointment.status && (
                               <Badge
-                                colorScheme={getStatusColor(appointment.status)}
-                                size="sm"
-                                borderRadius="full"
-                                px={3}
-                                py={1}
+                                px={2} py={0.5} borderRadius="full" fontSize="xs" fontWeight="700"
+                                bg={appointment.status === "confirmed" ? "rgba(16,185,129,0.15)" : appointment.status === "pending" ? "rgba(245,158,11,0.15)" : "rgba(244,63,94,0.15)"}
+                                color={appointment.status === "confirmed" ? "emerald.300" : appointment.status === "pending" ? "amber.300" : "rose.300"}
                               >
                                 {appointment.status}
                               </Badge>
                             )}
                           </HStack>
-                          <VStack align="start" spacing={1}>
-                            <Text
-                              fontSize="sm"
-                              color="gray.600"
-                              fontWeight="medium"
-                            >
+                          <VStack align="start" spacing={0.5}>
+                            <Text fontSize="sm" color="whiteAlpha.700" fontWeight="600">
                               {appointment.time}
                             </Text>
                             {appointment.dentist && (
-                              <Text fontSize="sm" color="gray.500">
-                                Dr. {appointment.dentist}
-                              </Text>
+                              <Text fontSize="xs" color="whiteAlpha.400">{appointment.dentist}</Text>
                             )}
-                            <Text
-                              fontSize="sm"
-                              color="dental.500"
-                              fontWeight="semibold"
-                            >
+                            <Text fontSize="xs" color="cyan.400" fontWeight="600">
                               {appointment.type}
                             </Text>
                           </VStack>
@@ -589,165 +335,33 @@ export default function DashboardPage() {
             </RoleGuard>
           </Grid>
 
-          {/* Quick Actions - Only show if user has any quick action permissions */}
-          <RoleGuard 
-            requiredPermission={{ module: 'patients', action: 'create' }}
+          {/* Quick Actions */}
+          <RoleGuard
+            requiredPermission={{ module: "patients", action: "create" }}
             fallback={
-              (hasPermission(user?.role || 'patient', 'appointments', 'create') || 
-               hasPermission(user?.role || 'patient', 'billing', 'process') ||
-               hasPermission(user?.role || 'patient', 'inventory', 'manage') ||
-               hasPermission(user?.role || 'patient', 'charting', 'create')) ? (
-                <Card
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  boxShadow="lg"
-                  border="1px"
-                  borderColor="gray.100"
-                >
+              (hasPermission(user?.role || "patient", "appointments", "create") ||
+               hasPermission(user?.role || "patient", "billing", "process") ||
+               hasPermission(user?.role || "patient", "inventory", "manage") ||
+               hasPermission(user?.role || "patient", "charting", "create")) ? (
+                <Card {...cardStyle}>
                   <CardHeader pb={4}>
-                    <Heading size="lg" color="gray.800">
+                    <Heading fontSize="lg" fontWeight="700" color="white" letterSpacing="-0.01em">
                       Quick Actions
                     </Heading>
                   </CardHeader>
                   <CardBody pt={0}>
-                    <Grid
-                      templateColumns={{ base: "1fr", md: "repeat(auto-fit, minmax(200px, 1fr))" }}
-                      gap={6}
-                    >
-                      {hasPermission(user?.role || 'patient', 'appointments', 'create') && (
-                        <Card
-                          variant="outline"
-                          borderRadius="xl"
-                          border="2px"
-                          borderColor="gray.200"
-                          _hover={{
-                            bg: "dental.50",
-                            cursor: "pointer",
-                            borderColor: "dental.300",
-                            transform: "translateY(-2px)",
-                            boxShadow: "lg",
-                          }}
-                          transition="all 0.3s ease"
-                          onClick={() => window.location.href = '/appointments'}
-                        >
-                          <CardBody textAlign="center" p={6}>
-                            <Box
-                              p={4}
-                              borderRadius="xl"
-                              bg="dental.100"
-                              display="inline-block"
-                              mb={4}
-                            >
-                              <Icon as={FiCalendar} boxSize={8} color="dental.600" />
-                            </Box>
-                            <Text fontWeight="semibold" color="gray.800">
-                              Schedule Appointment
-                            </Text>
-                          </CardBody>
-                        </Card>
+                    <Grid templateColumns={{ base: "1fr", md: "repeat(auto-fit, minmax(180px, 1fr))" }} gap={4}>
+                      {hasPermission(user?.role || "patient", "appointments", "create") && (
+                        <QuickActionCard icon={FiCalendar} label="Schedule Appointment" href="/appointments" accent="cyan" />
                       )}
-                      
-                      {hasPermission(user?.role || 'patient', 'billing', 'process') && (
-                        <Card
-                          variant="outline"
-                          borderRadius="xl"
-                          border="2px"
-                          borderColor="gray.200"
-                          _hover={{
-                            bg: "dental.50",
-                            cursor: "pointer",
-                            borderColor: "dental.300",
-                            transform: "translateY(-2px)",
-                            boxShadow: "lg",
-                          }}
-                          transition="all 0.3s ease"
-                          onClick={() => window.location.href = '/billing'}
-                        >
-                          <CardBody textAlign="center" p={6}>
-                            <Box
-                              p={4}
-                              borderRadius="xl"
-                              bg="dental.100"
-                              display="inline-block"
-                              mb={4}
-                            >
-                              <Icon
-                                as={FiDollarSign}
-                                boxSize={8}
-                                color="dental.600"
-                              />
-                            </Box>
-                            <Text fontWeight="semibold" color="gray.800">
-                              Process Payment
-                            </Text>
-                          </CardBody>
-                        </Card>
+                      {hasPermission(user?.role || "patient", "billing", "process") && (
+                        <QuickActionCard icon={FiDollarSign} label="Process Payment" href="/billing" accent="emerald" />
                       )}
-
-                      {hasPermission(user?.role || 'patient', 'inventory', 'manage') && (
-                        <Card
-                          variant="outline"
-                          borderRadius="xl"
-                          border="2px"
-                          borderColor="gray.200"
-                          _hover={{
-                            bg: "dental.50",
-                            cursor: "pointer",
-                            borderColor: "dental.300",
-                            transform: "translateY(-2px)",
-                            boxShadow: "lg",
-                          }}
-                          transition="all 0.3s ease"
-                          onClick={() => window.location.href = '/inventory'}
-                        >
-                          <CardBody textAlign="center" p={6}>
-                            <Box
-                              p={4}
-                              borderRadius="xl"
-                              bg="dental.100"
-                              display="inline-block"
-                              mb={4}
-                            >
-                              <Icon as={FiPackage} boxSize={8} color="dental.600" />
-                            </Box>
-                            <Text fontWeight="semibold" color="gray.800">
-                              Manage Inventory
-                            </Text>
-                          </CardBody>
-                        </Card>
+                      {hasPermission(user?.role || "patient", "inventory", "manage") && (
+                        <QuickActionCard icon={FiPackage} label="Manage Inventory" href="/inventory" accent="amber" />
                       )}
-
-                      {hasPermission(user?.role || 'patient', 'charting', 'create') && (
-                        <Card
-                          variant="outline"
-                          borderRadius="xl"
-                          border="2px"
-                          borderColor="gray.200"
-                          _hover={{
-                            bg: "dental.50",
-                            cursor: "pointer",
-                            borderColor: "dental.300",
-                            transform: "translateY(-2px)",
-                            boxShadow: "lg",
-                          }}
-                          transition="all 0.3s ease"
-                          onClick={() => window.location.href = '/charting'}
-                        >
-                          <CardBody textAlign="center" p={6}>
-                            <Box
-                              p={4}
-                              borderRadius="xl"
-                              bg="dental.100"
-                              display="inline-block"
-                              mb={4}
-                            >
-                              <Icon as={FiFileText} boxSize={8} color="dental.600" />
-                            </Box>
-                            <Text fontWeight="semibold" color="gray.800">
-                              Create Treatment Plan
-                            </Text>
-                          </CardBody>
-                        </Card>
+                      {hasPermission(user?.role || "patient", "charting", "create") && (
+                        <QuickActionCard icon={FiFileText} label="Treatment Plan" href="/charting" accent="violet" />
                       )}
                     </Grid>
                   </CardBody>
@@ -755,53 +369,15 @@ export default function DashboardPage() {
               ) : null
             }
           >
-            <Card
-              bg={cardBg}
-              borderRadius="2xl"
-              boxShadow="lg"
-              border="1px"
-              borderColor="gray.100"
-            >
+            <Card {...cardStyle}>
               <CardHeader pb={4}>
-                <Heading size="lg" color="gray.800">
+                <Heading fontSize="lg" fontWeight="700" color="white" letterSpacing="-0.01em">
                   Quick Actions
                 </Heading>
               </CardHeader>
               <CardBody pt={0}>
-                <Grid
-                  templateColumns={{ base: "1fr", md: "repeat(auto-fit, minmax(200px, 1fr))" }}
-                  gap={6}
-                >
-                  <Card
-                    variant="outline"
-                    borderRadius="xl"
-                    border="2px"
-                    borderColor="gray.200"
-                    _hover={{
-                      bg: "dental.50",
-                      cursor: "pointer",
-                      borderColor: "dental.300",
-                      transform: "translateY(-2px)",
-                      boxShadow: "lg",
-                    }}
-                    transition="all 0.3s ease"
-                    onClick={() => window.location.href = '/patients'}
-                  >
-                    <CardBody textAlign="center" p={6}>
-                      <Box
-                        p={4}
-                        borderRadius="xl"
-                        bg="dental.100"
-                        display="inline-block"
-                        mb={4}
-                      >
-                        <Icon as={FiUsers} boxSize={8} color="dental.600" />
-                      </Box>
-                      <Text fontWeight="semibold" color="gray.800">
-                        Add Patient
-                      </Text>
-                    </CardBody>
-                  </Card>
+                <Grid templateColumns={{ base: "1fr", md: "repeat(auto-fit, minmax(180px, 1fr))" }} gap={4}>
+                  <QuickActionCard icon={FiUsers} label="Add Patient" href="/patients" accent="cyan" />
                 </Grid>
               </CardBody>
             </Card>
@@ -809,5 +385,53 @@ export default function DashboardPage() {
         </VStack>
       </Layout>
     </ProtectedRoute>
+  );
+}
+
+function QuickActionCard({
+  icon,
+  label,
+  href,
+  accent,
+}: {
+  icon: React.ComponentType;
+  label: string;
+  href: string;
+  accent: string;
+}) {
+  const accentMap: Record<string, { bg: string; hover: string; border: string; iconBg: string; color: string }> = {
+    cyan:    { bg: "rgba(6,182,212,0.06)",    hover: "rgba(6,182,212,0.12)",    border: "rgba(6,182,212,0.2)",    iconBg: "rgba(6,182,212,0.15)",    color: "#22d3ee" },
+    emerald: { bg: "rgba(16,185,129,0.06)",   hover: "rgba(16,185,129,0.12)",   border: "rgba(16,185,129,0.2)",   iconBg: "rgba(16,185,129,0.15)",   color: "#34d399" },
+    amber:   { bg: "rgba(245,158,11,0.06)",   hover: "rgba(245,158,11,0.12)",   border: "rgba(245,158,11,0.2)",   iconBg: "rgba(245,158,11,0.15)",   color: "#fbbf24" },
+    violet:  { bg: "rgba(139,92,246,0.06)",   hover: "rgba(139,92,246,0.12)",   border: "rgba(139,92,246,0.2)",   iconBg: "rgba(139,92,246,0.15)",   color: "#c4b5fd" },
+  };
+  const a = accentMap[accent] || accentMap.cyan;
+  return (
+    <Box
+      p={5}
+      borderRadius="xl"
+      border="1px solid rgba(255,255,255,0.07)"
+      cursor="pointer"
+      textAlign="center"
+      bg="rgba(255,255,255,0.03)"
+      _hover={{ borderColor: a.border, bg: a.hover, transform: "translateY(-3px)", boxShadow: `0 8px 24px rgba(0,0,0,0.3)` }}
+      transition="all 0.25s ease"
+      onClick={() => (window.location.href = href)}
+    >
+      <Box
+        p={3}
+        borderRadius="xl"
+        bg={a.iconBg}
+        display="inline-flex"
+        mb={3}
+        border="1px solid"
+        borderColor={a.border}
+      >
+        <Icon as={icon} boxSize={6} color={a.color} />
+      </Box>
+      <Text fontWeight="700" color="whiteAlpha.800" fontSize="sm">
+        {label}
+      </Text>
+    </Box>
   );
 }

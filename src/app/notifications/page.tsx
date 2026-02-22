@@ -11,12 +11,10 @@ import {
   Button,
   Badge,
   Icon,
-  useColorModeValue,
   Card,
   CardBody,
   CardHeader,
   Avatar,
-  Divider,
   Tabs,
   TabList,
   TabPanels,
@@ -35,7 +33,6 @@ import {
   FiTrash2,
   FiCheck,
   FiClock,
-  FiAlertCircle,
   FiInfo,
   FiCalendar,
   FiDollarSign,
@@ -122,11 +119,18 @@ const mockNotifications: Notification[] = [
   },
 ];
 
+const cardStyle = {
+  bg: "rgba(15,22,41,0.7)",
+  border: "1px solid",
+  borderColor: "rgba(255,255,255,0.07)",
+  backdropFilter: "blur(12px)",
+  borderRadius: "2xl",
+  _hover: { borderColor: "rgba(255,255,255,0.12)" },
+} as const;
+
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [activeTab, setActiveTab] = useState(0);
-  
-  const cardBg = useColorModeValue('white', 'gray.800');
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -149,7 +153,7 @@ export default function NotificationsPage() {
   };
 
   const markAsRead = (notificationId: string) => {
-    setNotifications(notifications.map(notif => 
+    setNotifications(notifications.map(notif =>
       notif.id === notificationId ? { ...notif, isRead: true } : notif
     ));
   };
@@ -180,7 +184,7 @@ export default function NotificationsPage() {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
     if (diffInHours < 48) return 'Yesterday';
@@ -195,8 +199,8 @@ export default function NotificationsPage() {
             {/* Header */}
             <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
-                <Heading size="lg">Notifications</Heading>
-                <Text color="gray.600">
+                <Heading size="lg" color="white">Notifications</Heading>
+                <Text color="whiteAlpha.700">
                   Stay updated with clinic activities and important alerts
                   {unreadCount > 0 && (
                     <Badge ml={2} colorScheme="red" variant="solid">
@@ -209,7 +213,9 @@ export default function NotificationsPage() {
                 {unreadCount > 0 && (
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="ghost"
+                    color="whiteAlpha.600"
+                    _hover={{ bg: "rgba(255,255,255,0.07)" }}
                     onClick={markAllAsRead}
                   >
                     Mark All as Read
@@ -217,7 +223,9 @@ export default function NotificationsPage() {
                 )}
                 <Button
                   size="sm"
-                  colorScheme="dental"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
                   leftIcon={<FiBell />}
                 >
                   Notification Settings
@@ -226,9 +234,19 @@ export default function NotificationsPage() {
             </Grid>
 
             <Tabs index={activeTab} onChange={setActiveTab}>
-              <TabList>
-                <Tab>All</Tab>
-                <Tab>
+              <TabList borderBottom="1px solid rgba(255,255,255,0.07)">
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
+                  All
+                </Tab>
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
                   Unread
                   {unreadCount > 0 && (
                     <Badge ml={2} colorScheme="red" variant="solid" size="sm">
@@ -236,30 +254,58 @@ export default function NotificationsPage() {
                     </Badge>
                   )}
                 </Tab>
-                <Tab>Appointments</Tab>
-                <Tab>Payments</Tab>
-                <Tab>Inventory</Tab>
-                <Tab>System</Tab>
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
+                  Appointments
+                </Tab>
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
+                  Payments
+                </Tab>
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
+                  Inventory
+                </Tab>
+                <Tab
+                  color="whiteAlpha.500"
+                  _selected={{ color: "white", borderColor: "cyan.400" }}
+                  _hover={{ color: "whiteAlpha.800" }}
+                >
+                  System
+                </Tab>
               </TabList>
 
               <TabPanels>
                 <TabPanel px={0}>
                   <VStack spacing={4} align="stretch">
                     {getFilteredNotifications().length === 0 ? (
-                      <Card bg={cardBg}>
+                      <Card {...cardStyle}>
                         <CardBody textAlign="center" py={12}>
-                          <Icon as={FiBell} boxSize={12} color="gray.400" mb={4} />
-                          <Text color="gray.600">No notifications found</Text>
+                          <Icon as={FiBell} boxSize={12} color="whiteAlpha.300" mb={4} />
+                          <Text color="whiteAlpha.700">No notifications found</Text>
                         </CardBody>
                       </Card>
                     ) : (
                       getFilteredNotifications().map((notification) => (
                         <Card
                           key={notification.id}
-                          bg={cardBg}
-                          borderLeft={!notification.isRead ? '4px solid' : 'none'}
-                          borderLeftColor="dental.500"
-                          _hover={{ shadow: 'md' }}
+                          bg="rgba(15,22,41,0.7)"
+                          border="1px solid"
+                          borderColor="rgba(255,255,255,0.07)"
+                          backdropFilter="blur(12px)"
+                          borderRadius="2xl"
+                          borderLeft={!notification.isRead ? '4px solid' : undefined}
+                          borderLeftColor={!notification.isRead ? 'cyan.500' : undefined}
+                          _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
                           transition="all 0.2s"
                         >
                           <CardBody>
@@ -269,18 +315,18 @@ export default function NotificationsPage() {
                               ) : (
                                 <Box
                                   p={2}
-                                  bg="dental.100"
+                                  bg="rgba(6,182,212,0.12)"
                                   borderRadius="full"
-                                  color="dental.500"
+                                  color="cyan.400"
                                 >
                                   <Icon as={getNotificationIcon(notification.type)} />
                                 </Box>
                               )}
-                              
+
                               <Box flex={1}>
                                 <HStack justify="space-between" mb={2}>
                                   <HStack spacing={2}>
-                                    <Text fontWeight="medium" fontSize="sm">
+                                    <Text fontWeight="medium" fontSize="sm" color="white">
                                       {notification.title}
                                     </Text>
                                     <Badge
@@ -301,11 +347,20 @@ export default function NotificationsPage() {
                                       icon={<FiMoreVertical />}
                                       variant="ghost"
                                       size="sm"
+                                      color="whiteAlpha.600"
+                                      _hover={{ bg: "rgba(255,255,255,0.07)" }}
                                     />
-                                    <MenuList>
+                                    <MenuList
+                                      bg="#0f1629"
+                                      border="1px solid rgba(255,255,255,0.1)"
+                                      boxShadow="0 16px 40px rgba(0,0,0,0.5)"
+                                    >
                                       {!notification.isRead && (
                                         <MenuItem
                                           icon={<FiCheck />}
+                                          bg="transparent"
+                                          color="whiteAlpha.800"
+                                          _hover={{ bg: "rgba(255,255,255,0.07)", color: "white" }}
                                           onClick={() => markAsRead(notification.id)}
                                         >
                                           Mark as Read
@@ -313,7 +368,9 @@ export default function NotificationsPage() {
                                       )}
                                       <MenuItem
                                         icon={<FiTrash2 />}
-                                        color="red.500"
+                                        color="red.400"
+                                        bg="transparent"
+                                        _hover={{ bg: "rgba(255,255,255,0.07)", color: "red.300" }}
                                         onClick={() => deleteNotification(notification.id)}
                                       >
                                         Delete
@@ -321,16 +378,16 @@ export default function NotificationsPage() {
                                     </MenuList>
                                   </Menu>
                                 </HStack>
-                                
-                                <Text fontSize="sm" color="gray.600" mb={2}>
+
+                                <Text fontSize="sm" color="whiteAlpha.700" mb={2}>
                                   {notification.message}
                                 </Text>
-                                
+
                                 <HStack justify="space-between">
                                   <HStack spacing={4}>
                                     <HStack spacing={1}>
-                                      <Icon as={FiClock} boxSize={3} color="gray.400" />
-                                      <Text fontSize="xs" color="gray.500">
+                                      <Icon as={FiClock} boxSize={3} color="whiteAlpha.400" />
+                                      <Text fontSize="xs" color="whiteAlpha.400">
                                         {formatTimestamp(notification.timestamp)}
                                       </Text>
                                     </HStack>
@@ -338,7 +395,7 @@ export default function NotificationsPage() {
                                       <Button
                                         size="xs"
                                         variant="outline"
-                                        colorScheme="dental"
+                                        colorScheme="cyan"
                                       >
                                         View Details
                                       </Button>
@@ -357,37 +414,37 @@ export default function NotificationsPage() {
             </Tabs>
 
             {/* Quick Actions */}
-            <Card bg={cardBg}>
+            <Card {...cardStyle}>
               <CardHeader>
-                <Heading size="md">Quick Actions</Heading>
+                <Heading size="md" color="white">Quick Actions</Heading>
               </CardHeader>
               <CardBody>
                 <HStack spacing={4} wrap="wrap">
                   <Button
                     leftIcon={<FiCalendar />}
                     variant="outline"
-                    colorScheme="dental"
+                    colorScheme="cyan"
                   >
                     Schedule Appointment
                   </Button>
                   <Button
                     leftIcon={<FiDollarSign />}
                     variant="outline"
-                    colorScheme="dental"
+                    colorScheme="cyan"
                   >
                     Process Payment
                   </Button>
                   <Button
                     leftIcon={<FiPackage />}
                     variant="outline"
-                    colorScheme="dental"
+                    colorScheme="cyan"
                   >
                     Check Inventory
                   </Button>
                   <Button
                     leftIcon={<FiUser />}
                     variant="outline"
-                    colorScheme="dental"
+                    colorScheme="cyan"
                   >
                     Add Patient
                   </Button>

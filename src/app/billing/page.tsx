@@ -21,7 +21,6 @@ import {
   Badge,
   Avatar,
   Icon,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -38,11 +37,6 @@ import {
   CardHeader,
   useDisclosure,
   Divider,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Textarea,
 } from "@chakra-ui/react";
 import {
@@ -53,10 +47,6 @@ import {
   FiEye,
   FiDollarSign,
   FiCreditCard,
-  FiPrinter,
-  FiDownload,
-  FiCalendar,
-  FiUser,
   FiFileText,
 } from "react-icons/fi";
 import Layout from "../components/Layout";
@@ -227,8 +217,6 @@ export default function BillingPage() {
     onClose: onPaymentClose,
   } = useDisclosure();
 
-  const cardBg = useColorModeValue("white", "gray.800");
-
   const filteredInvoices = invoices.filter((invoice) => {
     const matchesSearch =
       invoice.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -342,24 +330,28 @@ export default function BillingPage() {
         <Container maxW="7xl" py={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
-              <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
               <Box>
-                <Heading size="lg">Billing & Payments</Heading>
-                <Text color="gray.600">
+                <Heading size="lg" color="white">Billing & Payments</Heading>
+                <Text color="whiteAlpha.700">
                   Manage invoices and payment processing
                 </Text>
               </Box>
               <HStack spacing={4} justifyContent={"flex-end"}>
                 <Button
                   leftIcon={<FiPlus />}
-                  colorScheme="dental"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
                   onClick={onOpen}
                 >
                   Create Invoice
                 </Button>
                 <Button
                   leftIcon={<FiDollarSign />}
-                  variant="outline"
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: "rgba(255,255,255,0.07)" }}
                   onClick={onPaymentOpen}
                 >
                   Record Payment
@@ -373,11 +365,17 @@ export default function BillingPage() {
               gap={6}
             >
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           Outstanding Balance
                         </Text>
                         <Text fontSize="2xl" fontWeight="bold" color="red.500">
@@ -390,11 +388,17 @@ export default function BillingPage() {
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           Monthly Revenue
                         </Text>
                         <Text
@@ -411,14 +415,20 @@ export default function BillingPage() {
                 </Card>
               </GridItem>
               <GridItem>
-                <Card bg={cardBg}>
+                <Card
+                  bg="rgba(15,22,41,0.7)"
+                  border="1px solid"
+                  borderColor="rgba(255,255,255,0.07)"
+                  backdropFilter="blur(12px)"
+                  _hover={{ borderColor: "rgba(255,255,255,0.12)" }}
+                >
                   <CardBody>
                     <HStack justify="space-between">
                       <Box>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color="whiteAlpha.500">
                           Total Invoices
                         </Text>
-                        <Text fontSize="2xl" fontWeight="bold">
+                        <Text fontSize="2xl" fontWeight="bold" color="white">
                           {invoices.length}
                         </Text>
                       </Box>
@@ -430,23 +440,41 @@ export default function BillingPage() {
             </Grid>
 
             {/* Search and Filters */}
-            <Card bg={cardBg}>
+            <Card
+              bg="rgba(15,22,41,0.7)"
+              border="1px solid"
+              borderColor="rgba(255,255,255,0.07)"
+              backdropFilter="blur(12px)"
+            >
               <CardBody>
                 <HStack spacing={4}>
                   <InputGroup flex={1}>
-                    <InputLeftElement>
+                    <InputLeftElement color="whiteAlpha.400">
                       <FiSearch />
                     </InputLeftElement>
                     <Input
                       placeholder="Search invoices by patient name or invoice number..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      bg="rgba(255,255,255,0.05)"
+                      border="1.5px solid"
+                      borderColor="rgba(255,255,255,0.1)"
+                      color="white"
+                      _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                      _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      _placeholder={{ color: "whiteAlpha.300" }}
                     />
                   </InputGroup>
                   <Select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     w="150px"
+                    bg="rgba(255,255,255,0.05)"
+                    border="1.5px solid"
+                    borderColor="rgba(255,255,255,0.1)"
+                    color="white"
+                    _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                    _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
                   >
                     <option value="all">All Status</option>
                     <option value="draft">Draft</option>
@@ -460,64 +488,71 @@ export default function BillingPage() {
             </Card>
 
             {/* Invoices Table */}
-            <Card bg={cardBg}>
+            <Card
+              bg="rgba(15,22,41,0.7)"
+              border="1px solid"
+              borderColor="rgba(255,255,255,0.07)"
+              backdropFilter="blur(12px)"
+            >
               <CardHeader>
-                <Heading size="md">
+                <Heading size="md" color="white">
                   Invoices ({filteredInvoices.length})
                 </Heading>
               </CardHeader>
               <CardBody overflow={"auto"}>
-                <Table variant="simple">
+                <Table variant="unstyled">
                   <Thead>
                     <Tr>
-                      <Th>Invoice #</Th>
-                      <Th>Patient</Th>
-                      <Th>Date</Th>
-                      <Th>Due Date</Th>
-                      <Th>Amount</Th>
-                      <Th>Status</Th>
-                      <Th>Actions</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Invoice #</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Patient</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Date</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Due Date</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Amount</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Status</Th>
+                      <Th bg="rgba(255,255,255,0.03)" color="whiteAlpha.500" borderColor="rgba(255,255,255,0.06)" fontSize="xs" fontWeight="700" letterSpacing="0.08em">Actions</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {filteredInvoices.map((invoice) => (
-                      <Tr key={invoice.id}>
-                        <Td>
+                      <Tr key={invoice.id} _hover={{ bg: "rgba(255,255,255,0.03)" }}>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontWeight="medium">
                             {invoice.invoiceNumber}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <HStack spacing={3}>
                             <Avatar size="sm" name={invoice.patientName} />
                             <Text>{invoice.patientName}</Text>
                           </HStack>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontSize="sm">
                             {new Date(invoice.date).toLocaleDateString()}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontSize="sm">
                             {new Date(invoice.dueDate).toLocaleDateString()}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td color="whiteAlpha.800" borderColor="rgba(255,255,255,0.05)">
                           <Text fontWeight="medium">
                             ₱{invoice.total.toLocaleString()}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <Badge colorScheme={getStatusColor(invoice.status)}>
                             {invoice.status}
                           </Badge>
                         </Td>
-                        <Td>
+                        <Td borderColor="rgba(255,255,255,0.05)">
                           <HStack spacing={2}>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
+                              color="whiteAlpha.600"
+                              _hover={{ bg: "rgba(255,255,255,0.07)" }}
                               onClick={() => {
                                 setSelectedInvoice(invoice);
                                 // Open view modal
@@ -527,7 +562,9 @@ export default function BillingPage() {
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
+                              color="whiteAlpha.600"
+                              _hover={{ bg: "rgba(255,255,255,0.07)" }}
                               onClick={() => {
                                 setSelectedInvoice(invoice);
                                 onOpen();
@@ -537,8 +574,9 @@ export default function BillingPage() {
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
-                              colorScheme="red"
+                              variant="ghost"
+                              color="red.400"
+                              _hover={{ bg: "rgba(239,68,68,0.1)" }}
                               onClick={() => {
                                 setInvoices(
                                   invoices.filter(
@@ -559,9 +597,14 @@ export default function BillingPage() {
             </Card>
 
             {/* Recent Payments */}
-            <Card bg={cardBg}>
+            <Card
+              bg="rgba(15,22,41,0.7)"
+              border="1px solid"
+              borderColor="rgba(255,255,255,0.07)"
+              backdropFilter="blur(12px)"
+            >
               <CardHeader>
-                <Heading size="md">Recent Payments</Heading>
+                <Heading size="md" color="white">Recent Payments</Heading>
               </CardHeader>
               <CardBody>
                 <VStack spacing={4} align="stretch">
@@ -574,7 +617,8 @@ export default function BillingPage() {
                         key={payment.id}
                         justify="space-between"
                         p={4}
-                        bg="gray.50"
+                        bg="rgba(255,255,255,0.03)"
+                        border="1px solid rgba(255,255,255,0.06)"
                         borderRadius="md"
                       >
                         <HStack spacing={4}>
@@ -583,10 +627,10 @@ export default function BillingPage() {
                             color="dental.500"
                           />
                           <Box>
-                            <Text fontWeight="medium">
+                            <Text fontWeight="medium" color="white">
                               {invoice?.patientName} - {invoice?.invoiceNumber}
                             </Text>
-                            <Text fontSize="sm" color="gray.600">
+                            <Text fontSize="sm" color="whiteAlpha.500">
                               {new Date(payment.date).toLocaleDateString()} •{" "}
                               {payment.method.toUpperCase()}
                             </Text>
@@ -747,21 +791,39 @@ function InvoiceModal({
     }
   };
 
+  const inputStyles = {
+    bg: "rgba(255,255,255,0.05)",
+    border: "1.5px solid",
+    borderColor: "rgba(255,255,255,0.1)",
+    color: "white",
+    _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+    _hover: { borderColor: "rgba(255,255,255,0.2)" },
+    _placeholder: { color: "whiteAlpha.300" },
+  };
+
+  const labelStyles = {
+    fontSize: "xs" as const,
+    fontWeight: 600,
+    color: "whiteAlpha.500",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.06em",
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+      <ModalContent bg="#0f1629" border="1px solid rgba(255,255,255,0.08)" boxShadow="0 24px 64px rgba(0,0,0,0.6)" borderRadius="2xl">
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">
           {invoice ? "Edit Invoice" : "Create New Invoice"}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="whiteAlpha.600" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={6}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Patient</FormLabel>
+                    <FormLabel {...labelStyles}>Patient</FormLabel>
                     <Select
                       value={formData.patientId}
                       onChange={(e) => {
@@ -774,6 +836,7 @@ function InvoiceModal({
                           patientName: patient?.name || "",
                         });
                       }}
+                      {...inputStyles}
                     >
                       <option value="">Select Patient</option>
                       {mockPatients.map((patient) => (
@@ -786,7 +849,7 @@ function InvoiceModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel {...labelStyles}>Status</FormLabel>
                     <Select
                       value={formData.status}
                       onChange={(e) =>
@@ -795,6 +858,7 @@ function InvoiceModal({
                           status: e.target.value as Invoice["status"],
                         })
                       }
+                      {...inputStyles}
                     >
                       <option value="draft">Draft</option>
                       <option value="sent">Sent</option>
@@ -805,25 +869,27 @@ function InvoiceModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Invoice Date</FormLabel>
+                    <FormLabel {...labelStyles}>Invoice Date</FormLabel>
                     <Input
                       type="date"
                       value={formData.date}
                       onChange={(e) =>
                         setFormData({ ...formData, date: e.target.value })
                       }
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Due Date</FormLabel>
+                    <FormLabel {...labelStyles}>Due Date</FormLabel>
                     <Input
                       type="date"
                       value={formData.dueDate}
                       onChange={(e) =>
                         setFormData({ ...formData, dueDate: e.target.value })
                       }
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
@@ -832,8 +898,14 @@ function InvoiceModal({
               {/* Invoice Items */}
               <Box w="full">
                 <HStack justify="space-between" mb={4}>
-                  <Text fontWeight="medium">Invoice Items</Text>
-                  <Button size="sm" onClick={addItem}>
+                  <Text fontWeight="medium" color="white">Invoice Items</Text>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    color="whiteAlpha.600"
+                    _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                    onClick={addItem}
+                  >
                     <FiPlus />
                   </Button>
                 </HStack>
@@ -848,7 +920,7 @@ function InvoiceModal({
                     >
                       <GridItem>
                         <FormControl>
-                          <FormLabel fontSize="sm">Description</FormLabel>
+                          <FormLabel {...labelStyles}>Description</FormLabel>
                           <Input
                             value={item.description}
                             onChange={(e) =>
@@ -859,12 +931,13 @@ function InvoiceModal({
                               )
                             }
                             placeholder="Service or item description"
+                            {...inputStyles}
                           />
                         </FormControl>
                       </GridItem>
                       <GridItem>
                         <FormControl>
-                          <FormLabel fontSize="sm">Quantity</FormLabel>
+                          <FormLabel {...labelStyles}>Quantity</FormLabel>
                           <Input
                             type="number"
                             value={item.quantity}
@@ -875,12 +948,13 @@ function InvoiceModal({
                                 parseInt(e.target.value) || 0
                               )
                             }
+                            {...inputStyles}
                           />
                         </FormControl>
                       </GridItem>
                       <GridItem>
                         <FormControl>
-                          <FormLabel fontSize="sm">Unit Price</FormLabel>
+                          <FormLabel {...labelStyles}>Unit Price</FormLabel>
                           <Input
                             type="number"
                             value={item.unitPrice}
@@ -891,25 +965,31 @@ function InvoiceModal({
                                 parseFloat(e.target.value) || 0
                               )
                             }
+                            {...inputStyles}
                           />
                         </FormControl>
                       </GridItem>
                       <GridItem>
                         <FormControl>
-                          <FormLabel fontSize="sm">Total</FormLabel>
+                          <FormLabel {...labelStyles}>Total</FormLabel>
                           <Input
                             type="number"
                             value={item.total}
                             isReadOnly
-                            bg="gray.50"
+                            bg="rgba(255,255,255,0.04)"
+                            border="1.5px solid"
+                            borderColor="rgba(255,255,255,0.08)"
+                            color="whiteAlpha.700"
+                            cursor="default"
                           />
                         </FormControl>
                       </GridItem>
                       <GridItem>
                         <Button
                           size="sm"
-                          colorScheme="red"
-                          variant="outline"
+                          variant="ghost"
+                          color="red.400"
+                          _hover={{ bg: "rgba(239,68,68,0.1)" }}
                           onClick={() => removeItem(index)}
                           isDisabled={formData.items.length === 1}
                         >
@@ -922,44 +1002,61 @@ function InvoiceModal({
               </Box>
 
               {/* Totals */}
-              <Box w="full" p={4} bg="gray.50" borderRadius="md">
+              <Box w="full" p={4} bg="rgba(255,255,255,0.04)" border="1px solid rgba(255,255,255,0.08)" borderRadius="md">
                 <VStack spacing={2} align="stretch">
                   <HStack justify="space-between">
-                    <Text>Subtotal:</Text>
-                    <Text>₱{calculateSubtotal().toLocaleString()}</Text>
+                    <Text color="whiteAlpha.700">Subtotal:</Text>
+                    <Text color="whiteAlpha.700">₱{calculateSubtotal().toLocaleString()}</Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text>Discount:</Text>
-                    <Text>-₱{formData.discount.toLocaleString()}</Text>
+                    <Text color="whiteAlpha.700">Discount:</Text>
+                    <Text color="whiteAlpha.700">-₱{formData.discount.toLocaleString()}</Text>
                   </HStack>
                   <HStack justify="space-between">
-                    <Text>Tax (12%):</Text>
-                    <Text>₱{formData.tax.toLocaleString()}</Text>
+                    <Text color="whiteAlpha.700">Tax (12%):</Text>
+                    <Text color="whiteAlpha.700">₱{formData.tax.toLocaleString()}</Text>
                   </HStack>
-                  <Divider />
+                  <Divider borderColor="rgba(255,255,255,0.08)" />
                   <HStack justify="space-between" fontWeight="bold">
-                    <Text>Total:</Text>
-                    <Text>₱{calculateTotal().toLocaleString()}</Text>
+                    <Text color="white">Total:</Text>
+                    <Text color="white">₱{calculateTotal().toLocaleString()}</Text>
                   </HStack>
                 </VStack>
               </Box>
 
               <FormControl>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel {...labelStyles}>Notes</FormLabel>
                 <Textarea
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
                   placeholder="Additional notes or terms..."
+                  bg="rgba(255,255,255,0.05)"
+                  border="1.5px solid"
+                  borderColor="rgba(255,255,255,0.1)"
+                  color="white"
+                  _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                  _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
+                  _placeholder={{ color: "whiteAlpha.300" }}
                 />
               </FormControl>
 
               <HStack spacing={4} w="full" justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                <Button
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" colorScheme="dental">
+                <Button
+                  type="submit"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
+                >
                   {invoice ? "Update Invoice" : "Create Invoice"}
                 </Button>
               </HStack>
@@ -1010,17 +1107,35 @@ function PaymentModal({
     });
   };
 
+  const inputStyles = {
+    bg: "rgba(255,255,255,0.05)",
+    border: "1.5px solid",
+    borderColor: "rgba(255,255,255,0.1)",
+    color: "white",
+    _focus: { bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" },
+    _hover: { borderColor: "rgba(255,255,255,0.2)" },
+    _placeholder: { color: "whiteAlpha.300" },
+  };
+
+  const labelStyles = {
+    fontSize: "xs" as const,
+    fontWeight: 600,
+    color: "whiteAlpha.500",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.06em",
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Record Payment</ModalHeader>
-        <ModalCloseButton />
+      <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(6px)" />
+      <ModalContent bg="#0f1629" border="1px solid rgba(255,255,255,0.08)" boxShadow="0 24px 64px rgba(0,0,0,0.6)" borderRadius="2xl">
+        <ModalHeader color="white" borderBottom="1px solid rgba(255,255,255,0.07)">Record Payment</ModalHeader>
+        <ModalCloseButton color="whiteAlpha.600" />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Invoice</FormLabel>
+                <FormLabel {...labelStyles}>Invoice</FormLabel>
                 <Select
                   value={formData.invoiceId}
                   onChange={(e) => {
@@ -1033,6 +1148,7 @@ function PaymentModal({
                       amount: invoice?.total || 0,
                     });
                   }}
+                  {...inputStyles}
                 >
                   <option value="">Select Invoice</option>
                   {invoices
@@ -1050,11 +1166,11 @@ function PaymentModal({
               </FormControl>
 
               {selectedInvoice && (
-                <Box w="full" p={3} bg="blue.50" borderRadius="md">
-                  <Text fontSize="sm" color="blue.700">
+                <Box w="full" p={3} bg="rgba(6,182,212,0.08)" border="1px solid rgba(6,182,212,0.2)" borderRadius="md">
+                  <Text fontSize="sm" color="cyan.300">
                     Invoice Total: ₱{selectedInvoice.total.toLocaleString()}
                   </Text>
-                  <Text fontSize="sm" color="blue.700">
+                  <Text fontSize="sm" color="cyan.300">
                     Remaining Balance: ₱{remainingBalance.toLocaleString()}
                   </Text>
                 </Box>
@@ -1063,7 +1179,7 @@ function PaymentModal({
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel {...labelStyles}>Amount</FormLabel>
                     <Input
                       type="number"
                       value={formData.amount}
@@ -1073,12 +1189,13 @@ function PaymentModal({
                           amount: parseFloat(e.target.value) || 0,
                         })
                       }
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Payment Method</FormLabel>
+                    <FormLabel {...labelStyles}>Payment Method</FormLabel>
                     <Select
                       value={formData.method}
                       onChange={(e) =>
@@ -1087,6 +1204,7 @@ function PaymentModal({
                           method: e.target.value as Payment["method"],
                         })
                       }
+                      {...inputStyles}
                     >
                       <option value="cash">Cash</option>
                       <option value="card">Credit/Debit Card</option>
@@ -1098,46 +1216,65 @@ function PaymentModal({
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Payment Date</FormLabel>
+                    <FormLabel {...labelStyles}>Payment Date</FormLabel>
                     <Input
                       type="date"
                       value={formData.date}
                       onChange={(e) =>
                         setFormData({ ...formData, date: e.target.value })
                       }
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl>
-                    <FormLabel>Reference Number</FormLabel>
+                    <FormLabel {...labelStyles}>Reference Number</FormLabel>
                     <Input
                       value={formData.reference}
                       onChange={(e) =>
                         setFormData({ ...formData, reference: e.target.value })
                       }
                       placeholder="Transaction reference"
+                      {...inputStyles}
                     />
                   </FormControl>
                 </GridItem>
               </Grid>
 
               <FormControl>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel {...labelStyles}>Notes</FormLabel>
                 <Textarea
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
                   placeholder="Payment notes or comments..."
+                  bg="rgba(255,255,255,0.05)"
+                  border="1.5px solid"
+                  borderColor="rgba(255,255,255,0.1)"
+                  color="white"
+                  _focus={{ bg: "rgba(6,182,212,0.06)", borderColor: "cyan.500", boxShadow: "0 0 0 3px rgba(6,182,212,0.15)" }}
+                  _hover={{ borderColor: "rgba(255,255,255,0.2)" }}
+                  _placeholder={{ color: "whiteAlpha.300" }}
                 />
               </FormControl>
 
               <HStack spacing={4} w="full" justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                <Button
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  _hover={{ bg: "rgba(255,255,255,0.07)" }}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" colorScheme="dental">
+                <Button
+                  type="submit"
+                  bgGradient="linear(135deg, cyan.500, violet.500)"
+                  color="white"
+                  _hover={{ bgGradient: "linear(135deg, cyan.400, violet.400)", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}
+                >
                   Record Payment
                 </Button>
               </HStack>

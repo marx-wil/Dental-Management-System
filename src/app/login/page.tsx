@@ -1,52 +1,67 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
+  VStack,
+  HStack,
   Heading,
+  Text,
   FormControl,
   FormLabel,
   Input,
+  InputGroup,
+  InputRightElement,
   Button,
-  VStack,
-  HStack,
-  Text,
   Alert,
   AlertIcon,
   Divider,
-  InputGroup,
-  InputRightElement,
   IconButton,
+  Badge,
+  Icon,
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon, CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { ViewIcon, ViewOffIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { FiLock, FiMail } from 'react-icons/fi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
 import AuthLayout from '../components/AuthLayout';
+import { gsap } from 'gsap';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail]               = useState('');
+  const [password, setPassword]         = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [error, setError]               = useState('');
+  const [isLoading, setIsLoading]       = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
+
   const { login } = useAuth();
-  const router = useRouter();
+  const router    = useRouter();
+
+  useEffect(() => {
+    if (!formRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.to(formRef.current, {
+        y: 0, opacity: 1,
+        duration: 0.7, ease: 'power3.out', delay: 0.25,
+      });
+    }, formRef);
+    return () => ctx.revert();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
     try {
       const success = await login(email, password);
       if (success) {
         router.push('/dashboard');
       } else {
-        setError('Invalid email or password');
+        setError('Invalid email or password. Try a demo account below.');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -54,193 +69,264 @@ export default function LoginPage() {
   };
 
   const demoAccounts = [
-    { email: 'admin@clinic.com', password: 'password', role: 'Admin' },
-    { email: 'dentist@clinic.com', password: 'password', role: 'Dentist' },
-    { email: 'staff@clinic.com', password: 'password', role: 'Staff' },
-    { email: 'patient@clinic.com', password: 'password', role: 'Patient' },
+    { email: 'admin@clinic.com',   password: 'password', role: 'Admin',   color: '#8b5cf6' },
+    { email: 'dentist@clinic.com', password: 'password', role: 'Dentist', color: '#06b6d4' },
+    { email: 'staff@clinic.com',   password: 'password', role: 'Staff',   color: '#10b981' },
+    { email: 'patient@clinic.com', password: 'password', role: 'Patient', color: '#f59e0b' },
   ];
+
+  /* ── shared dark input styles ── */
+  const inputStyles = {
+    bg: 'rgba(255,255,255,0.05)',
+    border: '1.5px solid',
+    borderColor: 'rgba(255,255,255,0.1)',
+    color: 'white',
+    borderRadius: 'xl',
+    fontSize: 'sm',
+    h: 12,
+    _focus: {
+      bg: 'rgba(6,182,212,0.06)',
+      borderColor: 'cyan.500',
+      boxShadow: '0 0 0 3px rgba(6,182,212,0.15)',
+    },
+    _hover: { borderColor: 'rgba(255,255,255,0.2)' },
+    _placeholder: { color: 'whiteAlpha.300' },
+  };
 
   return (
     <AuthLayout>
-      <VStack spacing={8} align="stretch">
-        <Box>
+      <Box
+        ref={formRef}
+        style={{ opacity: 0, transform: 'translateY(24px)' }}
+      >
+        <VStack spacing={8} align="stretch">
+          {/* Back link */}
           <Link href="/">
             <Button
               variant="ghost"
               size="sm"
               leftIcon={<ArrowBackIcon />}
-              color="gray.600"
-              mb={4}
-              _hover={{
-                bg: "gray.100",
-                color: "gray.800",
-              }}
+              color="whiteAlpha.500"
+              px={0}
+              _hover={{ color: 'white', bg: 'transparent' }}
             >
-              Back to Home
+              Back to home
             </Button>
           </Link>
-          <Heading size="xl" color="gray.800" mb={2}>
-            Sign in to your account
-          </Heading>
-        </Box>
 
-        <form onSubmit={handleSubmit}>
-          <VStack spacing={6} align="stretch">
-            {error && (
-              <Alert status="error" borderRadius="md" fontSize="sm">
-                <AlertIcon />
-                {error}
-              </Alert>
-            )}
+          {/* Header */}
+          <Box>
+            <Heading
+              fontSize="3xl"
+              fontWeight="800"
+              color="white"
+              letterSpacing="-0.03em"
+              mb={2}
+            >
+              Sign in
+            </Heading>
+            <Text fontSize="sm" color="whiteAlpha.400">
+              Welcome back. Enter your credentials to continue.
+            </Text>
+          </Box>
 
-            <FormControl>
-              <FormLabel fontSize="sm" color="gray.600" mb={2}>
-                E-mail Address
-              </FormLabel>
-              <InputGroup>
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  border="none"
-                  borderBottom="2px solid"
-                  borderBottomColor="gray.200"
-                  borderRadius="0"
-                  px={0}
-                  py={3}
-                  fontSize="md"
-                  _focus={{
-                    borderBottomColor: "#3182ce",
-                    boxShadow: "none",
-                  }}
-                  _placeholder={{
-                    color: "gray.400",
-                  }}
-                />
-                <InputRightElement>
-                  <CheckIcon color="green.500" />
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
+          {/* Error */}
+          {error && (
+            <Alert
+              status="error"
+              borderRadius="xl"
+              fontSize="sm"
+              bg="rgba(244,63,94,0.1)"
+              border="1px solid rgba(244,63,94,0.25)"
+            >
+              <AlertIcon color="rose.400" />
+              <Text color="rose.300">{error}</Text>
+            </Alert>
+          )}
 
-            <FormControl>
-              <FormLabel fontSize="sm" color="gray.600" mb={2}>
-                Password
-              </FormLabel>
-              <InputGroup>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  border="none"
-                  borderBottom="2px solid"
-                  borderBottomColor="gray.200"
-                  borderRadius="0"
-                  px={0}
-                  py={3}
-                  fontSize="md"
-                  _focus={{
-                    borderBottomColor: "#3182ce",
-                    boxShadow: "none",
-                  }}
-                  _placeholder={{
-                    color: "gray.400",
-                  }}
-                />
-                <InputRightElement>
-                  <IconButton
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowPassword(!showPassword)}
-                    color="gray.500"
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            <VStack spacing={5} align="stretch">
+              {/* Email */}
+              <FormControl>
+                <FormLabel fontSize="xs" fontWeight="600" color="whiteAlpha.500" mb={2} letterSpacing="0.06em" textTransform="uppercase">
+                  Email address
+                </FormLabel>
+                <InputGroup>
+                  <Input
+                    type="email"
+                    placeholder="you@clinic.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    {...inputStyles}
+                    pl={10}
                   />
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
+                  <Box
+                    position="absolute"
+                    left={3}
+                    top="50%"
+                    transform="translateY(-50%)"
+                    zIndex={1}
+                    pointerEvents="none"
+                  >
+                    <Icon as={FiMail} color="whiteAlpha.300" boxSize={4} />
+                  </Box>
+                </InputGroup>
+              </FormControl>
 
-            <HStack spacing={4} pt={4}>
+              {/* Password */}
+              <FormControl>
+                <HStack justify="space-between" mb={2}>
+                  <FormLabel fontSize="xs" fontWeight="600" color="whiteAlpha.500" mb={0} letterSpacing="0.06em" textTransform="uppercase">
+                    Password
+                  </FormLabel>
+                  <Text
+                    fontSize="xs"
+                    color="cyan.500"
+                    fontWeight="600"
+                    cursor="pointer"
+                    _hover={{ color: 'cyan.300' }}
+                    transition="color 0.2s"
+                  >
+                    Forgot password?
+                  </Text>
+                </HStack>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    {...inputStyles}
+                    pl={10}
+                    pr={12}
+                  />
+                  <Box
+                    position="absolute"
+                    left={3}
+                    top="50%"
+                    transform="translateY(-50%)"
+                    zIndex={1}
+                    pointerEvents="none"
+                  >
+                    <Icon as={FiLock} color="whiteAlpha.300" boxSize={4} />
+                  </Box>
+                  <InputRightElement h="full" pr={1}>
+                    <IconButton
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      variant="ghost"
+                      size="sm"
+                      borderRadius="lg"
+                      color="whiteAlpha.400"
+                      _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+
+              {/* Submit */}
               <Button
                 type="submit"
-                bg="#3182ce"
-                color="white"
                 size="lg"
-                flex="1"
-                borderRadius="full"
-                fontSize="md"
-                fontWeight="medium"
+                h={12}
+                fontWeight="700"
+                fontSize="sm"
+                borderRadius="xl"
+                bg="linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)"
+                color="white"
+                mt={2}
                 isLoading={isLoading}
-                loadingText="Signing In..."
+                loadingText="Signing in..."
+                boxShadow="0 4px 20px rgba(6,182,212,0.25)"
                 _hover={{
-                  bg: "#2c5aa0",
+                  opacity: 0.9,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 32px rgba(6,182,212,0.4)',
                 }}
-                _active={{
-                  bg: "#2c5aa0",
-                }}
+                _active={{ transform: 'translateY(0)' }}
+                transition="all 0.25s ease"
               >
-                Sign In
+                Sign in
               </Button>
-              
-              <Link href="/register">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  borderRadius="full"
-                  fontSize="md"
-                  fontWeight="medium"
-                  borderColor="gray.300"
-                  color="gray.700"
-                  _hover={{
-                    bg: "gray.50",
-                    borderColor: "gray.400",
-                  }}
-                >
-                  Sign Up
-                </Button>
-              </Link>
-            </HStack>
-          </VStack>
-        </form>
+            </VStack>
+          </form>
 
-        {/* Demo Accounts Section */}
-        <VStack spacing={4} mt={8}>
-          <HStack w="full">
-            <Divider />
-            <Text fontSize="sm" color="gray.500" px={4}>
-              Demo Accounts
+          {/* Register link */}
+          <Text textAlign="center" fontSize="sm" color="whiteAlpha.400">
+            Don&apos;t have an account?{' '}
+            <Link href="/register">
+              <Text
+                as="span"
+                color="cyan.400"
+                fontWeight="700"
+                cursor="pointer"
+                _hover={{ color: 'cyan.300' }}
+                transition="color 0.2s"
+              >
+                Create account
+              </Text>
+            </Link>
+          </Text>
+
+          {/* Divider */}
+          <HStack>
+            <Divider borderColor="rgba(255,255,255,0.07)" />
+            <Text fontSize="xs" color="whiteAlpha.300" whiteSpace="nowrap" px={3} fontWeight="500">
+              Demo accounts
             </Text>
-            <Divider />
+            <Divider borderColor="rgba(255,255,255,0.07)" />
           </HStack>
 
-          <VStack spacing={2} w="full">
-            {demoAccounts.map((account, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
+          {/* Demo account cards */}
+          <VStack spacing={2}>
+            {demoAccounts.map((account, i) => (
+              <Box
+                key={i}
                 w="full"
-                fontSize="xs"
-                py={2}
-                borderColor="gray.200"
-                color="gray.600"
-                _hover={{
-                  bg: "gray.50",
-                  borderColor: "gray.300",
-                }}
+                px={4}
+                py={3}
+                borderRadius="xl"
+                border="1.5px solid rgba(255,255,255,0.07)"
+                cursor="pointer"
+                bg="rgba(255,255,255,0.03)"
                 onClick={() => {
                   setEmail(account.email);
                   setPassword(account.password);
                 }}
+                _hover={{
+                  bg: 'rgba(255,255,255,0.06)',
+                  borderColor: `${account.color}4D`,
+                }}
+                transition="all 0.2s ease"
               >
-                {account.role} - {account.email}
-              </Button>
+                <HStack justify="space-between">
+                  <VStack spacing={0} align="start">
+                    <Text fontSize="sm" fontWeight="600" color="whiteAlpha.800">
+                      {account.email}
+                    </Text>
+                    <Text fontSize="xs" color="whiteAlpha.300">
+                      password: {account.password}
+                    </Text>
+                  </VStack>
+                  <Badge
+                    px={3}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="xs"
+                    fontWeight="700"
+                    color="white"
+                    style={{ background: account.color }}
+                  >
+                    {account.role}
+                  </Badge>
+                </HStack>
+              </Box>
             ))}
           </VStack>
         </VStack>
-      </VStack>
+      </Box>
     </AuthLayout>
   );
 }

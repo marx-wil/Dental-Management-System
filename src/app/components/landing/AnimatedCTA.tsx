@@ -1,13 +1,21 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { Box, Container, VStack, HStack, Heading, Text, Button, Icon } from '@chakra-ui/react';
-import { FiArrowRight, FiStar, FiZap } from 'react-icons/fi';
+import {
+  Box,
+  Container,
+  VStack,
+  HStack,
+  Heading,
+  Text,
+  Button,
+  Icon,
+} from '@chakra-ui/react';
+import { FiArrowRight, FiCheck, FiZap } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -32,260 +40,263 @@ export default function AnimatedCTA({
   features = [],
 }: AnimatedCTAProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
+  const orb1Ref = useRef<HTMLDivElement>(null);
+  const orb2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Initial state
-      gsap.set([titleRef.current, subtitleRef.current, buttonsRef.current, featuresRef.current], {
-        opacity: 0,
-        y: 50,
+      // Orbs floating
+      gsap.to(orb1Ref.current, {
+        x: 20, y: -15, scale: 1.08,
+        duration: 7, repeat: -1, yoyo: true, ease: 'sine.inOut',
+      });
+      gsap.to(orb2Ref.current, {
+        x: -15, y: 20, scale: 0.92,
+        duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.5,
       });
 
-      gsap.set(backgroundRef.current, {
-        scale: 1.1,
-        opacity: 0,
+      // Initial states
+      gsap.set(cardRef.current, { opacity: 0, y: 60, scale: 0.97 });
+      gsap.set([titleRef.current, subtitleRef.current, featuresRef.current, buttonsRef.current], {
+        opacity: 0, y: 30,
       });
 
-      // Create scroll trigger animation
       ScrollTrigger.create({
         trigger: containerRef.current,
-        start: 'top 70%',
-        end: 'bottom 30%',
+        start: 'top 72%',
         onEnter: () => {
           const tl = gsap.timeline();
-
-          // Animate background
-          tl.to(backgroundRef.current, {
-            scale: 1,
-            opacity: 1,
-            duration: 1.5,
-            ease: 'power2.out',
-          });
-
-          // Animate title
-          tl.to(titleRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-          }, '-=1');
-
-          // Animate subtitle
-          tl.to(subtitleRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: 'power2.out',
-          }, '-=0.4');
-
-          // Animate features
-          if (features.length > 0) {
-            tl.to(featuresRef.current, {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              ease: 'power2.out',
-            }, '-=0.3');
-          }
-
-          // Animate buttons
-          tl.to(buttonsRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'back.out(1.7)',
-          }, '-=0.2');
-
-          // Continuous floating animation for buttons
-          if (buttonsRef.current?.children) {
-            gsap.to(buttonsRef.current.children, {
-              y: -5,
-              duration: 2,
-              ease: 'power1.inOut',
-              yoyo: true,
-              repeat: -1,
-              stagger: 0.2,
-            });
-          }
+          tl.to(cardRef.current, {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.9, ease: 'power3.out',
+          })
+          .to(titleRef.current, {
+            opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+          }, '-=0.6')
+          .to(subtitleRef.current, {
+            opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+          }, '-=0.4')
+          .to(featuresRef.current, {
+            opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+          }, '-=0.3')
+          .to(buttonsRef.current, {
+            opacity: 1, y: 0, duration: 0.7, ease: 'back.out(1.5)',
+          }, '-=0.3');
         },
       });
     }, containerRef);
 
     return () => ctx.revert();
-  }, [features.length]);
+  }, []);
 
   return (
     <Box
       ref={containerRef}
+      py={24}
+      bg="navy.900"
       position="relative"
-      py={20}
       overflow="hidden"
     >
-      {/* Animated Background */}
+      {/* Orbs */}
       <Box
-        ref={backgroundRef}
+        ref={orb1Ref}
         position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bgGradient="linear(135deg, dental.500 0%, brand.500 50%, dental.600 100%)"
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)',
-        }}
-      />
-
-      {/* Floating Elements */}
-      <Box
-        position="absolute"
-        top="10%"
-        left="5%"
-        w="80px"
-        h="80px"
-        bg="white"
+        top="-20%"
+        left="-10%"
+        w="500px"
+        h="500px"
         borderRadius="full"
-        opacity={0.1}
-        animation="float 8s ease-in-out infinite"
+        bg="radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)"
+        pointerEvents="none"
       />
       <Box
+        ref={orb2Ref}
         position="absolute"
-        top="20%"
-        right="10%"
-        w="60px"
-        h="60px"
-        bg="white"
+        bottom="-20%"
+        right="-5%"
+        w="400px"
+        h="400px"
         borderRadius="full"
-        opacity={0.15}
-        animation="float 6s ease-in-out infinite reverse"
-      />
-      <Box
-        position="absolute"
-        bottom="15%"
-        left="15%"
-        w="40px"
-        h="40px"
-        bg="white"
-        borderRadius="full"
-        opacity={0.2}
-        animation="float 4s ease-in-out infinite"
+        bg="radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)"
+        pointerEvents="none"
       />
 
       <Container maxW="4xl" position="relative" zIndex={1}>
-        <VStack spacing={8} textAlign="center" color="white">
-          <Heading
-            ref={titleRef}
-            size="2xl"
-            fontWeight="bold"
-            maxW="3xl"
-            lineHeight="shorter"
-          >
-            {title}
-          </Heading>
+        {/* Glass card */}
+        <Box
+          ref={cardRef}
+          position="relative"
+          overflow="hidden"
+          borderRadius="3xl"
+          p={{ base: 10, md: 16 }}
+          textAlign="center"
+          bg="rgba(15,22,41,0.5)"
+          border="1px solid rgba(255,255,255,0.08)"
+          backdropFilter="blur(20px)"
+          boxShadow="0 40px 80px rgba(0,0,0,0.4)"
+        >
+          {/* Gradient top border */}
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            h="2px"
+            bgGradient="linear(90deg, transparent, cyan.400, violet.400, transparent)"
+          />
 
-          <Text
-            ref={subtitleRef}
-            fontSize="xl"
-            opacity={0.9}
-            maxW="2xl"
-            lineHeight="tall"
-          >
-            {subtitle}
-          </Text>
+          {/* Inner glow */}
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%,-50%)"
+            w="300px"
+            h="300px"
+            borderRadius="full"
+            bg="radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%)"
+            pointerEvents="none"
+          />
 
-          {features.length > 0 && (
+          <VStack spacing={8} position="relative">
+            {/* Label */}
+            <Box
+              px={4}
+              py={1.5}
+              borderRadius="full"
+              bg="rgba(6,182,212,0.1)"
+              border="1px solid rgba(6,182,212,0.25)"
+              display="inline-flex"
+              alignItems="center"
+              gap={2}
+            >
+              <Icon as={FiZap} color="cyan.400" boxSize={3.5} />
+              <Text fontSize="xs" fontWeight="700" color="cyan.300" letterSpacing="0.1em" textTransform="uppercase">
+                Get Started Today
+              </Text>
+            </Box>
+
+            {/* Title */}
+            <Heading
+              ref={titleRef}
+              as="h2"
+              fontSize={{ base: '3xl', md: '5xl' }}
+              fontWeight="800"
+              color="white"
+              letterSpacing="-0.03em"
+              lineHeight="1.1"
+              maxW="2xl"
+            >
+              {title.split(' ').slice(0, -2).join(' ')}{' '}
+              <Box as="span" bgGradient="linear(135deg, cyan.400, violet.400)" bgClip="text">
+                {title.split(' ').slice(-2).join(' ')}
+              </Box>
+            </Heading>
+
+            {/* Subtitle */}
+            <Text
+              ref={subtitleRef}
+              fontSize={{ base: 'md', md: 'lg' }}
+              color="whiteAlpha.500"
+              maxW="2xl"
+              lineHeight="1.8"
+            >
+              {subtitle}
+            </Text>
+
+            {/* Feature pills */}
+            {features.length > 0 && (
+              <HStack
+                ref={featuresRef}
+                spacing={{ base: 3, md: 6 }}
+                flexWrap="wrap"
+                justify="center"
+              >
+                {features.map((feature, i) => (
+                  <HStack key={i} spacing={2}>
+                    <Box
+                      w={5}
+                      h={5}
+                      borderRadius="full"
+                      bg="rgba(16,185,129,0.15)"
+                      border="1px solid rgba(16,185,129,0.4)"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Icon as={FiCheck} color="emerald.400" boxSize={3} />
+                    </Box>
+                    <Text fontSize="sm" color="whiteAlpha.700" fontWeight="500">
+                      {feature}
+                    </Text>
+                  </HStack>
+                ))}
+              </HStack>
+            )}
+
+            {/* Buttons */}
             <HStack
-              ref={featuresRef}
-              spacing={8}
+              ref={buttonsRef}
+              spacing={4}
               flexWrap="wrap"
               justify="center"
-              pt={4}
+              pt={2}
             >
-              {features.map((feature, index) => (
-                <HStack key={index} spacing={2} color="white">
-                  <Icon as={FiStar} boxSize={5} color="yellow.300" />
-                  <Text fontSize="md" fontWeight="medium">
-                    {feature}
-                  </Text>
-                </HStack>
-              ))}
+              <Link href={primaryButtonLink}>
+                <Button
+                  size="lg"
+                  px={10}
+                  py={7}
+                  fontSize="md"
+                  fontWeight="700"
+                  borderRadius="2xl"
+                  bg="linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)"
+                  color="white"
+                  rightIcon={<FiArrowRight />}
+                  boxShadow="0 8px 32px rgba(6,182,212,0.4)"
+                  _hover={{
+                    bg: 'linear-gradient(135deg, #0891b2 0%, #7c3aed 100%)',
+                    transform: 'translateY(-3px)',
+                    boxShadow: '0 16px 48px rgba(6,182,212,0.55)',
+                  }}
+                  transition="all 0.3s ease"
+                >
+                  {primaryButtonText}
+                </Button>
+              </Link>
+              <Link href={secondaryButtonLink}>
+                <Button
+                  size="lg"
+                  px={10}
+                  py={7}
+                  fontSize="md"
+                  fontWeight="600"
+                  borderRadius="2xl"
+                  variant="outline"
+                  borderColor="whiteAlpha.200"
+                  color="whiteAlpha.800"
+                  _hover={{
+                    bg: 'whiteAlpha.100',
+                    borderColor: 'cyan.400',
+                    color: 'white',
+                    transform: 'translateY(-3px)',
+                  }}
+                  transition="all 0.3s ease"
+                >
+                  {secondaryButtonText}
+                </Button>
+              </Link>
             </HStack>
-          )}
-
-          <HStack
-            ref={buttonsRef}
-            spacing={6}
-            pt={6}
-            flexWrap="wrap"
-            justify="center"
-          >
-            <Link href={primaryButtonLink}>
-              <Button
-                size="lg"
-                bg="white"
-                color="dental.600"
-                rightIcon={<FiArrowRight />}
-                px={8}
-                py={6}
-                fontSize="lg"
-                fontWeight="bold"
-                borderRadius="xl"
-                boxShadow="xl"
-                _hover={{
-                  bg: 'gray.100',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '2xl',
-                }}
-                transition="all 0.3s ease"
-              >
-                {primaryButtonText}
-              </Button>
-            </Link>
-            <Link href={secondaryButtonLink}>
-              <Button
-                size="lg"
-                variant="outline"
-                borderColor="white"
-                color="white"
-                leftIcon={<FiZap />}
-                px={8}
-                py={6}
-                fontSize="lg"
-                fontWeight="bold"
-                borderRadius="xl"
-                borderWidth="2px"
-                _hover={{
-                  bg: 'white',
-                  color: 'dental.600',
-                  transform: 'translateY(-2px)',
-                }}
-                transition="all 0.3s ease"
-              >
-                {secondaryButtonText}
-              </Button>
-            </Link>
-          </HStack>
-        </VStack>
+          </VStack>
+        </Box>
       </Container>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(180deg); }
-        }
-      `}</style>
     </Box>
   );
 }

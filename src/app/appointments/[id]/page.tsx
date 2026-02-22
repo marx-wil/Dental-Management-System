@@ -16,7 +16,6 @@ import {
   Avatar,
   Icon,
   useColorModeValue,
-  Divider,
   Grid,
   GridItem,
   SimpleGrid,
@@ -29,7 +28,6 @@ import {
   FiArrowLeft,
   FiEdit,
   FiTrash2,
-  FiMapPin,
   FiPhone,
   FiMail,
   FiActivity,
@@ -215,6 +213,7 @@ export default function AppointmentDetailsPage() {
   const toast = useToast();
   
   const cardBg = useColorModeValue('white', 'gray.800');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   useEffect(() => {

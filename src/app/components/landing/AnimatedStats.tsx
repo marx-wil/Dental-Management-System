@@ -1,12 +1,20 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { Box, Container, Grid, GridItem, VStack, HStack, Text, Heading, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Grid,
+  GridItem,
+  VStack,
+  Text,
+  Heading,
+  Icon,
+} from '@chakra-ui/react';
 import { FiUsers, FiCalendar, FiDollarSign, FiShield } from 'react-icons/fi';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -15,7 +23,9 @@ interface StatItem {
   icon: React.ElementType;
   value: string;
   label: string;
-  color: string;
+  gradient: string;
+  glow: string;
+  textColor: string;
 }
 
 const stats: StatItem[] = [
@@ -23,92 +33,91 @@ const stats: StatItem[] = [
     icon: FiUsers,
     value: '500+',
     label: 'Active Clinics',
-    color: 'dental.500',
+    gradient: 'linear(135deg, cyan.500, cyan.700)',
+    glow: 'rgba(6,182,212,0.25)',
+    textColor: 'cyan.400',
   },
   {
     icon: FiCalendar,
     value: '50K+',
-    label: 'Appointments Monthly',
-    color: 'brand.500',
+    label: 'Monthly Appointments',
+    gradient: 'linear(135deg, violet.500, violet.700)',
+    glow: 'rgba(139,92,246,0.25)',
+    textColor: 'violet.400',
   },
   {
     icon: FiDollarSign,
     value: '₱2M+',
     label: 'Revenue Processed',
-    color: 'green.500',
+    gradient: 'linear(135deg, emerald.500, emerald.700)',
+    glow: 'rgba(16,185,129,0.25)',
+    textColor: 'emerald.400',
   },
   {
     icon: FiShield,
     value: '99.9%',
     label: 'Uptime Guarantee',
-    color: 'purple.500',
+    gradient: 'linear(135deg, amber.500, amber.700)',
+    glow: 'rgba(245,158,11,0.25)',
+    textColor: 'amber.400',
   },
 ];
 
 export default function AnimatedStats() {
   const containerRef = useRef<HTMLDivElement>(null);
   const statRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Initial state
-      gsap.set(statRefs.current, {
-        opacity: 0,
-        y: 50,
-        scale: 0.8,
-      });
+      gsap.set(headerRef.current, { opacity: 0, y: 30 });
+      gsap.set(statRefs.current, { opacity: 0, y: 50, scale: 0.9 });
 
-      // Create scroll trigger animation
       ScrollTrigger.create({
         trigger: containerRef.current,
-        start: 'top 70%',
-        end: 'bottom 30%',
+        start: 'top 75%',
         onEnter: () => {
-          gsap.to(statRefs.current, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: 'back.out(1.7)',
-            stagger: 0.2,
+          gsap.to(headerRef.current, {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
           });
 
-          // Animate numbers
+          gsap.to(statRefs.current, {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.8,
+            ease: 'back.out(1.7)',
+            stagger: 0.15,
+            delay: 0.2,
+          });
+
+          // Counter animation
           statRefs.current.forEach((ref, index) => {
-            if (ref) {
-              const numberElement = ref.querySelector('.stat-number');
-              if (numberElement) {
-                const finalValue = stats[index].value;
-                const isNumber = /^\d+/.test(finalValue);
-                
-                if (isNumber) {
-                  const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
-                  gsap.fromTo(numberElement, 
-                    { textContent: 0 },
-                    {
-                      textContent: numericValue,
-                      duration: 2,
-                      ease: 'power2.out',
-                      snap: { textContent: 1 },
-                      onUpdate: function() {
-                        const currentValue = Math.round(this.targets()[0].textContent);
-                        if (finalValue.includes('K')) {
-                          numberElement.textContent = `${currentValue}K+`;
-                        } else if (finalValue.includes('M')) {
-                          numberElement.textContent = `₱${currentValue}M+`;
-                        } else if (finalValue.includes('%')) {
-                          numberElement.textContent = `${currentValue}%`;
-                        } else {
-                          numberElement.textContent = `${currentValue}+`;
-                        }
-                      }
-                    }
-                  );
-                }
+            if (!ref) return;
+            const numberEl = ref.querySelector('.stat-number');
+            if (!numberEl) return;
+
+            const finalValue = stats[index].value;
+            const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+            if (!numericValue) return;
+
+            gsap.fromTo(numberEl,
+              { textContent: 0 },
+              {
+                textContent: numericValue,
+                duration: 2.5,
+                ease: 'power2.out',
+                snap: { textContent: 1 },
+                delay: 0.4 + index * 0.15,
+                onUpdate() {
+                  const val = Math.round(Number(this.targets()[0].textContent));
+                  if (finalValue.includes('K')) numberEl.textContent = `${val}K+`;
+                  else if (finalValue.includes('M')) numberEl.textContent = `₱${val}M+`;
+                  else if (finalValue.includes('%')) numberEl.textContent = `${val}%`;
+                  else numberEl.textContent = `${val}+`;
+                },
               }
-            }
+            );
           });
         },
       });
@@ -118,92 +127,140 @@ export default function AnimatedStats() {
   }, []);
 
   return (
-    <Box py={20} bg="gray.50" position="relative" overflow="hidden">
-      {/* Background Pattern */}
+    <Box
+      ref={containerRef}
+      py={24}
+      bg="navy.900"
+      position="relative"
+      overflow="hidden"
+    >
+      {/* Subtle divider gradient from hero */}
       <Box
         position="absolute"
         top={0}
         left={0}
         right={0}
+        h="1px"
+        bg="linear-gradient(90deg, transparent 0%, rgba(6,182,212,0.3) 50%, transparent 100%)"
+      />
+      <Box
+        position="absolute"
         bottom={0}
-        opacity={0.05}
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 25% 25%, dental.300 0%, transparent 50%), radial-gradient(circle at 75% 75%, brand.300 0%, transparent 50%)',
-        }}
+        left={0}
+        right={0}
+        h="1px"
+        bg="linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.3) 50%, transparent 100%)"
       />
 
-      <Container maxW="6xl" position="relative" zIndex={1}>
-        <VStack spacing={12}>
-          <VStack spacing={4} textAlign="center">
-            <Heading size="2xl" color="gray.800">
+      <Container maxW="6xl">
+        <VStack spacing={16}>
+          {/* Header */}
+          <Box ref={headerRef} textAlign="center">
+            <Text
+              fontSize="xs"
+              fontWeight="700"
+              color="cyan.400"
+              letterSpacing="0.15em"
+              textTransform="uppercase"
+              mb={3}
+            >
+              Proven Results
+            </Text>
+            <Heading
+              fontSize={{ base: '3xl', md: '4xl' }}
+              fontWeight="800"
+              color="white"
+              letterSpacing="-0.02em"
+              mb={4}
+            >
               Trusted by Dental Professionals
             </Heading>
-            <Text fontSize="lg" color="gray.600" maxW="2xl">
-              Join hundreds of dental clinics across the Philippines who trust our system
+            <Text fontSize="lg" color="whiteAlpha.500" maxW="2xl" mx="auto">
+              Join hundreds of clinics across the Philippines who trust our system
               to manage their practice efficiently and securely.
             </Text>
-          </VStack>
+          </Box>
 
+          {/* Stats Grid */}
           <Grid
-            ref={containerRef}
-            templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
-            gap={8}
+            templateColumns={{ base: '1fr', sm: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }}
+            gap={6}
             w="full"
           >
             {stats.map((stat, index) => (
               <GridItem key={index}>
                 <Box
                   ref={(el) => { statRefs.current[index] = el; }}
-                  p={8}
-                  bg="white"
-                  borderRadius="2xl"
-                  boxShadow="xl"
-                  textAlign="center"
-                  border="1px solid"
-                  borderColor="gray.100"
                   position="relative"
+                  p={8}
+                  bg="rgba(15,22,41,0.6)"
+                  border="1px solid rgba(255,255,255,0.07)"
+                  borderRadius="2xl"
+                  backdropFilter="blur(16px)"
+                  textAlign="center"
                   overflow="hidden"
+                  cursor="default"
+                  transition="all 0.3s ease"
+                  _hover={{
+                    transform: 'translateY(-6px)',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    boxShadow: `0 20px 60px ${stat.glow}`,
+                  }}
                   _before={{
                     content: '""',
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '4px',
-                    bg: stat.color,
+                    h: '3px',
+                    bgGradient: stat.gradient,
+                    borderTopRadius: '2xl',
                   }}
                 >
-                  <VStack spacing={4}>
+                  {/* Glow dot */}
+                  <Box
+                    position="absolute"
+                    top="30%"
+                    left="50%"
+                    transform="translate(-50%,-50%)"
+                    w="120px"
+                    h="120px"
+                    borderRadius="full"
+                    bg={stat.glow}
+                    filter="blur(40px)"
+                    pointerEvents="none"
+                  />
+
+                  <VStack spacing={4} position="relative">
+                    {/* Icon */}
                     <Box
-                      p={4}
+                      p={3}
                       borderRadius="xl"
-                      bg={`${stat.color.replace('500', '50')}`}
-                      display="inline-flex"
-                      alignItems="center"
-                      justifyContent="center"
+                      bg={`rgba(${stat.glow.replace('rgba(', '').replace(/,\d+\.\d+\)/, ',0.15)')}`}
+                      border="1px solid"
+                      borderColor="whiteAlpha.100"
                     >
-                      <Icon as={stat.icon} boxSize={8} color={stat.color} />
+                      <Icon as={stat.icon} boxSize={6} color={stat.textColor} />
                     </Box>
-                    
-                    <Heading
-                      size="3xl"
-                      color="gray.800"
-                      fontWeight="bold"
+
+                    {/* Number */}
+                    <Text
                       className="stat-number"
+                      fontSize="4xl"
+                      fontWeight="800"
+                      color={stat.textColor}
+                      lineHeight={1}
+                      letterSpacing="-0.03em"
                     >
                       {stat.value}
-                    </Heading>
-                    
+                    </Text>
+
+                    {/* Label */}
                     <Text
-                      fontSize="lg"
-                      color="gray.600"
-                      fontWeight="medium"
+                      fontSize="sm"
+                      color="whiteAlpha.500"
+                      fontWeight="500"
+                      lineHeight={1.4}
                     >
                       {stat.label}
                     </Text>
